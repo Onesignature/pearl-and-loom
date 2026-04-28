@@ -4,9 +4,13 @@
 
 export type MotifId =
   | "mthalath" // triangles — al-mthalath
-  | "shajarah" // tree — al-shajarah
+  | "shajarah" // tree of life — al-shajarah
   | "eyoun" // eyes — al-eyoun
   | "mushat" // comb — al-mushat
+  | "hubub" // grain seeds — حبوب
+  | "dhurs" // horse-teeth — ضرس الخيل
+  | "chevron" // facing-triangles — uwairjan / عويرجان
+  | "stripe" // warp band — khat / خط
   | "diamond"
   | "blank";
 

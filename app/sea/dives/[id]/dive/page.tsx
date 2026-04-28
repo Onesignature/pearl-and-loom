@@ -2,16 +2,16 @@
 
 import { use } from "react";
 import { notFound } from "next/navigation";
-import { PreDive } from "@/components/sea/PreDive";
+import { DiveScene } from "@/components/sea/DiveScene";
 import { DIVES } from "@/app/sea/page";
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function DiveSetupPage({ params }: PageProps) {
+export default function DiveScenePage({ params }: PageProps) {
   const { id } = use(params);
   const dive = DIVES.find((d) => d.key === id);
   if (!dive || dive.state !== "available") return notFound();
-  return <PreDive dive={dive} />;
+  return <DiveScene dive={dive} />;
 }

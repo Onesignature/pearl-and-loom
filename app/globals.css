@@ -2,122 +2,195 @@
 
 /* ============================================================
    The Pearl and the Loom — Design Tokens
-   Two palettes (Sadu + Sea) sharing one type & motion system.
+   Ported from the Claude Design hand-off. Two palettes share
+   one type system, motion, and texture vocabulary.
    ============================================================ */
 
 :root {
-  /* --- Sadu palette (loom world) --- */
-  --sadu-indigo: #1B2D5C;
-  --sadu-madder: #B5341E;
-  --sadu-saffron: #E8A33D;
-  --sadu-charcoal: #2A2522;
-  --sadu-wool: #F0E4C9;
+  /* Sadu palette (loom world) */
+  --indigo: #1B2D5C;
+  --indigo-deep: #121F44;
+  --indigo-mist: #2C3F70;
+  --madder: #B5341E;
+  --madder-deep: #8C2614;
+  --saffron: #E8A33D;
+  --saffron-soft: #F0BD6A;
+  --charcoal: #2A2522;
+  --charcoal-soft: #3D3531;
+  --wool: #F0E4C9;
+  --wool-warm: #E8D9B5;
+  --wool-deep: #D9C49C;
 
-  /* --- Sea palette (dive world) --- */
+  /* Sea palette (dive world) */
   --sea-blue: #0E5E7B;
-  --sea-coral: #E07856;
-  --sea-dhow: #6B4423;
-  --sea-sunset: #F4B860;
-  --sea-foam: #F0F4F2;
+  --sea-deep: #08374A;
+  --sea-abyss: #051E2C;
+  --coral: #E07856;
+  --dhow-wood: #6B4423;
+  --dhow-wood-deep: #4A2F18;
+  --sunset-gold: #F4B860;
+  --foam: #F0F4F2;
 
-  /* --- Shared semantic tokens --- */
-  --background: var(--sadu-wool);
-  --foreground: var(--sadu-charcoal);
-  --surface: #FAF3E2;
-  --surface-elevated: #FFFFFF;
-  --border-soft: rgba(42, 37, 34, 0.12);
-  --border-strong: rgba(42, 37, 34, 0.32);
+  /* Semantic */
+  --paper: #F5EBD3;
+  --paper-aged: #E6D6B0;
+  --ink: #2A2522;
+  --ink-soft: #5A4D44;
+  --thread-warp: #C9A876;
+  --thread-weft: #8C2614;
+
+  /* Pearl tiers */
+  --pearl-common: #F4EBDC;
+  --pearl-fine: #F2C7C3;
+  --pearl-royal: #F4D77A;
+
+  /* Type — wired to next/font in layout.tsx */
+  --font-sans: var(--font-tajawal);
+  --font-display-family: var(--font-cormorant);
+  --font-arabic: var(--font-tajawal);
 
   /* Motion */
-  --ease-loom: cubic-bezier(0.32, 0.72, 0.16, 1);
-  --ease-sea: cubic-bezier(0.45, 0, 0.25, 1);
+  --ease-loom: cubic-bezier(0.34, 1.16, 0.64, 1);
+  --ease-water: cubic-bezier(0.45, 0, 0.55, 1);
+  --ease-pearl: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-quick: 200ms;
   --dur-standard: 400ms;
   --dur-cinematic: 800ms;
   --dur-deep: 1200ms;
+
+  /* Texture */
+  --woven-paper:
+    repeating-linear-gradient(0deg, rgba(120,90,55,0.03) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(120,90,55,0.025) 0 1px, transparent 1px 3px);
+  --warp-lines:
+    repeating-linear-gradient(90deg,
+      rgba(201,168,118,0.55) 0 1px,
+      transparent 1px 6px);
 }
 
-[data-world="sea"] {
-  --background: var(--sea-foam);
-  --foreground: #0A2530;
-  --surface: #E5EEF1;
-  --surface-elevated: #FFFFFF;
-}
+/* Tapestry SVG internals stay LTR even under [dir="rtl"]. */
+[dir="rtl"] .ltr-internal { direction: ltr; }
 
 @theme inline {
-  /* Color tokens — Tailwind v4 utilities */
-  --color-sadu-indigo: var(--sadu-indigo);
-  --color-sadu-madder: var(--sadu-madder);
-  --color-sadu-saffron: var(--sadu-saffron);
-  --color-sadu-charcoal: var(--sadu-charcoal);
-  --color-sadu-wool: var(--sadu-wool);
+  /* Tailwind v4 utility tokens */
+  --color-indigo: var(--indigo);
+  --color-indigo-deep: var(--indigo-deep);
+  --color-madder: var(--madder);
+  --color-madder-deep: var(--madder-deep);
+  --color-saffron: var(--saffron);
+  --color-saffron-soft: var(--saffron-soft);
+  --color-charcoal: var(--charcoal);
+  --color-wool: var(--wool);
+  --color-wool-warm: var(--wool-warm);
+
   --color-sea-blue: var(--sea-blue);
-  --color-sea-coral: var(--sea-coral);
-  --color-sea-dhow: var(--sea-dhow);
-  --color-sea-sunset: var(--sea-sunset);
-  --color-sea-foam: var(--sea-foam);
+  --color-sea-deep: var(--sea-deep);
+  --color-sea-abyss: var(--sea-abyss);
+  --color-coral: var(--coral);
+  --color-dhow-wood: var(--dhow-wood);
+  --color-sunset-gold: var(--sunset-gold);
+  --color-foam: var(--foam);
 
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-surface: var(--surface);
-  --color-surface-elevated: var(--surface-elevated);
+  --color-paper: var(--paper);
+  --color-paper-aged: var(--paper-aged);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
 
-  /* Type — wired via next/font in layout.tsx */
   --font-sans: var(--font-tajawal);
   --font-display: var(--font-cormorant);
 }
 
-html {
+html, body {
+  margin: 0;
+  padding: 0;
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-feature-settings: "ss01", "kern";
-  background: var(--background);
-  color: var(--foreground);
-}
-
-body {
-  min-height: 100dvh;
-  font-family: inherit;
-  background: var(--background);
-  color: var(--foreground);
+  color: var(--ink);
+  background: var(--charcoal);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background-color var(--dur-cinematic) var(--ease-loom);
+  text-rendering: optimizeLegibility;
 }
 
-/* RTL — let logical properties do their thing; this is just polish */
-html[dir="rtl"] body {
-  font-feature-settings: "ss01", "kern";
+* { box-sizing: border-box; }
+
+.font-display { font-family: var(--font-cormorant), serif; letter-spacing: 0.04em; font-weight: 500; }
+.font-arabic { font-family: var(--font-tajawal), system-ui, sans-serif; }
+.tracking-wide { letter-spacing: 0.12em; }
+.tracking-display { letter-spacing: 0.06em; }
+
+/* Worn paper card */
+.paper-bg {
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(ellipse at 30% 20%, rgba(139,90,40,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(139,90,40,0.08) 0%, transparent 50%),
+    var(--woven-paper);
+  border: 1px solid rgba(80,55,30,0.18);
+  box-shadow:
+    inset 0 0 30px rgba(110,75,40,0.08),
+    0 1px 0 rgba(255,255,255,0.4) inset;
 }
 
-/* Display headings use Cormorant only in LTR; Arabic uses Tajawal exclusively */
-html[lang="en"] h1.display,
-html[lang="en"] h2.display,
-html[lang="en"] .font-display {
-  font-family: var(--font-display), serif;
-  letter-spacing: 0.01em;
+.paper-aged {
+  background-color: var(--paper-aged);
+  background-image:
+    radial-gradient(ellipse at 20% 10%, rgba(139,90,40,0.1) 0%, transparent 55%),
+    radial-gradient(ellipse at 90% 95%, rgba(139,90,40,0.14) 0%, transparent 50%),
+    var(--woven-paper);
 }
 
-html[lang="ar"] h1.display,
-html[lang="ar"] h2.display,
-html[lang="ar"] .font-display {
-  font-family: var(--font-sans), system-ui, sans-serif;
-  letter-spacing: 0;
+/* Lantern + caustic ambient utilities */
+.lantern-glow {
+  background: radial-gradient(ellipse 60% 70% at 50% 40%,
+    rgba(244,184,96,0.32) 0%,
+    rgba(232,163,61,0.12) 30%,
+    transparent 70%);
+}
+
+.caustic {
+  background-image:
+    radial-gradient(ellipse 80% 30% at 30% 0%, rgba(244,184,96,0.18), transparent 70%),
+    radial-gradient(ellipse 60% 25% at 70% 10%, rgba(255,255,255,0.08), transparent 70%);
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
 
 /* Selection */
 ::selection {
-  background: var(--sadu-saffron);
-  color: var(--sadu-charcoal);
+  background: var(--saffron);
+  color: var(--charcoal);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(180,140,80,0.3); border-radius: 4px; }
+
+/* Animations used across screens */
+@keyframes bubble {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.6; }
+  100% { transform: translateY(-100vh); opacity: 0; }
+}
+@keyframes pearlRise {
+  from { transform: translateY(40px) scale(0.5); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes pearlGlow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+@keyframes heroPearlRise {
+  from { top: 60%; transform: translateX(-50%) scale(0.3); opacity: 0; }
+  to { top: 30%; transform: translateX(-50%) scale(1); opacity: 1; }
+}
+@keyframes pulseRing {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.04); }
 }

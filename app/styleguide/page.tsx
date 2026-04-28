@@ -1,188 +1,427 @@
 "use client";
 
 import { useI18n } from "@/lib/i18n/provider";
-import { AppShell } from "@/components/layout/AppShell";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { NumeralText } from "@/components/ui/NumeralText";
-import { LangToggle } from "@/components/layout/LangToggle";
-import { NumeralToggle } from "@/components/layout/NumeralToggle";
-import { SADU_COLORS } from "@/lib/pattern-engine/palette";
-import { MOTIFS } from "@/lib/pattern-engine/motifs";
+import { TentScene } from "@/components/scenes/TentScene";
+import { TopChrome } from "@/components/layout/TopChrome";
+import { useRouter } from "next/navigation";
+import { MOTIF_COMPONENTS, MOTIF_REGISTRY } from "@/components/motifs";
+import { TAPESTRY_25 } from "@/lib/tapestry/composition";
 
-const SEA_PALETTE: Record<string, string> = {
-  "sea-blue": "#0E5E7B",
-  "sea-coral": "#E07856",
-  "sea-dhow": "#6B4423",
-  "sea-sunset": "#F4B860",
-  "sea-foam": "#F0F4F2",
-};
+const SADU_PALETTE: { name: string; hex: string }[] = [
+  { name: "indigo", hex: "#1B2D5C" },
+  { name: "madder", hex: "#B5341E" },
+  { name: "saffron", hex: "#E8A33D" },
+  { name: "charcoal", hex: "#2A2522" },
+  { name: "wool", hex: "#F0E4C9" },
+];
+
+const SEA_PALETTE: { name: string; hex: string }[] = [
+  { name: "sea-blue", hex: "#0E5E7B" },
+  { name: "coral", hex: "#E07856" },
+  { name: "dhow-wood", hex: "#6B4423" },
+  { name: "sunset-gold", hex: "#F4B860" },
+  { name: "foam", hex: "#F0F4F2" },
+];
 
 export default function StyleguidePage() {
-  const { lang, t } = useI18n();
+  const router = useRouter();
+  const { fmt, lang } = useI18n();
+
   return (
-    <AppShell>
-      <section className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-12">
-        <header className="flex flex-col gap-2">
-          <p className="text-xs uppercase tracking-widest text-sadu-charcoal/60">
-            {t("nav.styleguide")}
-          </p>
-          <h1 className="font-display text-4xl tracking-wide text-sadu-charcoal">
-            Design system
-          </h1>
-          <p className="text-sadu-charcoal/70">
-            Tokens, type, motion, and motif library — the visual contract for the whole product.
-          </p>
-        </header>
-
-        <Section label="Palettes">
-          <div className="grid grid-cols-2 gap-6">
-            <PaletteSwatches title="Sadu (loom world)" colors={SADU_COLORS} />
-            <PaletteSwatches title="Sea (dive world)" colors={SEA_PALETTE} />
-          </div>
-        </Section>
-
-        <Section label="Typography">
-          <Card className="flex flex-col gap-4 p-8">
-            <p className="font-display text-5xl tracking-wide text-sadu-charcoal">
-              The Pearl and the Loom
+    <TentScene time="day">
+      <TopChrome
+        onHome={() => router.push("/")}
+        title="Style guide"
+        subtitle="DESIGN SYSTEM"
+      />
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          paddingTop: 100,
+          paddingBottom: 40,
+          paddingInline: 60,
+          overflowY: "auto",
+        }}
+      >
+        <div style={{ maxWidth: 1200, margin: "0 auto", color: "var(--wool)" }}>
+          <header style={{ marginBottom: 40 }}>
+            <h1
+              className="font-display"
+              style={{ fontSize: 40, letterSpacing: "0.04em", margin: 0 }}
+            >
+              Design system
+            </h1>
+            <p style={{ opacity: 0.7, marginTop: 8 }}>
+              Tokens, type, motifs, motion, and the live tapestry sandbox — every visual
+              contract a reviewer might want to scan in 60 seconds.
             </p>
-            <p className="text-3xl" lang="ar" dir="rtl">
-              الَّلؤلؤة والنّول
-            </p>
-            <div className="grid grid-cols-2 gap-4 text-sadu-charcoal/80">
-              <div>
-                <p className="text-xs uppercase tracking-widest text-sadu-charcoal/60">Display</p>
-                <p className="font-display text-2xl">Cormorant Garamond</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-widest text-sadu-charcoal/60">Body</p>
-                <p className="text-xl">Tajawal — supports Arabic & Latin</p>
-              </div>
-            </div>
-            <p className="text-base text-sadu-charcoal/70">
-              Numerals respond to your active mode:{" "}
-              <NumeralText n={1234567890} className="font-mono tabular-nums" />.
-              Currently <code className="rounded bg-sadu-wool px-2 py-1">{lang}</code>.
-            </p>
-          </Card>
-        </Section>
+          </header>
 
-        <Section label="Buttons">
-          <div className="flex flex-wrap gap-3">
-            <Button variant="primary">Primary</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="primary" disabled>
-              Disabled
-            </Button>
-          </div>
-        </Section>
+          <Section label="Sadu palette · loom world">
+            <PaletteSwatches colors={SADU_PALETTE} />
+          </Section>
 
-        <Section label="Toggles">
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-4">
-              <p className="text-sm uppercase tracking-widest text-sadu-charcoal/60 w-32">
-                Language
+          <Section label="Sea palette · dive world">
+            <PaletteSwatches colors={SEA_PALETTE} />
+          </Section>
+
+          <Section label="Typography">
+            <div className="paper-bg" style={{ padding: 32 }}>
+              <p
+                className="font-display"
+                style={{
+                  fontSize: 56,
+                  margin: 0,
+                  color: "var(--ink)",
+                  fontStyle: "italic",
+                }}
+              >
+                The Pearl and the Loom
               </p>
-              <LangToggle />
-            </div>
-            <div className="flex items-center gap-4">
-              <p className="text-sm uppercase tracking-widest text-sadu-charcoal/60 w-32">
-                Numerals
+              <p
+                style={{
+                  fontFamily: "var(--font-tajawal), sans-serif",
+                  fontSize: 36,
+                  color: "var(--ink)",
+                  margin: "12px 0",
+                }}
+                lang="ar"
+                dir="rtl"
+              >
+                اللؤلؤة والنَّول
               </p>
-              <NumeralToggle />
-            </div>
-          </div>
-        </Section>
-
-        <Section label="Sadu motif library">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            {(["mthalath", "shajarah", "eyoun", "mushat", "diamond"] as const).map((id) => {
-              const spec = MOTIFS[id];
-              return (
-                <Card key={id} className="flex flex-col items-center gap-2 p-4">
-                  <svg
-                    viewBox="0 0 100 100"
-                    className="h-24 w-24"
-                    aria-label={spec.name}
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 16,
+                  color: "var(--ink-soft)",
+                  marginTop: 18,
+                }}
+              >
+                <div>
+                  <p
+                    style={{
+                      fontSize: 11,
+                      letterSpacing: "0.3em",
+                      textTransform: "uppercase",
+                      margin: 0,
+                    }}
                   >
-                    {spec.paths.map((d, i) => (
-                      <path
-                        key={i}
-                        d={d}
-                        fill={spec.filled ? SADU_COLORS.indigo : "none"}
-                        stroke={SADU_COLORS.indigo}
-                        strokeWidth={spec.strokeWidth}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    ))}
-                  </svg>
-                  <div className="text-center">
-                    <p className="font-display text-base">{spec.name}</p>
-                    <p className="text-sm" lang="ar" dir="rtl">
-                      {spec.arName}
-                    </p>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        </Section>
-
-        <Section label="Numeral toggle demo">
-          <Card className="flex flex-col gap-3 p-6">
-            <p className="text-sadu-charcoal/70">
-              The same number in your active mode (toggle above):
-            </p>
-            <div className="flex items-baseline gap-6">
-              <p className="font-display text-4xl">
-                <NumeralText n={1234567890} />
+                    Display
+                  </p>
+                  <p
+                    className="font-display"
+                    style={{ fontSize: 24, color: "var(--ink)", margin: "4px 0 0" }}
+                  >
+                    Cormorant Garamond
+                  </p>
+                </div>
+                <div>
+                  <p
+                    style={{
+                      fontSize: 11,
+                      letterSpacing: "0.3em",
+                      textTransform: "uppercase",
+                      margin: 0,
+                    }}
+                  >
+                    Body
+                  </p>
+                  <p
+                    style={{
+                      fontSize: 18,
+                      color: "var(--ink)",
+                      margin: "4px 0 0",
+                      fontFamily: "var(--font-tajawal), sans-serif",
+                    }}
+                  >
+                    Tajawal — Arabic & Latin
+                  </p>
+                </div>
+              </div>
+              <p style={{ marginTop: 18, color: "var(--ink-soft)" }}>
+                Numerals respond to your active mode (try toggling top-right):{" "}
+                <span
+                  className="font-display"
+                  style={{ fontSize: 22, color: "var(--ink)" }}
+                >
+                  {fmt(1234567890)}
+                </span>{" "}
+                — locale: <code style={{ background: "var(--wool)", padding: "2px 6px" }}>{lang}</code>
               </p>
-              <p className="font-mono text-sm text-sadu-charcoal/50">1234567890 / ١٢٣٤٥٦٧٨٩٠</p>
             </div>
-          </Card>
-        </Section>
-      </section>
-    </AppShell>
+          </Section>
+
+          <Section label="Sadu motif library">
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: 14,
+              }}
+            >
+              {MOTIF_REGISTRY.map((m) => {
+                const Motif = MOTIF_COMPONENTS[m.id];
+                if (!Motif) return null;
+                return (
+                  <div
+                    key={m.id}
+                    className="paper-bg"
+                    style={{ padding: 16, display: "flex", gap: 14, alignItems: "center" }}
+                  >
+                    <div
+                      style={{
+                        width: 80,
+                        height: 50,
+                        flexShrink: 0,
+                        border: "1px solid rgba(80,55,30,0.2)",
+                        background: "var(--wool)",
+                      }}
+                    >
+                      <Motif w="100%" h="100%" />
+                    </div>
+                    <div style={{ minWidth: 0 }}>
+                      <p
+                        className="font-display"
+                        style={{ fontSize: 16, margin: 0, color: "var(--ink)" }}
+                      >
+                        {m.en}
+                      </p>
+                      <p
+                        style={{
+                          fontFamily: "var(--font-tajawal), sans-serif",
+                          fontSize: 14,
+                          margin: "2px 0",
+                          color: "var(--madder)",
+                        }}
+                      >
+                        {m.ar}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: 11,
+                          margin: 0,
+                          color: "var(--ink-soft)",
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {lang === "en" ? m.noteEn : m.noteAr}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Section>
+
+          <Section label="Tapestry sandbox · 25-row narrative">
+            <div
+              className="paper-aged"
+              style={{
+                padding: 20,
+                background: "linear-gradient(170deg, #5A3618, #3D2A1E)",
+                maxWidth: 480,
+                margin: "0 auto",
+              }}
+            >
+              <div
+                className="ltr-internal"
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column-reverse",
+                  border: "1px solid rgba(0,0,0,0.4)",
+                }}
+              >
+                {TAPESTRY_25.map((row, i) => {
+                  const Motif = MOTIF_COMPONENTS[row.motif];
+                  if (!Motif) return null;
+                  return (
+                    <div key={i} style={{ height: 18 }}>
+                      <Motif {...row.palette} w="100%" h="100%" />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Section>
+
+          <Section label="Motion timing">
+            <div
+              className="paper-bg"
+              style={{
+                padding: 20,
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: 12,
+              }}
+            >
+              {[
+                ["Loom thump", "400-800ms", "var(--ease-loom)"],
+                ["Underwater", "1000-1500ms", "var(--ease-water)"],
+                ["Pearl rise", "1200ms", "var(--ease-pearl)"],
+                ["Weave row", "400 / 800 / 600ms", "var(--ease-loom)"],
+              ].map(([name, dur, ease]) => (
+                <div key={name as string} style={{ color: "var(--ink)" }}>
+                  <p
+                    className="font-display"
+                    style={{ fontSize: 14, margin: 0, letterSpacing: "0.1em" }}
+                  >
+                    {name}
+                  </p>
+                  <p style={{ margin: 0, fontSize: 12, color: "var(--ink-soft)" }}>{dur}</p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 10,
+                      fontFamily: "monospace",
+                      color: "var(--ink-soft)",
+                    }}
+                  >
+                    {ease}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </Section>
+
+          <Section label="Numeral toggle demo">
+            <div className="paper-bg" style={{ padding: 24, display: "flex", gap: 30 }}>
+              <div>
+                <p
+                  style={{
+                    fontSize: 11,
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "var(--ink-soft)",
+                    margin: 0,
+                  }}
+                >
+                  Active
+                </p>
+                <p
+                  className="font-display"
+                  style={{ fontSize: 36, margin: "4px 0 0", color: "var(--ink)" }}
+                >
+                  {fmt(1234567890)}
+                </p>
+              </div>
+              <div>
+                <p
+                  style={{
+                    fontSize: 11,
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "var(--ink-soft)",
+                    margin: 0,
+                  }}
+                >
+                  Latin
+                </p>
+                <p
+                  style={{
+                    fontFamily: "monospace",
+                    fontSize: 22,
+                    margin: "4px 0 0",
+                    color: "var(--ink)",
+                  }}
+                >
+                  1234567890
+                </p>
+              </div>
+              <div>
+                <p
+                  style={{
+                    fontSize: 11,
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "var(--ink-soft)",
+                    margin: 0,
+                  }}
+                >
+                  Arabic-Indic
+                </p>
+                <p
+                  style={{
+                    fontFamily: "var(--font-tajawal), sans-serif",
+                    fontSize: 22,
+                    margin: "4px 0 0",
+                    color: "var(--ink)",
+                  }}
+                >
+                  ١٢٣٤٥٦٧٨٩٠
+                </p>
+              </div>
+            </div>
+          </Section>
+        </div>
+      </div>
+    </TentScene>
   );
 }
 
-function Section({ label, children }: { label: string; children: React.ReactNode }) {
+function Section({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section className="flex flex-col gap-4">
-      <p className="text-xs uppercase tracking-widest text-sadu-charcoal/60">{label}</p>
+    <section style={{ marginBottom: 36 }}>
+      <p
+        style={{
+          fontSize: 11,
+          letterSpacing: "0.3em",
+          textTransform: "uppercase",
+          color: "var(--saffron)",
+          marginBottom: 14,
+          opacity: 0.85,
+        }}
+      >
+        {label}
+      </p>
       {children}
     </section>
   );
 }
 
-function PaletteSwatches({
-  title,
-  colors,
-}: {
-  title: string;
-  colors: Record<string, string>;
-}) {
+function PaletteSwatches({ colors }: { colors: { name: string; hex: string }[] }) {
   return (
-    <div className="flex flex-col gap-3">
-      <p className="font-display text-xl">{title}</p>
-      <div className="grid grid-cols-5 gap-2">
-        {Object.entries(colors).map(([name, hex]) => (
-          <div key={name} className="flex flex-col gap-1">
-            <div
-              className="aspect-square rounded-lg border border-[var(--border-soft)]"
-              style={{ background: hex }}
-              aria-label={`${name} ${hex}`}
-            />
-            <p className="text-xs leading-tight text-sadu-charcoal/70">
-              <span className="block font-medium text-sadu-charcoal">{name}</span>
-              <span className="font-mono">{hex}</span>
-            </p>
-          </div>
-        ))}
-      </div>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+        gap: 12,
+      }}
+    >
+      {colors.map((c) => (
+        <div
+          key={c.name}
+          style={{
+            background: c.hex,
+            padding: 14,
+            color: c.name === "wool" || c.name === "foam" ? "var(--ink)" : "var(--wool)",
+            border: "1px solid rgba(0,0,0,0.2)",
+            minHeight: 90,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <span
+            className="font-display"
+            style={{ fontSize: 14, letterSpacing: "0.08em" }}
+          >
+            {c.name}
+          </span>
+          <span style={{ fontFamily: "monospace", fontSize: 11, opacity: 0.85 }}>
+            {c.hex}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }

@@ -1,31 +1,33 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useI18n } from "@/lib/i18n/provider";
 import { useSettings } from "@/lib/store/settings";
 import { useProgress } from "@/lib/store/progress";
-import { rowCount } from "@/lib/pattern-engine";
-import { AppShell } from "@/components/layout/AppShell";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { NumeralText } from "@/components/ui/NumeralText";
+import { TentScene } from "@/components/scenes/TentScene";
+import { TopChrome } from "@/components/layout/TopChrome";
+import { CharacterCard } from "@/components/home/CharacterCard";
+import { TapestryStrip } from "@/components/tapestry/TapestryStrip";
 
-const subscribeHydration = (cb: () => void) => useSettings.persist.onFinishHydration(cb);
+const subscribeHydration = (cb: () => void) =>
+  useSettings.persist.onFinishHydration(cb);
 const getHydrated = () => useSettings.persist.hasHydrated();
 const getHydratedServer = () => false;
 
 export default function HomePage() {
-  // Wait for zustand persist to finish hydrating before deciding splash vs home —
-  // useSyncExternalStore avoids the setState-in-effect anti-pattern.
-  const hydrated = useSyncExternalStore(subscribeHydration, getHydrated, getHydratedServer);
+  const hydrated = useSyncExternalStore(
+    subscribeHydration,
+    getHydrated,
+    getHydratedServer,
+  );
   const hasChosenLanguage = useSettings((s) => s.hasChosenLanguage);
 
   if (!hydrated) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
-        <div className="h-8 w-8 animate-pulse rounded-full bg-sadu-saffron/40" aria-hidden />
+        <div className="h-8 w-8 animate-pulse rounded-full bg-saffron/40" aria-hidden />
       </div>
     );
   }
@@ -60,124 +62,263 @@ export default function HomePage() {
 function LanguageSplash() {
   const { setLang } = useI18n();
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center gap-10 bg-sadu-wool px-6 text-center">
-      <div className="flex flex-col items-center gap-3">
-        <span aria-hidden className="text-5xl text-sadu-saffron">◆</span>
-        <h1 className="font-display text-4xl tracking-wide text-sadu-charcoal sm:text-5xl">
-          The Pearl and the Loom
-        </h1>
-        <p className="font-sans text-2xl text-sadu-charcoal/80" lang="ar" dir="rtl">
-          الَّلؤلؤة والنّول
-        </p>
-      </div>
-
-      <div className="h-px w-24 bg-sadu-charcoal/20" />
-
-      <div className="flex flex-col items-center gap-4">
-        <p className="text-sadu-charcoal/70">
-          Choose your language · اختَر لغتك
-        </p>
-        <div className="flex gap-3">
-          <Button size="lg" variant="secondary" onClick={() => setLang("en")}>
-            English
-          </Button>
-          <Button
-            size="lg"
-            variant="secondary"
-            onClick={() => setLang("ar")}
-            style={{ fontFamily: "var(--font-tajawal)" }}
+    <TentScene>
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 40,
+          padding: "0 24px",
+          textAlign: "center",
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "center" }}>
+          <div
+            className="font-display"
+            style={{
+              fontSize: 14,
+              color: "var(--saffron)",
+              letterSpacing: "0.4em",
+              textTransform: "uppercase",
+            }}
           >
-            العربية
-          </Button>
+            Abu Dhabi · 1948
+          </div>
+          <h1
+            style={{
+              margin: 0,
+              fontFamily: "var(--font-cormorant), serif",
+              fontSize: 64,
+              fontWeight: 400,
+              color: "var(--wool)",
+              letterSpacing: "0.02em",
+              fontStyle: "italic",
+              lineHeight: 1.05,
+            }}
+          >
+            The Pearl and the Loom
+          </h1>
+          <p
+            style={{
+              fontFamily: "var(--font-tajawal), sans-serif",
+              fontSize: 28,
+              color: "var(--wool)",
+              opacity: 0.85,
+              margin: 0,
+            }}
+            lang="ar"
+            dir="rtl"
+          >
+            اللؤلؤة والنَّول
+          </p>
+          <div
+            style={{
+              marginTop: 8,
+              fontSize: 13,
+              color: "rgba(240,228,201,0.55)",
+              fontStyle: "italic",
+              letterSpacing: "0.08em",
+            }}
+          >
+            A family story, woven row by row · حكاية عائلة، تُنسَج صفًّا بعد صف
+          </div>
+        </div>
+
+        <div style={{ width: 96, height: 1, background: "rgba(240,228,201,0.25)" }} />
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 18, alignItems: "center" }}>
+          <div
+            style={{
+              fontSize: 11,
+              color: "var(--wool)",
+              opacity: 0.65,
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
+            }}
+          >
+            Choose your language · اختَر لغتك
+          </div>
+          <div style={{ display: "flex", gap: 16 }}>
+            <button onClick={() => setLang("en")} className="splash-btn">
+              <span className="font-display" style={{ fontSize: 18, letterSpacing: "0.12em" }}>
+                English
+              </span>
+            </button>
+            <button
+              onClick={() => setLang("ar")}
+              className="splash-btn"
+              style={{ fontFamily: "var(--font-tajawal), sans-serif" }}
+            >
+              <span style={{ fontSize: 22, letterSpacing: 0 }}>العربية</span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+      <style>{`
+        .splash-btn {
+          background: rgba(245,235,211,0.06);
+          color: var(--wool);
+          border: 1px solid rgba(244,184,96,0.4);
+          padding: 16px 36px;
+          cursor: pointer;
+          backdrop-filter: blur(8px);
+          transition: all 0.3s var(--ease-loom);
+        }
+        .splash-btn:hover {
+          background: rgba(244,184,96,0.18);
+          border-color: var(--saffron);
+          transform: translateY(-2px);
+        }
+      `}</style>
+    </TentScene>
   );
 }
 
 function FamilyTent() {
-  const { t } = useI18n();
-  const tapestryRowCount = useProgress((s) =>
-    rowCount({ seed: s.seed, ops: s.ops, beads: s.beads }),
-  );
+  const router = useRouter();
+  const { t, fmt, lang } = useI18n();
+  const ops = useProgress((s) => s.ops);
+  const pearls = useProgress((s) => s.pearls);
+  const wovenCount = ops.filter((op) => op.kind !== "bead").length;
 
   return (
-    <AppShell>
-      <section className="mx-auto flex w-full max-w-6xl flex-col items-center gap-12 px-6 py-12">
-        <header className="flex flex-col items-center gap-3 text-center">
-          <h1 className="font-display text-4xl tracking-wide text-sadu-charcoal sm:text-5xl">
-            {t("home.welcome")}
-          </h1>
-          <p className="max-w-2xl text-lg text-sadu-charcoal/80">{t("home.intro")}</p>
-        </header>
-
-        <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2">
-          <CharacterCard
-            href="/loom"
-            name={t("home.layla.name")}
-            role={t("home.layla.role")}
-            tagline={t("home.layla.tagline")}
-            accent="sadu"
-          />
-          <CharacterCard
-            href="/sea"
-            name={t("home.saif.name")}
-            role={t("home.saif.role")}
-            tagline={t("home.saif.tagline")}
-            accent="sea"
-          />
-        </div>
-
-        <footer className="flex w-full items-center justify-center text-sm text-sadu-charcoal/60">
-          <NumeralText n={tapestryRowCount} className="font-medium text-sadu-charcoal" />
-          <span className="ms-2">{t("home.progress")}</span>
-        </footer>
-      </section>
-    </AppShell>
-  );
-}
-
-interface CharacterCardProps {
-  href: string;
-  name: string;
-  role: string;
-  tagline: string;
-  accent: "sadu" | "sea";
-}
-
-function CharacterCard({ href, name, role, tagline, accent }: CharacterCardProps) {
-  const accentBg =
-    accent === "sadu"
-      ? "linear-gradient(180deg, #FAF3E2 0%, #F0E4C9 100%)"
-      : "linear-gradient(180deg, #F0F4F2 0%, #DCE7EC 100%)";
-  const accentTextColor = accent === "sadu" ? "text-sadu-charcoal" : "text-[#0A2530]";
-  const accentBadgeColor =
-    accent === "sadu" ? "bg-sadu-madder text-sadu-wool" : "bg-sea-blue text-sea-foam";
-
-  return (
-    <Link href={href} className="group">
-      <Card
-        tone={accent === "sadu" ? "tent" : "sea"}
-        className="relative overflow-hidden p-8 transition-transform duration-500 group-hover:-translate-y-1"
+    <TentScene>
+      <TopChrome />
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          paddingBottom: 110,
+          paddingTop: 80,
+        }}
       >
-        <div className="absolute inset-0 -z-10" style={{ background: accentBg }} />
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col gap-2">
-            <span
-              className={[
-                "inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-medium tracking-wide",
-                accentBadgeColor,
-              ].join(" ")}
-            >
-              {role}
-            </span>
-            <h2 className={["font-display text-3xl", accentTextColor].join(" ")}>{name}</h2>
-            <p className={["text-base/relaxed", accentTextColor, "opacity-80"].join(" ")}>
-              {tagline}
-            </p>
+        <div style={{ textAlign: "center", marginBottom: 38, maxWidth: 760 }}>
+          <div
+            className="font-display"
+            style={{
+              fontSize: 14,
+              color: "var(--saffron)",
+              letterSpacing: "0.4em",
+              textTransform: "uppercase",
+              marginBottom: 14,
+            }}
+          >
+            {t("era.abuDhabi1948")}
+          </div>
+          <h1
+            style={{
+              margin: 0,
+              fontFamily:
+                lang === "ar"
+                  ? "var(--font-tajawal), sans-serif"
+                  : "var(--font-cormorant), serif",
+              fontSize: lang === "ar" ? 56 : 72,
+              fontWeight: 400,
+              color: "var(--wool)",
+              letterSpacing: lang === "ar" ? "0" : "0.02em",
+              lineHeight: 1.05,
+              whiteSpace: "nowrap",
+              fontStyle: lang === "en" ? "italic" : "normal",
+            }}
+          >
+            {t("meta.title")}
+          </h1>
+          <div
+            style={{
+              marginTop: 18,
+              color: "rgba(240,228,201,0.65)",
+              fontSize: 15,
+              letterSpacing: "0.08em",
+              fontStyle: "italic",
+            }}
+          >
+            {t("meta.subtitle")}
           </div>
         </div>
-      </Card>
-    </Link>
+
+        <div
+          style={{
+            color: "var(--wool)",
+            marginBottom: 28,
+            fontSize: 12,
+            letterSpacing: "0.3em",
+            textTransform: "uppercase",
+            opacity: 0.55,
+          }}
+        >
+          {t("home.chooseChild")}
+        </div>
+
+        <div style={{ display: "flex", gap: 36, flexWrap: "wrap", justifyContent: "center" }}>
+          <CharacterCard
+            who="layla"
+            onClick={() => router.push("/loom")}
+            progress={{ current: wovenCount, total: 30, label: "home.rowsWoven" }}
+          />
+          <CharacterCard
+            who="saif"
+            onClick={() => router.push("/sea")}
+            progress={{ current: pearls.length, total: 12, label: "home.pearlsCollected" }}
+          />
+        </div>
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          insetInlineStart: 0,
+          insetInlineEnd: 0,
+          padding: "16px 28px",
+          background: "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "baseline",
+            marginBottom: 8,
+          }}
+        >
+          <div
+            style={{
+              color: "var(--wool)",
+              fontSize: 11,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              opacity: 0.7,
+            }}
+          >
+            {t("home.familyTapestry")}
+          </div>
+          <div
+            style={{
+              color: "var(--saffron)",
+              fontSize: 12,
+              fontFamily: "var(--font-cormorant), serif",
+              letterSpacing: "0.1em",
+            }}
+          >
+            <span className="font-display" style={{ fontSize: 18 }}>
+              {fmt(wovenCount)}
+            </span>
+            <span style={{ opacity: 0.5, margin: "0 6px" }}>/</span>
+            <span style={{ opacity: 0.7 }}>
+              {fmt(30)} {t("home.rowsWoven")}
+            </span>
+          </div>
+        </div>
+        <TapestryStrip woven={wovenCount} height={48} />
+      </div>
+    </TentScene>
   );
 }
