@@ -92,10 +92,11 @@ export function LessonSaduPreview({ plannedOp, locked }: LessonSaduPreviewProps)
       <div className="lsp-frame">
         <svg
           viewBox={`0 0 720 ${24 * visible.length}`}
-          preserveAspectRatio="none"
+          preserveAspectRatio="xMidYMid meet"
           style={{
             width: "100%",
-            height: 24 * visible.length,
+            height: "auto",
+            aspectRatio: `720 / ${24 * visible.length}`,
             display: "block",
             background: "#3D2A1E",
           }}

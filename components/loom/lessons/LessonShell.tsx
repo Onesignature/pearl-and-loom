@@ -23,53 +23,82 @@ export function LessonShell({ titleKey, index, children }: LessonShellProps) {
         title={t(titleKey)}
         subtitle={`${t("loom.lessonLabel").toUpperCase()} ${fmt(index)} · ${t("loom.laylaSubtitle")}`}
       />
-      <div
-        className="lesson-stage"
-        style={{
-          position: "absolute",
-          inset: 0,
-          paddingTop: 86,
-          paddingBottom: 28,
-          paddingInline: "clamp(16px, 3vw, 60px)",
-          display: "flex",
-          gap: "clamp(20px, 3vw, 40px)",
-          alignItems: "center",
-          alignContent: "center",
-          justifyContent: "center",
-          flexWrap: "wrap",
-          overflowY: "auto",
-          overflowX: "hidden",
-        }}
-      >
-        {children}
-      </div>
+      <div className="lesson-stage">{children}</div>
       <style>{`
-        /* Belt-and-suspenders — never let a wide child blow out the
-           viewport on phone. Every flex child is allowed to shrink. */
+        /* Lesson stage layout.
+         *
+         * Desktop / laptop (>=900px): hard CSS Grid with three named areas.
+         *   instruction | exercise
+         *   tapestry tapestry
+         * The grid template is identical at every width and zoom level on
+         * web, so the layout never reflows. nth-child selectors target the
+         * three children every lesson renders in order: ProblemCard, the
+         * exercise wrapper, .lesson-preview-row.
+         *
+         * Tablet / phone (<900px): the grid collapses to a single column
+         * so the same three children stack instruction → exercise → tapestry.
+         */
+        .lesson-stage {
+          position: absolute;
+          inset: 0;
+          padding: 86px clamp(16px, 3vw, 60px) 28px;
+          overflow-y: auto;
+          overflow-x: hidden;
+          display: grid;
+          grid-template-columns: 1fr;
+          grid-template-areas:
+            "instruction"
+            "exercise"
+            "tapestry";
+          column-gap: clamp(24px, 3vw, 56px);
+          row-gap: clamp(20px, 2.5vw, 36px);
+          justify-content: center;
+          align-content: start;
+          justify-items: center;
+        }
         .lesson-stage > * { min-width: 0; max-width: 100%; }
-        /* Bottom-row preview — full width under the problem + puzzle
-           pair on web, flowing inline on phone (where everything is
-           already a single column). */
-        .lesson-preview-row {
-          flex-basis: 100%;
+        .lesson-stage > :nth-child(1) {
+          grid-area: instruction;
           width: 100%;
-          max-width: 1080px;
-          margin: 0 auto;
+          max-width: 560px;
+        }
+        .lesson-stage > :nth-child(2) {
+          grid-area: exercise;
+          width: 100%;
+          max-width: 720px;
+        }
+        .lesson-stage > :nth-child(3) {
+          grid-area: tapestry;
+          width: 100%;
+          max-width: 960px;
+        }
+        .lesson-preview-row {
+          width: 100%;
           padding-top: 6px;
           border-top: 1px solid rgba(232, 163, 61, 0.18);
         }
+        @media (min-width: 900px) {
+          .lesson-stage {
+            grid-template-columns: minmax(0, 540px) minmax(0, 680px);
+            grid-template-areas:
+              "instruction exercise"
+              "tapestry tapestry";
+            align-content: center;
+          }
+          .lesson-stage > :nth-child(1) {
+            justify-self: end;
+          }
+          .lesson-stage > :nth-child(2) {
+            justify-self: start;
+          }
+          .lesson-stage > :nth-child(3) {
+            justify-self: center;
+          }
+        }
         @media (max-width: 640px) {
           .lesson-stage {
-            align-items: flex-start !important;
-            align-content: flex-start !important;
-            padding-top: 96px !important;
-            padding-bottom: 40px !important;
-            padding-inline: 14px !important;
-            gap: 18px !important;
-            overflow-x: hidden !important;
-          }
-          .lesson-stage > * {
-            flex-basis: 100% !important;
+            padding: 96px 14px 40px;
+            row-gap: 18px;
           }
           .lesson-preview-row {
             border-top: none;
