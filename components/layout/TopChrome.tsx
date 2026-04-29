@@ -36,26 +36,16 @@ export function TopChrome({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "18px 28px",
-        gap: 14,
+        padding: "20px 28px 18px",
+        gap: 16,
         zIndex: 50,
         background: transparent
           ? "transparent"
-          : "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.18) 75%, transparent 100%)",
+          : "linear-gradient(to bottom, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.22) 70%, transparent 100%)",
         pointerEvents: "none",
       }}
     >
       <div style={{ display: "flex", gap: 14, alignItems: "center", pointerEvents: "auto", minWidth: 0 }}>
-        {/* Brand mark — small favicon ties inner pages back to the home identity */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/favicon.svg"
-          alt=""
-          width={30}
-          height={30}
-          className="chrome-brand-mark"
-          aria-hidden
-        />
         {(onBack || onHome) && (
           <button onClick={onBack || onHome} className="chrome-btn chrome-back">
             <span style={{ display: "inline-block", transform: dir === "rtl" ? "scaleX(-1)" : "none" }}>
@@ -71,10 +61,11 @@ export function TopChrome({
             <div
               className="font-display chrome-title"
               style={{
-                fontSize: 20,
+                fontSize: 24,
                 lineHeight: 1.15,
                 letterSpacing: "0.04em",
                 whiteSpace: "nowrap",
+                textShadow: "0 0 14px rgba(232,163,61,0.18), 0 2px 8px rgba(0,0,0,0.4)",
               }}
             >
               {title}
@@ -83,12 +74,13 @@ export function TopChrome({
               <div
                 className="chrome-subtitle"
                 style={{
-                  fontSize: 11,
-                  opacity: 0.7,
+                  fontSize: 12,
+                  opacity: 0.78,
                   marginTop: 6,
-                  letterSpacing: "0.1em",
+                  letterSpacing: "0.18em",
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
+                  color: "var(--saffron)",
                 }}
               >
                 {subtitle}
@@ -138,12 +130,6 @@ export function TopChrome({
         </button>
       </div>
       <style>{`
-        .chrome-brand-mark {
-          flex: 0 0 auto;
-          display: block;
-          opacity: 0.92;
-          filter: drop-shadow(0 1px 4px rgba(0,0,0,0.5));
-        }
         .chrome-btn {
           background: linear-gradient(180deg, rgba(245,235,211,0.10) 0%, rgba(245,235,211,0.04) 100%);
           color: var(--wool);
@@ -173,15 +159,15 @@ export function TopChrome({
           font-family: var(--font-cormorant), serif;
           font-style: italic;
           letter-spacing: 0.12em;
-          font-size: 14px;
+          font-size: 15px;
         }
+
         .chrome-mobile-only { display: none; }
         @media (max-width: 640px) {
           .chrome-chip-row { display: none !important; }
           .chrome-mobile-only { display: inline-flex; }
           .chrome-title { font-size: 16px !important; white-space: normal !important; }
           .chrome-subtitle { font-size: 10px !important; white-space: normal !important; margin-top: 3px !important; }
-          .chrome-brand-mark { width: 26px !important; height: 26px !important; }
         }
         @media (max-width: 480px) {
           .chrome-back-label { display: none; }

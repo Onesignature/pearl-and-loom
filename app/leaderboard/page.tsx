@@ -21,7 +21,6 @@ export default function LeaderboardPage() {
   const pearls = useProgress((s) => s.pearls);
   const achievements = useProgress((s) => s.achievements);
   const streak = useProgress((s) => s.streak);
-  const unlockedItems = useProgress((s) => s.unlockedItems);
   const startedAt = useProgress((s) => s.startedAt);
   const completedAt = useProgress((s) => s.completedAt);
   // Snapshot "now" once on mount — the leaderboard's elapsed-time column
@@ -35,9 +34,8 @@ export default function LeaderboardPage() {
         pearls,
         achievements,
         streak,
-        unlockedItems,
       }),
-    [loomLessonsCompleted, pearls, achievements, streak, unlockedItems],
+    [loomLessonsCompleted, pearls, achievements, streak],
   );
 
   const entries = useMemo(
@@ -140,17 +138,20 @@ export default function LeaderboardPage() {
           justify-content: center;
         }
         .lb-card {
-          width: min(820px, 100%);
+          width: min(860px, 100%);
           height: fit-content;
-          padding: 22px clamp(12px, 2.4vw, 28px) 18px;
-          background: linear-gradient(180deg, rgba(36,24,14,0.92) 0%, rgba(14,10,8,0.94) 100%);
-          border: 1px solid rgba(232,163,61,0.45);
-          border-radius: 24px;
+          padding: 32px clamp(16px, 3vw, 40px) 24px;
+          background: linear-gradient(145deg, rgba(40,28,20,0.65) 0%, rgba(15,10,8,0.85) 100%);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          border: 1px solid rgba(232,163,61,0.25);
+          border-top: 1px solid rgba(232,163,61,0.45);
+          border-radius: 32px;
           color: var(--wool);
           font-family: var(--font-tajawal), sans-serif;
           box-shadow:
-            0 28px 80px rgba(0,0,0,0.55),
-            inset 0 0 60px rgba(232,163,61,0.06);
+            0 40px 100px rgba(0,0,0,0.65),
+            inset 0 1px 0 rgba(255,255,255,0.06);
         }
 
         /* Desktop / tablet — 5-column grid table. The .lb-meta wrapper
@@ -159,26 +160,35 @@ export default function LeaderboardPage() {
         .lb-head,
         .lb-row {
           display: grid;
-          grid-template-columns: 64px 1.7fr 1fr 70px 1fr;
-          gap: 12px;
+          grid-template-columns: 60px 1.8fr 1fr 70px 1fr;
+          gap: 16px;
           align-items: center;
-          padding: 12px 14px;
+          padding: 14px 18px;
         }
         .lb-head {
-          padding: 10px 14px;
+          padding: 10px 18px 16px;
           font-family: var(--font-cormorant), serif;
-          font-size: 10px;
-          letter-spacing: 0.32em;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.28em;
           text-transform: uppercase;
           color: var(--saffron);
-          opacity: 0.85;
+          opacity: 0.9;
+          border-bottom: 1px solid rgba(240,228,201,0.1);
+          margin-bottom: 12px;
         }
         .lb-row {
-          margin-top: 8px;
-          background: rgba(245,235,211,0.04);
-          border: 1px solid rgba(232,163,61,0.18);
-          border-radius: 16px;
-          transition: background 0.2s var(--ease-loom), border-color 0.2s, box-shadow 0.2s;
+          margin-top: 10px;
+          background: rgba(245,235,211,0.03);
+          border: 1px solid rgba(240,228,201,0.08);
+          border-radius: 20px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .lb-row:hover {
+          background: rgba(245,235,211,0.08);
+          border-color: rgba(232,163,61,0.3);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
         .lb-meta {
           display: contents;
@@ -205,7 +215,8 @@ export default function LeaderboardPage() {
         .lb-name-name {
           font-family: var(--font-cormorant), serif;
           font-style: italic;
-          font-size: 17px;
+          font-weight: 600;
+          font-size: 19px;
           color: var(--wool);
           white-space: nowrap;
           overflow: hidden;
@@ -225,7 +236,7 @@ export default function LeaderboardPage() {
         }
         .lb-points-col {
           font-family: var(--font-cormorant), serif;
-          font-size: 18px;
+          font-size: 20px;
           color: var(--saffron);
           font-weight: 600;
           letter-spacing: 0.04em;
@@ -256,23 +267,27 @@ export default function LeaderboardPage() {
 
         /* Highlighted states */
         .lb-row.is-you {
-          background: linear-gradient(180deg, rgba(232,163,61,0.18) 0%, rgba(232,163,61,0.06) 100%);
-          border-color: rgba(232,163,61,0.7);
-          box-shadow: 0 0 18px rgba(232,163,61,0.25);
+          background: linear-gradient(90deg, rgba(232,163,61,0.18) 0%, rgba(232,163,61,0.04) 100%);
+          border-color: rgba(232,163,61,0.6);
+          box-shadow: 0 0 24px rgba(232,163,61,0.15), inset 0 0 12px rgba(232,163,61,0.08);
+        }
+        .lb-row.is-you:hover {
+          border-color: rgba(232,163,61,0.9);
+          box-shadow: 0 6px 32px rgba(232,163,61,0.25), inset 0 0 16px rgba(232,163,61,0.12);
         }
         .lb-row.is-podium { border-width: 1.5px; }
         .lb-row.is-rank-1 {
-          border-color: rgba(232,163,61,0.85);
-          background: linear-gradient(180deg, rgba(232,163,61,0.16) 0%, rgba(20,12,8,0.6) 100%);
-          box-shadow: 0 0 28px rgba(232,163,61,0.28);
+          border-color: rgba(248,216,122,0.85);
+          background: linear-gradient(90deg, rgba(248,216,122,0.18) 0%, rgba(20,12,8,0.4) 100%);
+          box-shadow: 0 0 32px rgba(248,216,122,0.22);
         }
         .lb-row.is-rank-2 {
-          border-color: rgba(220,220,230,0.55);
-          background: linear-gradient(180deg, rgba(200,200,210,0.10) 0%, rgba(20,12,8,0.6) 100%);
+          border-color: rgba(220,220,230,0.65);
+          background: linear-gradient(90deg, rgba(200,200,210,0.12) 0%, rgba(20,12,8,0.4) 100%);
         }
         .lb-row.is-rank-3 {
-          border-color: rgba(196,128,88,0.65);
-          background: linear-gradient(180deg, rgba(176,108,68,0.14) 0%, rgba(20,12,8,0.6) 100%);
+          border-color: rgba(225,168,124,0.65);
+          background: linear-gradient(90deg, rgba(196,128,88,0.14) 0%, rgba(20,12,8,0.4) 100%);
         }
 
         /* MOBILE — two-row stacked layout. The .lb-meta wrapper switches

@@ -35,7 +35,6 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/", labelEn: "Family Tent", labelAr: "خيمة العائلة", glyph: "◇" },
   { href: "/loom", labelEn: "Layla's Loom", labelAr: "نَول ليلى", glyph: "▦" },
   { href: "/sea", labelEn: "Saif's Sea", labelAr: "بحر سيف", glyph: "≈" },
-  { href: "/souk", labelEn: "Souk al-Lulu", labelAr: "سوق اللؤلؤ", glyph: "✦" },
   { href: "/leaderboard", labelEn: "Leaderboard", labelAr: "لوحة الصدارة", glyph: "🏆" },
 ];
 
@@ -57,7 +56,6 @@ export function MobileNav({ onOpenWalkthrough, onOpenTutorial }: MobileNavProps)
   const pearls = useProgress((s) => s.pearls);
   const achievements = useProgress((s) => s.achievements);
   const streak = useProgress((s) => s.streak);
-  const unlockedItems = useProgress((s) => s.unlockedItems);
   const points = useMemo(
     () =>
       computeHikma({
@@ -65,9 +63,8 @@ export function MobileNav({ onOpenWalkthrough, onOpenTutorial }: MobileNavProps)
         pearls,
         achievements,
         streak,
-        unlockedItems,
       }),
-    [loomLessonsCompleted, pearls, achievements, streak, unlockedItems],
+    [loomLessonsCompleted, pearls, achievements, streak],
   );
   const tier = hikmaTier(points);
   const firstName = learnerName.trim().split(/\s+/)[0];

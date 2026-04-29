@@ -2,7 +2,7 @@
 
 // HikmaCounter — saffron pill that shows the learner's running ✦ score
 // in the header. The number is a pure derivation from progress state, so
-// it updates live as lessons / dives / souk events fire. Tier badge
+// it updates live as lessons + dives fire. Tier badge
 // ("Novice / Weaver / Diver / Master") gives a visible level reading
 // without inventing a new notion of "level" — it's just a re-projection
 // of the same hikma total.
@@ -18,7 +18,6 @@ export function HikmaCounter() {
   const pearls = useProgress((s) => s.pearls);
   const achievements = useProgress((s) => s.achievements);
   const streak = useProgress((s) => s.streak);
-  const unlockedItems = useProgress((s) => s.unlockedItems);
 
   const points = useMemo(
     () =>
@@ -27,9 +26,8 @@ export function HikmaCounter() {
         pearls,
         achievements,
         streak,
-        unlockedItems,
       }),
-    [loomLessonsCompleted, pearls, achievements, streak, unlockedItems],
+    [loomLessonsCompleted, pearls, achievements, streak],
   );
 
   const tier = hikmaTier(points);

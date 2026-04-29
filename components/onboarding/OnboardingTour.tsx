@@ -61,18 +61,6 @@ const STEPS: Step[] = [
     bodyAr:
       "الشريط في أسفل الخيمة يُظهر نموّ الإرث — صفوف ليلى ولؤلؤ سيف مضفورة كقماش واحد.",
   },
-  {
-    pos: "top-center",
-    arrow: "up",
-    eyebrowEn: "Souk al-Lulu",
-    eyebrowAr: "سوق اللؤلؤ",
-    titleEn: "Spend pearls at the souk",
-    titleAr: "أنفق اللؤلؤ في السوق",
-    bodyEn:
-      "Saif's collected pearls become real currency at Souk al-Lulu — trade them for Sadu skeins, diving gear, and tent heirlooms.",
-    bodyAr:
-      "لؤلؤ سيف عملةٌ حقيقية في سوق اللؤلؤ — بادله بخيوط السدو وعُدّة الغوص وإرث الخيمة.",
-  },
 ];
 
 interface Props {
@@ -210,20 +198,24 @@ export function OnboardingTour({ forceOpen = false, onClose }: Props) {
 
         .onb-card {
           position: absolute;
-          width: min(380px, calc(100vw - 32px));
-          padding: 22px 22px 18px;
-          background: linear-gradient(180deg, #1A1208 0%, #0A0807 100%);
-          border: 1px solid var(--saffron);
-          border-radius: 22px;
+          width: min(420px, calc(100vw - 32px));
+          padding: 28px 28px 24px;
+          background: linear-gradient(145deg, rgba(30, 20, 10, 0.75) 0%, rgba(10, 6, 4, 0.9) 100%);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          border: 1px solid rgba(232, 163, 61, 0.35);
+          border-top: 1px solid rgba(232, 163, 61, 0.55);
+          border-radius: 28px;
           color: var(--wool);
           box-shadow:
-            0 24px 60px rgba(0,0,0,0.6),
-            inset 0 0 30px rgba(232,163,61,0.12);
+            0 32px 80px rgba(0,0,0,0.7),
+            inset 0 1px 0 rgba(255,255,255,0.08),
+            inset 0 0 40px rgba(232,163,61,0.1);
           font-family: var(--font-tajawal), sans-serif;
-          animation: onbRise 0.35s var(--ease-loom);
+          animation: onbRise 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         @keyframes onbRise {
-          from { opacity: 0; transform: translateY(8px); }
+          from { opacity: 0; transform: translateY(12px); }
           to   { opacity: 1; transform: translateY(0); }
         }
 
@@ -285,11 +277,12 @@ export function OnboardingTour({ forceOpen = false, onClose }: Props) {
           align-items: baseline;
           justify-content: space-between;
           font-family: var(--font-cormorant), serif;
-          font-size: 11px;
-          letter-spacing: 0.36em;
+          font-size: 13px;
+          font-weight: 600;
+          letter-spacing: 0.32em;
           text-transform: uppercase;
           color: var(--saffron);
-          opacity: 0.85;
+          opacity: 0.95;
         }
         .onb-step {
           font-size: 11px;
@@ -297,71 +290,82 @@ export function OnboardingTour({ forceOpen = false, onClose }: Props) {
           color: rgba(232,163,61,0.65);
         }
         .onb-title {
-          margin-top: 6px;
+          margin-top: 8px;
           font-family: var(--font-cormorant), serif;
-          font-size: clamp(20px, 2.4vw, 24px);
+          font-style: italic;
+          font-weight: 600;
+          font-size: clamp(24px, 2.8vw, 28px);
           color: var(--wool);
-          letter-spacing: 0.04em;
-          line-height: 1.2;
+          letter-spacing: 0.02em;
+          line-height: 1.15;
         }
         .onb-body {
-          margin-top: 10px;
-          font-size: 13px;
-          color: rgba(240,228,201,0.78);
-          line-height: 1.55;
+          margin-top: 12px;
+          font-size: 14px;
+          color: rgba(240,228,201,0.85);
+          line-height: 1.6;
         }
         .onb-controls {
-          margin-top: 18px;
-          padding-top: 14px;
-          border-top: 1px dashed rgba(232,163,61,0.3);
+          margin-top: 24px;
+          padding-top: 16px;
+          border-top: 1px solid rgba(232, 163, 61, 0.15);
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 10px;
+          gap: 12px;
           flex-wrap: wrap;
         }
         .onb-controls-end {
           display: flex;
-          gap: 8px;
+          gap: 10px;
         }
         .onb-skip {
           background: transparent;
           border: none;
-          color: rgba(240,228,201,0.55);
+          color: rgba(240,228,201,0.6);
           font-family: var(--font-tajawal), sans-serif;
-          font-size: 12px;
+          font-size: 13px;
           letter-spacing: 0.16em;
           cursor: pointer;
           padding: 6px 4px;
+          transition: color 0.2s;
         }
-        .onb-skip:hover { color: var(--wool); }
+        .onb-skip:hover { color: var(--saffron); }
         .onb-back {
-          padding: 8px 14px;
-          background: transparent;
-          border: 1px solid rgba(240,228,201,0.3);
+          padding: 10px 18px;
+          background: rgba(245,235,211,0.04);
+          border: 1px solid rgba(240,228,201,0.25);
           border-radius: 999px;
           color: var(--wool);
           font-family: var(--font-cormorant), serif;
-          font-size: 11px;
-          letter-spacing: 0.3em;
-          text-transform: uppercase;
-          cursor: pointer;
-        }
-        .onb-back:hover { background: rgba(245,235,211,0.08); }
-        .onb-next {
-          padding: 9px 18px;
-          background: var(--saffron);
-          border: 1px solid var(--saffron);
-          border-radius: 999px;
-          color: var(--charcoal);
-          font-family: var(--font-cormorant), serif;
-          font-size: 11px;
-          letter-spacing: 0.3em;
-          text-transform: uppercase;
-          cursor: pointer;
+          font-size: 12px;
           font-weight: 600;
+          letter-spacing: 0.25em;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: all 0.2s;
         }
-        .onb-next:hover { background: var(--saffron-soft); }
+        .onb-back:hover { background: rgba(245,235,211,0.12); border-color: rgba(240,228,201,0.4); }
+        .onb-next {
+          padding: 10px 22px;
+          background: linear-gradient(180deg, #F0BD6A 0%, #E8A33D 100%);
+          border: 1px solid #F0BD6A;
+          border-radius: 999px;
+          color: #1A1208;
+          font-family: var(--font-cormorant), serif;
+          font-size: 12px;
+          letter-spacing: 0.25em;
+          text-transform: uppercase;
+          cursor: pointer;
+          font-weight: 700;
+          box-shadow: 0 4px 12px rgba(232,163,61,0.25);
+          transition: all 0.2s;
+        }
+        .onb-next:hover {
+          background: linear-gradient(180deg, #F4C783 0%, #F0BD6A 100%);
+          transform: translateY(-1px);
+          box-shadow: 0 6px 16px rgba(232,163,61,0.35);
+        }
       `}</style>
     </div>
   );

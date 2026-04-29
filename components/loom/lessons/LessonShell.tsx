@@ -178,14 +178,14 @@ export function ProblemCard({
         }
         .lesson-howto-eyebrow {
           font-family: var(--font-cormorant), serif;
-          font-size: 10px;
-          letter-spacing: 0.32em;
+          font-size: 11.5px;
+          letter-spacing: 0.3em;
           text-transform: uppercase;
           color: var(--madder);
-          opacity: 0.85;
+          opacity: 0.9;
         }
         .lesson-howto-body {
-          font-size: 14px;
+          font-size: 15.5px;
           color: var(--ink);
           line-height: 1.55;
         }

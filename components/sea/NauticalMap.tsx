@@ -44,23 +44,46 @@ export function NauticalMap({ dives }: { dives: DiveDef[] }) {
           style={{ width: "100%", height: "calc(100% - 80px)", marginTop: 14 }}
           className="ltr-internal"
         >
+          {/* The Sea */}
+          <path
+            d="M 0 60 Q 100 40 180 80 Q 260 50 360 70 Q 460 100 600 80 L 600 380 L 0 380 Z"
+            fill="#0E5E7B"
+            opacity="0.18"
+          />
+          {/* Subtle shoreline wave accents */}
+          <path
+            d="M 0 68 Q 100 48 180 88 Q 260 58 360 78 Q 460 108 600 88"
+            stroke="#0E5E7B"
+            strokeWidth="1.5"
+            fill="none"
+            opacity="0.25"
+          />
+          <path
+            d="M 0 76 Q 100 56 180 96 Q 260 66 360 86 Q 460 116 600 96"
+            stroke="#0E5E7B"
+            strokeWidth="1"
+            fill="none"
+            opacity="0.15"
+          />
+
+          {/* The Coastland */}
           <path
             d="M 0 60 Q 100 40 180 80 Q 260 50 360 70 Q 460 100 600 80 L 600 0 L 0 0 Z"
             fill="#E8C896"
             stroke="#8C5A2E"
-            strokeWidth="1"
+            strokeWidth="1.5"
           />
           <text
             x="60"
-            y="40"
-            fill="#5A3618"
-            fontSize="10"
-            fontFamily="serif"
+            y="35"
+            fill="#8C5A2E"
+            fontSize="11"
+            fontFamily="var(--font-cormorant), serif"
+            fontWeight="bold"
             letterSpacing="2"
           >
             {t("sea.abuDhabiCoast")}
           </text>
-          <rect x="0" y="80" width="600" height="300" fill="#0E5E7B" opacity="0.18" />
           {[140, 200, 260, 320].map((y, i) => (
             <path
               key={y}
@@ -98,8 +121,14 @@ export function NauticalMap({ dives }: { dives: DiveDef[] }) {
                     cx={x}
                     cy={y}
                     r="14"
-                    fill={d.state === "available" ? "#B5341E" : "#5A3618"}
-                    opacity="0.85"
+                    fill={
+                      d.state === "completed"
+                        ? "#3F7A35"
+                        : d.state === "available"
+                          ? "#B5341E"
+                          : "#5A3618"
+                    }
+                    opacity="0.88"
                   />
                   <circle cx={x} cy={y} r="8" fill="#F0E4C9" />
                   <text
@@ -109,7 +138,7 @@ export function NauticalMap({ dives }: { dives: DiveDef[] }) {
                     fontSize="10"
                     fontFamily="Cormorant Garamond, serif"
                     fontWeight="600"
-                    fill="#8C2614"
+                    fill={d.state === "completed" ? "#2A5320" : "#8C2614"}
                   >
                     {fmt(d.id)}
                   </text>
@@ -127,6 +156,18 @@ export function NauticalMap({ dives }: { dives: DiveDef[] }) {
                   {d.state === "locked" && (
                     <text x={x} y={y - 18} textAnchor="middle" fontSize="11" fill="#5A3618">
                       🔒
+                    </text>
+                  )}
+                  {d.state === "completed" && (
+                    <text
+                      x={x}
+                      y={y - 18}
+                      textAnchor="middle"
+                      fontSize="14"
+                      fill="#3F7A35"
+                      fontWeight="700"
+                    >
+                      ✓
                     </text>
                   )}
                 </g>

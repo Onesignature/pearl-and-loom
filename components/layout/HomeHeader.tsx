@@ -95,9 +95,6 @@ export function HomeHeader() {
             <span aria-hidden style={{ marginInlineEnd: 6 }}>🏆</span>
             <span>{lang === "en" ? "Leaderboard" : "الصدارة"}</span>
           </Link>
-          <Link href="/souk" className="hp-chip hp-chip--accent" title="Souk al-Lulu">
-            <span>{lang === "en" ? "Souk" : "السوق"}</span>
-          </Link>
           <HelpPopover
             onOpenWalkthrough={() => setWalkthroughOpen(true)}
             onOpenTutorial={() => setTutorialOpen(true)}

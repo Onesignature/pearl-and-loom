@@ -1,5 +1,5 @@
 // Hikma — حِكْمة, "wisdom" — the unified score the learner watches grow.
-// Pure derivation from existing progress + settings. NOT a separate persisted
+// Pure derivation from existing progress state. NOT a separate persisted
 // store — there is one source of truth for every action that earns points.
 //
 // Reward table (round numbers a Grade 4 can read off the screen):
@@ -9,7 +9,6 @@
 //   royal pearl        +100
 //   achievement unlock  +30
 //   streak milestone    +30 at 3 days, +70 at 7 days, +140 at 14 days
-//   souk purchase       +20 (rewards exploration; pearls themselves are the cost)
 
 import type { CollectedPearl } from "@/lib/store/progress";
 
@@ -22,7 +21,6 @@ export const HIKMA_REWARDS = {
     { atDay: 7, bonus: 70 },
     { atDay: 14, bonus: 140 },
   ] as const,
-  soukPurchase: 20,
 } as const;
 
 export interface HikmaInput {
@@ -30,7 +28,6 @@ export interface HikmaInput {
   pearls: CollectedPearl[];
   achievements: string[];
   streak: number;
-  unlockedItems: string[];
 }
 
 export function computeHikma(input: HikmaInput): number {
@@ -43,8 +40,7 @@ export function computeHikma(input: HikmaInput): number {
   const streakBonus = HIKMA_REWARDS.streakMilestones
     .filter((m) => input.streak >= m.atDay)
     .reduce((sum, m) => sum + m.bonus, 0);
-  const souk = input.unlockedItems.length * HIKMA_REWARDS.soukPurchase;
-  return loom + pearls + achievements + streakBonus + souk;
+  return loom + pearls + achievements + streakBonus;
 }
 
 /** Display tier — purely cosmetic, used by HomeHeader to swap chip color. */

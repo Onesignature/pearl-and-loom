@@ -162,11 +162,38 @@ export default function PearlChestPage() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           overflowY: "auto",
           overflowX: "hidden",
         }}
       >
+        <div style={{ margin: "auto 0", width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+
+        {/* Purpose strip — explains what pearls are FOR. Kids land here
+            with no idea why they collected pearls; this card closes the
+            loop: pearls → beads → tapestry → heirloom complete. */}
+        <div className="chest-purpose">
+          <span className="chest-purpose-glyph" aria-hidden>◐</span>
+          <div className="chest-purpose-text">
+            <div className="chest-purpose-eyebrow">
+              {lang === "en" ? "Why pearls matter" : "لمَ اللؤلؤ مهم"}
+            </div>
+            <div className="chest-purpose-body">
+              {lang === "en" ? (
+                <>
+                  Every pearl Saif earns becomes a <strong>bead inside Layla&apos;s tapestry</strong>. Collect{" "}
+                  <strong>12 pearls</strong> and weave all <strong>25 rows</strong> to finish your family heirloom.
+                </>
+              ) : (
+                <>
+                  كل لؤلؤة يكسبها سيف تصير <strong>خرزةً في نسيج ليلى</strong>. اجمع{" "}
+                  <strong>١٢ لؤلؤة</strong> وانسج <strong>٢٥ صفًّا</strong> لإتمام إرث العائلة.
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
         <div
           className="chest-stage"
           style={{ width: "min(600px, 100%)", position: "relative" }}
@@ -236,26 +263,74 @@ export default function PearlChestPage() {
           >
             {lang === "en" ? "BRAID INTO TAPESTRY →" : "ضمّ إلى النسيج →"}
           </button>
-          <button
-            onClick={() => router.push("/souk")}
-            className="souk-btn"
-          >
-            {lang === "en" ? "SPEND AT THE SOUK →" : "أنفق في السوق →"}
-          </button>
         </div>
 
         <BadgeGrid />
+        </div>
       </div>
 
       <style>{`
+        .chest-purpose {
+          display: flex;
+          align-items: flex-start;
+          gap: 14px;
+          padding: 14px 18px;
+          margin-bottom: 24px;
+          width: min(640px, 100%);
+          background: linear-gradient(180deg, rgba(232,163,61,0.16) 0%, rgba(232,163,61,0.04) 100%);
+          border: 1px solid rgba(232,163,61,0.42);
+          border-radius: 16px;
+          color: var(--wool);
+          backdrop-filter: blur(6px);
+        }
+        .chest-purpose-glyph {
+          flex: 0 0 auto;
+          width: 32px;
+          height: 32px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(232,163,61,0.18);
+          border: 1px solid rgba(232,163,61,0.5);
+          border-radius: 50%;
+          color: var(--saffron);
+          font-size: 16px;
+          line-height: 1;
+        }
+        .chest-purpose-text {
+          flex: 1;
+          min-width: 0;
+        }
+        .chest-purpose-eyebrow {
+          font-family: var(--font-cormorant), serif;
+          font-size: 11px;
+          letter-spacing: 0.32em;
+          text-transform: uppercase;
+          color: var(--saffron);
+          opacity: 0.92;
+          margin-bottom: 4px;
+        }
+        .chest-purpose-body {
+          font-size: 14px;
+          color: rgba(240,228,201,0.92);
+          line-height: 1.55;
+        }
+        .chest-purpose-body strong {
+          color: var(--saffron);
+          font-weight: 600;
+        }
+
         @media (max-width: 1100px) {
           .chest-weave-preview { display: none !important; }
         }
+        /* Switch to flex-start on short or narrow screens so centered content doesn't clip top bounds */
         @media (max-width: 900px) {
           .chest-scroll {
-            justify-content: flex-start !important;
             padding-top: 124px !important;
+          }
+          .chest-scroll > div {
             row-gap: 6px;
+            margin: 0 !important;
           }
         }
         @media (max-width: 640px) {
@@ -283,21 +358,6 @@ export default function PearlChestPage() {
         .braid-btn:disabled {
           opacity: 0.4;
           cursor: not-allowed;
-        }
-        .souk-btn {
-          padding: 14px 28px;
-          background: transparent;
-          color: var(--saffron);
-          border: 1px solid var(--saffron);
-          font-family: var(--font-cormorant), serif;
-          font-size: 13px;
-          letter-spacing: 0.3em;
-          cursor: pointer;
-          transition: all 0.3s var(--ease-loom);
-        }
-        .souk-btn:hover {
-          background: rgba(232,163,61,0.18);
-          transform: translateY(-2px);
         }
       `}</style>
     </TentScene>

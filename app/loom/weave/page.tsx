@@ -127,7 +127,7 @@ export default function WeaveAnimPage() {
             {t("weave.step")}
           </button>
           <button
-            onClick={() => router.push("/tapestry")}
+            onClick={() => router.push("/tapestry?from=loom")}
             className="anim-btn"
           >
             {t("weave.viewTapestry")}

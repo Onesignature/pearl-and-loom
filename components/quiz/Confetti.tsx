@@ -1,9 +1,10 @@
 "use client";
 
-// Confetti — pure-CSS celebratory burst. ~36 saffron / wool / madder
-// rectangles drop from the top edge with randomised horizontal drift,
-// rotation, and timing so the animation reads as natural rather than
-// mechanical. Honors prefers-reduced-motion.
+// Confetti — pure-CSS celebratory burst. ~36 colored rectangles drop
+// from the top edge with randomised horizontal drift, rotation, and
+// timing so the animation reads as natural rather than mechanical.
+// Two themed palettes so Saif's celebration leans sea-and-sun and
+// Layla's leans saffron-and-madder.
 
 import { useMemo } from "react";
 
@@ -12,16 +13,28 @@ interface Props {
   count?: number;
   /** Total animation duration in seconds. Default 3.2. */
   durationSec?: number;
+  /** "layla" for warm saffron mix, "saif" for sea-and-sun mix. */
+  theme?: "layla" | "saif";
 }
 
-const COLORS = [
-  "var(--saffron)",
-  "var(--saffron-soft)",
-  "var(--wool)",
-  "var(--madder)",
-  "#F4C783",
-  "#1B2D5C",
-];
+const PALETTES: Record<NonNullable<Props["theme"]>, string[]> = {
+  layla: [
+    "var(--saffron)",
+    "var(--saffron-soft)",
+    "var(--wool)",
+    "var(--madder)",
+    "#F4C783",
+    "#1B2D5C",
+  ],
+  saif: [
+    "var(--sunset-gold)",
+    "#F4C783",
+    "var(--foam)",
+    "#1B6478",
+    "#0E5E7B",
+    "#F4D77A",
+  ],
+};
 
 interface Piece {
   left: number; // %
@@ -37,7 +50,7 @@ interface Piece {
 
 // Deterministic pseudo-random so the visual rhythm is consistent but
 // readable — we don't actually need crypto-grade randomness here.
-function seedPieces(count: number): Piece[] {
+function seedPieces(count: number, palette: string[]): Piece[] {
   const pieces: Piece[] = [];
   for (let i = 0; i < count; i++) {
     const r = (n: number) => {
@@ -50,7 +63,7 @@ function seedPieces(count: number): Piece[] {
       duration: 2.4 + r(3) * 1.4,
       rotate: r(4) * 360,
       rotateEnd: r(5) * 720 - 360,
-      color: COLORS[Math.floor(r(6) * COLORS.length)],
+      color: palette[Math.floor(r(6) * palette.length)],
       width: 6 + r(7) * 8,
       height: 8 + r(8) * 12,
       drift: (r(9) - 0.5) * 160,
@@ -59,8 +72,11 @@ function seedPieces(count: number): Piece[] {
   return pieces;
 }
 
-export function Confetti({ count = 36 }: Props) {
-  const pieces = useMemo(() => seedPieces(count), [count]);
+export function Confetti({ count = 36, theme = "layla" }: Props) {
+  const pieces = useMemo(
+    () => seedPieces(count, PALETTES[theme]),
+    [count, theme],
+  );
   return (
     <div className="confetti-root" aria-hidden>
       {pieces.map((p, i) => (

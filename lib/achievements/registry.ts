@@ -10,7 +10,6 @@ export interface AchievementCheckInput {
   pearls: { grade: "common" | "fine" | "royal"; diveId: string }[];
   ops: { kind: string }[];
   streak: number;
-  unlockedItems: string[];
   hasToggledLang: boolean;
   hasToggledNumerals: boolean;
   /** Best-ever quiz score per path. 0 = not yet attempted or 0 correct. */
@@ -114,18 +113,6 @@ export const ACHIEVEMENTS: AchievementDef[] = [
       "Horse-teeth squares — the unbroken rhythm of breath the nahham sings to keep the divers' lungs steady.",
     noteAr: "الضرس — إيقاع النَّفس الذي يُغنّيه النّهام ليُثبّت رئة الغوّاص.",
     check: (s) => s.diveLessonsCompleted.includes("deepReef") || s.diveLessonsCompleted.includes("coralGarden"),
-  },
-  {
-    id: "souk_visitor",
-    motif: "stripe",
-    titleEn: "Al-Khat",
-    titleAr: "الخط",
-    taglineEn: "First trade at the Souk al-Lulu",
-    taglineAr: "أوّل صفقة في السوق",
-    noteEn:
-      "The warp band that frames every panel — the stripe a merchant once used to mark the size of a bolt.",
-    noteAr: "خط السدى الذي يحيط بكل لوحة — كان التاجر يقيس به الثوب.",
-    check: (s) => s.unlockedItems.length >= 1,
   },
   {
     id: "streak_3",

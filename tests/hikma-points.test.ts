@@ -26,7 +26,6 @@ describe("computeHikma", () => {
         pearls: [],
         achievements: [],
         streak: 0,
-        unlockedItems: [],
       }),
     ).toBe(0);
   });
@@ -38,7 +37,6 @@ describe("computeHikma", () => {
         pearls: [],
         achievements: [],
         streak: 0,
-        unlockedItems: [],
       }),
     ).toBe(2 * HIKMA_REWARDS.loomLesson);
   });
@@ -49,7 +47,6 @@ describe("computeHikma", () => {
       pearls: [pearl("common", "1"), pearl("fine", "2"), pearl("royal", "3")],
       achievements: [],
       streak: 0,
-      unlockedItems: [],
     });
     expect(points).toBe(
       HIKMA_REWARDS.pearl.common +
@@ -63,7 +60,6 @@ describe("computeHikma", () => {
       loomLessonsCompleted: [],
       pearls: [],
       achievements: [],
-      unlockedItems: [],
     };
     expect(computeHikma({ ...base, streak: 2 })).toBe(0);
     expect(computeHikma({ ...base, streak: 3 })).toBe(30);
@@ -71,17 +67,16 @@ describe("computeHikma", () => {
     expect(computeHikma({ ...base, streak: 14 })).toBe(30 + 70 + 140);
   });
 
-  it("composes loom + pearls + achievements + streak + souk into a single total", () => {
+  it("composes loom + pearls + achievements + streak into a single total", () => {
     const points = computeHikma({
       loomLessonsCompleted: ["symmetry", "fractions", "tessellation"],
       pearls: [pearl("common", "a"), pearl("fine", "b"), pearl("royal", "c")],
       achievements: ["first_row", "first_pearl"],
       streak: 7,
-      unlockedItems: ["souk:fattam"],
     });
     // 3 lessons (50×3=150) + pearls (20+50+100=170) + achievements (30×2=60)
-    // + streak >=7 (30 + 70 = 100) + souk (20×1=20) = 500
-    expect(points).toBe(500);
+    // + streak >=7 (30 + 70 = 100) = 480
+    expect(points).toBe(480);
   });
 });
 

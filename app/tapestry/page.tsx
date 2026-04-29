@@ -45,11 +45,15 @@ function TapestryFullPage() {
   // 25-row composition. Doesn't mutate own progress.
   const seedParam = search.get("seed");
   const isShared = !!seedParam && seedParam !== ownSeed;
+  // Where the kid came from — controls the Back button + the
+  // "continue" CTAs at the bottom so they return to the right path.
+  const fromParam = search.get("from");
+  const cameFromChest = fromParam === "chest";
+  const backHref = isShared ? "/" : cameFromChest ? "/sea/chest" : "/loom";
   const wovenCount = isShared
     ? 25
     : Math.min(Math.max(ops.filter((op) => op.kind !== "bead").length, 5), 25);
 
-  const seedShort = (ownSeed || "—").slice(0, 8);
   const sharedSeedShort = (seedParam || "").slice(0, 8);
 
   const learnerName = useSettings((s) => s.learnerName);
@@ -65,23 +69,6 @@ function TapestryFullPage() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [signing, setSigning] = useState(false);
 
-  async function onCopyLink() {
-    try {
-      const url = `${window.location.origin}/tapestry?seed=${encodeURIComponent(ownSeed)}`;
-      await navigator.clipboard.writeText(url);
-      playCue("ui.tap");
-      setFeedback(
-        lang === "en" ? "Tapestry link copied" : "نُسخ رابط النسيج",
-      );
-    } catch {
-      setFeedback(
-        lang === "en" ? "Copy failed" : "تعذّر النسخ",
-      );
-    } finally {
-      setTimeout(() => setFeedback(null), 2400);
-    }
-  }
-
   async function onDownload() {
     if (busy) return;
     setBusy("download");
@@ -91,6 +78,7 @@ function TapestryFullPage() {
         streak,
         pearlsCollected: pearls.length,
         lang,
+        learnerName,
       });
       const stamp = new Date().toISOString().slice(0, 10);
       downloadBlob(blob, `pearl-and-loom-tapestry-${stamp}.png`);
@@ -158,6 +146,7 @@ function TapestryFullPage() {
         streak,
         pearlsCollected: pearls.length,
         lang,
+        learnerName,
       });
       const file = new File([blob], "tapestry.png", { type: "image/png" });
       const navAny = navigator as Navigator & {
@@ -192,7 +181,7 @@ function TapestryFullPage() {
   return (
     <TentScene time="day">
       <TopChrome
-        onBack={() => router.push(isShared ? "/" : "/loom")}
+        onBack={() => router.push(backHref)}
         title={`${t("heirloom.title")} · ${t("heirloom.tapestry")}`}
         subtitle={`${t("heirloom.laylaWeave").toUpperCase()} · ${fmt(wovenCount)}/${fmt(TAPESTRY_TOTAL_ROWS)} ${t("heirloom.rowsWoven").toUpperCase()}`}
       />
@@ -280,8 +269,10 @@ function TapestryFullPage() {
           style={{
             flex: 1,
             display: "flex",
+            flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
+            gap: 20,
             overflow: "hidden",
           }}
         >
@@ -355,9 +346,58 @@ function TapestryFullPage() {
               ))}
             </div>
           </div>
+          
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap", justifyContent: "center" }}>
+            <button
+              className="tap-btn"
+              onClick={onDownload}
+              disabled={busy !== null || isShared}
+              title={
+                isShared
+                  ? lang === "en"
+                    ? "Saving is disabled when viewing a shared seed"
+                    : "الحفظ معطَّل في وضع المشاركة"
+                  : undefined
+              }
+            >
+              {busy === "download"
+                ? lang === "en" ? "Saving…" : "جارِ الحفظ…"
+                : t("tapestry.download")}
+            </button>
+            <button
+              className="tap-btn tap-share-btn"
+              onClick={onShare}
+              disabled={busy !== null || isShared}
+            >
+              {busy === "share"
+                ? lang === "en" ? "Sharing…" : "جارِ المشاركة…"
+                : t("tapestry.share")}
+            </button>
+            {heirloomComplete && !isShared && (
+              <button
+                className="tap-btn tap-btn--accent"
+                onClick={onSaveCertificate}
+                disabled={busy !== null}
+                title={
+                  !learnerName.trim()
+                    ? lang === "en"
+                      ? "Sign your name first"
+                      : "وقّع باسمك أولًا"
+                    : undefined
+                }
+              >
+                {busy === "certificate"
+                  ? lang === "en" ? "Sealing…" : "جاري الختم…"
+                  : lang === "en" ? "Certificate" : "الشهادة"}
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="tap-side" style={{ width: 280, color: "var(--wool)", overflowY: "auto" }}>
+          {/* What is this? — narrative card matching the old seed
+              card's squared treatment so it sits flush with the rest
+              of the sidebar instead of looking like a saffron pill. */}
           {!isShared && (
             <div
               style={{
@@ -374,48 +414,30 @@ function TapestryFullPage() {
                   letterSpacing: "0.32em",
                   textTransform: "uppercase",
                   color: "var(--saffron)",
-                  marginBottom: 4,
+                  marginBottom: 6,
                 }}
               >
-                {lang === "en" ? "Tapestry seed" : "بذرة النسيج"}
+                {lang === "en" ? "What is this?" : "ما هذا؟"}
               </div>
               <div
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  flexWrap: "wrap",
+                  fontSize: 12,
+                  color: "rgba(240,228,201,0.85)",
+                  lineHeight: 1.55,
                 }}
               >
-                <code
-                  style={{
-                    fontFamily: "var(--font-cormorant), serif",
-                    fontSize: 14,
-                    color: "var(--wool)",
-                    letterSpacing: "0.08em",
-                  }}
-                >
-                  {seedShort}
-                </code>
-                <button
-                  onClick={onCopyLink}
-                  className="seed-copy"
-                  title={lang === "en" ? "Copy direct-view link" : "انسخ الرابط"}
-                >
-                  {lang === "en" ? "Copy link" : "انسخ"}
-                </button>
-              </div>
-              <div
-                style={{
-                  fontSize: 10,
-                  color: "rgba(240,228,201,0.55)",
-                  marginTop: 6,
-                  lineHeight: 1.5,
-                }}
-              >
-                {lang === "en"
-                  ? "Every player gets a different seed — share yours to let someone view your finished tapestry."
-                  : "لكل لاعب بذرة مختلفة — شاركها ليرى أحدهم نسيجك."}
+                {lang === "en" ? (
+                  <>
+                    Your <strong>family heirloom</strong> — a 25-row Sadu tapestry being woven row by row.
+                    Layla&apos;s math lessons add <strong>rows</strong>; Saif&apos;s pearls become{" "}
+                    <strong>beads</strong> braided inside them.
+                  </>
+                ) : (
+                  <>
+                    <strong>إرث عائلتك</strong> — نسيج سدو من ٢٥ صفًّا يُنسج صفًّا صفًّا.
+                    دروس ليلى تضيف <strong>الصفوف</strong>، ولؤلؤ سيف يصير <strong>خرزًا</strong> داخلها.
+                  </>
+                )}
               </div>
             </div>
           )}
@@ -508,6 +530,37 @@ function TapestryFullPage() {
               <PearlLegend grade="royal" label={t("pearl.royal")} />
             </div>
           </div>
+
+          {/* Continue strip — clear forward path so the kid doesn't have
+              to use the back button to keep playing. Two CTAs let them
+              return to either path explicitly. Hidden on shared-view. */}
+          {!isShared && (
+            <div className="tap-continue">
+              <div className="tap-continue-eyebrow">
+                {lang === "en" ? "What next?" : "ما التالي؟"}
+              </div>
+              <button
+                onClick={() => router.push("/sea")}
+                className="tap-continue-btn"
+              >
+                <span aria-hidden style={{ marginInlineEnd: 10 }}>≈</span>
+                {lang === "en" ? "Dive for more pearls" : "اغطس للمزيد من اللؤلؤ"}
+                <span aria-hidden style={{ marginInlineStart: "auto" }}>
+                  {lang === "ar" ? "←" : "→"}
+                </span>
+              </button>
+              <button
+                onClick={() => router.push("/loom")}
+                className="tap-continue-btn"
+              >
+                <span aria-hidden style={{ marginInlineEnd: 10 }}>▦</span>
+                {lang === "en" ? "Weave another row" : "انسج صفًّا آخر"}
+                <span aria-hidden style={{ marginInlineStart: "auto" }}>
+                  {lang === "ar" ? "←" : "→"}
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -526,6 +579,7 @@ function TapestryFullPage() {
         }}
       >
         <div
+          className="tap-zoom-control"
           style={{
             flex: 1,
             display: "flex",
@@ -560,49 +614,6 @@ function TapestryFullPage() {
             {fmt(Math.round(zoom * 100))}%
           </span>
         </div>
-        <button
-          className="tap-btn"
-          onClick={onDownload}
-          disabled={busy !== null || isShared}
-          title={
-            isShared
-              ? lang === "en"
-                ? "Saving is disabled when viewing a shared seed"
-                : "الحفظ معطَّل في وضع المشاركة"
-              : undefined
-          }
-        >
-          {busy === "download"
-            ? lang === "en" ? "Saving…" : "جارِ الحفظ…"
-            : t("tapestry.download")}
-        </button>
-        <button
-          className="tap-btn"
-          onClick={onShare}
-          disabled={busy !== null || isShared}
-        >
-          {busy === "share"
-            ? lang === "en" ? "Sharing…" : "جارِ المشاركة…"
-            : t("tapestry.share")}
-        </button>
-        {heirloomComplete && !isShared && (
-          <button
-            className="tap-btn tap-btn--accent"
-            onClick={onSaveCertificate}
-            disabled={busy !== null}
-            title={
-              !learnerName.trim()
-                ? lang === "en"
-                  ? "Sign your name first"
-                  : "وقّع باسمك أولًا"
-                : undefined
-            }
-          >
-            {busy === "certificate"
-              ? lang === "en" ? "Sealing…" : "جاري الختم…"
-              : lang === "en" ? "Certificate" : "الشهادة"}
-          </button>
-        )}
       </div>
       {signing && heirloomComplete && (
         <div
@@ -755,6 +766,42 @@ function TapestryFullPage() {
         </div>
       )}
       <style>{`
+        .tap-continue {
+          margin-top: 22px;
+          padding: 12px 14px;
+          background: rgba(28,18,12,0.55);
+          border: 1px solid rgba(232,163,61,0.3);
+          font-family: var(--font-tajawal), sans-serif;
+        }
+        .tap-continue-eyebrow {
+          font-size: 10px;
+          letter-spacing: 0.32em;
+          text-transform: uppercase;
+          color: var(--saffron);
+          margin-bottom: 10px;
+        }
+        .tap-continue-btn {
+          width: 100%;
+          padding: 10px 14px;
+          background: rgba(245,235,211,0.06);
+          border: 1px solid rgba(232,163,61,0.4);
+          color: var(--wool);
+          font-family: var(--font-cormorant), serif;
+          font-size: 13px;
+          letter-spacing: 0.12em;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          text-align: start;
+          margin-top: 6px;
+          transition: background 0.2s, border-color 0.2s, transform 0.2s;
+        }
+        .tap-continue-btn:hover {
+          background: rgba(232,163,61,0.18);
+          border-color: var(--saffron);
+          transform: translateX(2px);
+        }
+        [dir="rtl"] .tap-continue-btn:hover { transform: translateX(-2px); }
         .tap-btn {
           padding: 10px 18px;
           background: rgba(245,235,211,0.08);
@@ -774,8 +821,10 @@ function TapestryFullPage() {
             inset-inline-end: 16px !important;
             bottom: 12px !important;
             gap: 10px !important;
+            justify-content: flex-end !important;
           }
           .tap-frame { padding: 10px !important; }
+          .tap-zoom-control, .tap-share-btn { display: none !important; }
         }
         .tap-btn--accent {
           background: var(--saffron);
@@ -786,20 +835,6 @@ function TapestryFullPage() {
         .tap-btn--accent:hover:not(:disabled) {
           background: var(--saffron-soft);
         }
-        .seed-copy {
-          padding: 4px 10px;
-          background: var(--saffron);
-          color: var(--charcoal);
-          border: none;
-          font-family: var(--font-cormorant), serif;
-          font-size: 10px;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          cursor: pointer;
-          font-weight: 600;
-          transition: background 0.2s;
-        }
-        .seed-copy:hover { background: var(--saffron-soft); }
       `}</style>
     </TentScene>
   );

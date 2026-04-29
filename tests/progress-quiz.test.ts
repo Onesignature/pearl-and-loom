@@ -3,7 +3,7 @@ import { useProgress, EMPTY_QUIZ_RESULT } from "@/lib/store/progress";
 
 function reset() {
   useProgress.setState({
-    version: 3,
+    version: 4,
     seed: "test-seed",
     ops: [],
     beads: [],
@@ -13,7 +13,6 @@ function reset() {
     achievements: [],
     lastWeaveDate: null,
     streak: 0,
-    unlockedItems: [],
     quizScores: {
       layla: { ...EMPTY_QUIZ_RESULT },
       saif: { ...EMPTY_QUIZ_RESULT },

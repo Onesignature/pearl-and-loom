@@ -25,7 +25,6 @@ export function AchievementWatcher() {
         pearls: p.pearls.map((x) => ({ grade: x.grade, diveId: x.diveId })),
         ops: p.ops.map((x) => ({ kind: x.kind })),
         streak: p.streak,
-        unlockedItems: p.unlockedItems,
         hasToggledLang: s.hasToggledLang,
         hasToggledNumerals: s.hasToggledNumerals,
         quizBestScores: {

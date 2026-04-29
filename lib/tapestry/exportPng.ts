@@ -229,6 +229,7 @@ interface ExportOptions {
   streak: number;
   pearlsCollected: number;
   lang: "en" | "ar";
+  learnerName?: string;
 }
 
 /** Render the user's tapestry to a 2x-DPI PNG blob. */
@@ -237,6 +238,7 @@ export async function buildTapestryPng({
   streak,
   pearlsCollected,
   lang,
+  learnerName,
 }: ExportOptions): Promise<Blob> {
   const dpr = 2;
   const W = 720;
@@ -357,6 +359,19 @@ export async function buildTapestryPng({
     W / 2,
     captionY,
   );
+
+  let nextY = captionY + 22;
+  if (learnerName && learnerName.trim()) {
+    ctx.fillStyle = "#5A3618";
+    ctx.font = 'italic 600 16px "Cormorant Garamond", serif';
+    ctx.fillText(
+      lang === "en" ? `Woven by ${learnerName.trim()}` : `نُسجت بواسطة ${learnerName.trim()}`,
+      W / 2,
+      nextY
+    );
+    nextY += 22;
+  }
+
   ctx.fillStyle = "#8C2614";
   ctx.font = '10px "Cormorant Garamond", serif';
   const date = new Date().toLocaleDateString(lang === "ar" ? "ar-EG" : "en-GB", {
@@ -364,7 +379,7 @@ export async function buildTapestryPng({
     month: "long",
     year: "numeric",
   });
-  ctx.fillText(date.toUpperCase(), W / 2, captionY + 20);
+  ctx.fillText(date.toUpperCase(), W / 2, nextY);
 
   // ── Footer signature ─────────────────────────────────────────────────
   ctx.fillStyle = "#8C2614";

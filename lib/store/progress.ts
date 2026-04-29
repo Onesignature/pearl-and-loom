@@ -37,7 +37,7 @@ export const EMPTY_QUIZ_RESULT: QuizResult = {
 };
 
 interface ProgressState {
-  version: 3;
+  version: 4;
   seed: string;
   ops: PatternOp[];
   beads: PearlBead[];
@@ -50,8 +50,6 @@ interface ProgressState {
   lastWeaveDate: string | null;
   /** Consecutive-day weave streak. */
   streak: number;
-  /** IDs of items purchased from the Souk al-Lulu shop. */
-  unlockedItems: string[];
   /** Quiz scores per path (Layla = math, Saif = science). */
   quizScores: Record<QuizPath, QuizResult>;
   /** Timestamp of first lesson completion — anchors leaderboard time-taken. */
@@ -65,7 +63,6 @@ interface ProgressState {
   collectPearl: (pearl: Omit<CollectedPearl, "collectedAt" | "wovenIntoTapestry">) => void;
   weavePearlIntoTapestry: (pearlId: string, column: number) => void;
   unlockAchievement: (id: string) => void;
-  spendPearls: (itemId: string, cost: { common?: number; fine?: number; royal?: number }) => boolean;
   recordQuizScore: (path: QuizPath, score: number) => void;
   markCompleted: () => void;
   reset: () => void;
@@ -106,12 +103,11 @@ const initial = (): Pick<
   | "achievements"
   | "lastWeaveDate"
   | "streak"
-  | "unlockedItems"
   | "quizScores"
   | "startedAt"
   | "completedAt"
 > => ({
-  version: 3,
+  version: 4,
   seed: makeSeed(),
   ops: [],
   beads: [],
@@ -121,7 +117,6 @@ const initial = (): Pick<
   achievements: [],
   lastWeaveDate: null,
   streak: 0,
-  unlockedItems: [],
   quizScores: {
     layla: { ...EMPTY_QUIZ_RESULT },
     saif: { ...EMPTY_QUIZ_RESULT },
@@ -206,38 +201,6 @@ export const useProgress = create<ProgressState>()(
             : { achievements: [...s.achievements, id] },
         ),
 
-      spendPearls: (itemId, cost) => {
-        let success = false;
-        set((s) => {
-          if (s.unlockedItems.includes(itemId)) return s;
-          // Spend oldest un-woven pearls of the requested tiers first.
-          const need = {
-            common: cost.common ?? 0,
-            fine: cost.fine ?? 0,
-            royal: cost.royal ?? 0,
-          };
-          const consumed = new Set<string>();
-          const sorted = [...s.pearls]
-            .filter((p) => !p.wovenIntoTapestry)
-            .sort((a, b) => a.collectedAt - b.collectedAt);
-          for (const p of sorted) {
-            if (need[p.grade] > 0) {
-              consumed.add(p.id);
-              need[p.grade]--;
-            }
-          }
-          if (need.common > 0 || need.fine > 0 || need.royal > 0) {
-            return s;
-          }
-          success = true;
-          return {
-            pearls: s.pearls.filter((p) => !consumed.has(p.id)),
-            unlockedItems: [...s.unlockedItems, itemId],
-          };
-        });
-        return success;
-      },
-
       recordQuizScore: (path, score) =>
         set((s) => {
           const prior = s.quizScores[path];
@@ -262,33 +225,36 @@ export const useProgress = create<ProgressState>()(
     }),
     {
       name: "pearl-and-loom:progress",
-      version: 3,
+      version: 4,
       storage: createJSONStorage(() => localStorage),
       migrate: (persisted, fromVersion) => {
-        const p = (persisted ?? {}) as Partial<ProgressState>;
-        // v1 → v2: add achievements/streak/items fields with safe defaults.
+        const p = (persisted ?? {}) as Partial<ProgressState> & {
+          unlockedItems?: string[];
+        };
+        // v1 → v2: add achievements/streak with safe defaults.
         if (fromVersion < 2) {
           Object.assign(p, {
             achievements: p.achievements ?? [],
             lastWeaveDate: p.lastWeaveDate ?? null,
             streak: p.streak ?? 0,
-            unlockedItems: p.unlockedItems ?? [],
           });
         }
         // v2 → v3: add quizScores + startedAt + completedAt.
         if (fromVersion < 3) {
-          return {
-            ...p,
-            version: 3,
+          Object.assign(p, {
             quizScores: p.quizScores ?? {
               layla: { ...EMPTY_QUIZ_RESULT },
               saif: { ...EMPTY_QUIZ_RESULT },
             },
             startedAt: p.startedAt ?? null,
             completedAt: p.completedAt ?? null,
-          } as ProgressState;
+          });
         }
-        return p as ProgressState;
+        // v3 → v4: drop the souk's unlockedItems field.
+        if (fromVersion < 4) {
+          delete p.unlockedItems;
+        }
+        return { ...p, version: 4 } as ProgressState;
       },
     },
   ),

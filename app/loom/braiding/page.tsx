@@ -143,7 +143,7 @@ export default function BraidingPage() {
           >
             {t("weave.step")}
           </button>
-          <button onClick={() => router.push("/tapestry")} className="anim-btn">
+          <button onClick={() => router.push("/tapestry?from=chest")} className="anim-btn">
             {t("weave.viewTapestry")} {lang === "ar" ? "←" : "→"}
           </button>
         </div>
@@ -183,8 +183,6 @@ export default function BraidingPage() {
 }
 
 function BraidKeyframe({ stage, active }: { stage: number; active: boolean }) {
-  // Stage 0: Saif (left, on dhow at sunset) holds out his pearl
-  // Stage 1: Pearl arcs from sea → tent across the seam, Layla reaches up
   // Stage 2: Pearl nestled in Layla's woven row, threads bind it ("ROW WOVEN")
   return (
     <svg
@@ -199,9 +197,9 @@ function BraidKeyframe({ stage, active }: { stage: number; active: boolean }) {
           <stop offset="100%" stopColor="#A87A2A" />
         </radialGradient>
         <linearGradient id="bk_trail" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#0E5E7B" stopOpacity="0.9" />
-          <stop offset="50%" stopColor="#E8A33D" />
-          <stop offset="100%" stopColor="#B5341E" stopOpacity="0.9" />
+          <stop offset="0%" stopColor="#F4D77A" stopOpacity="0.8" />
+          <stop offset="50%" stopColor="#E8A33D" stopOpacity="1" />
+          <stop offset="100%" stopColor="#B5341E" stopOpacity="0.8" />
         </linearGradient>
         <linearGradient id="bk_skin" x1="0" y1="0" x2="0.4" y2="1">
           <stop offset="0%" stopColor="#C9956A" />
@@ -209,65 +207,75 @@ function BraidKeyframe({ stage, active }: { stage: number; active: boolean }) {
         </linearGradient>
         <linearGradient id="bk_seaSky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#C26A60" />
+          <stop offset="40%" stopColor="#8E4F4D" />
           <stop offset="60%" stopColor="#0E5E7B" />
           <stop offset="100%" stopColor="#062436" />
         </linearGradient>
+        <radialGradient id="bk_tentGlow" cx="50%" cy="50%">
+          <stop offset="0%" stopColor="rgba(232,163,61,0.25)" />
+          <stop offset="100%" stopColor="rgba(0,0,0,0)" />
+        </radialGradient>
+        <radialGradient id="bk_sunGlow" cx="50%" cy="40%">
+          <stop offset="0%" stopColor="rgba(244,215,122,0.4)" />
+          <stop offset="100%" stopColor="rgba(194,106,96,0)" />
+        </radialGradient>
+        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="4" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
       </defs>
 
       {/* Split background: sea/sunset (Saif's world) | tent interior (Layla's world) */}
       <rect x="0" y="0" width="200" height="280" fill="url(#bk_seaSky)" />
+      <circle cx="100" cy="140" r="140" fill="url(#bk_sunGlow)" />
+      
+      {/* Stars on the sea side */}
+      {[ [30, 40], [80, 20], [150, 50], [60, 70], [180, 30] ].map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r={(i % 3) * 0.5 + 1} fill="#FFE9C2" opacity="0.6">
+           {active && <animate attributeName="opacity" values="0.2;0.8;0.2" dur={`${2 + i * 0.5}s`} repeatCount="indefinite" />}
+        </circle>
+      ))}
+
       <rect x="200" y="0" width="200" height="280" fill="#1A130D" />
-      <ellipse cx="300" cy="140" rx="120" ry="100" fill="#F4B860" opacity="0.14" />
+      <circle cx="300" cy="140" r="140" fill="url(#bk_tentGlow)" />
+      
       <line
         x1="200"
         y1="0"
         x2="200"
         y2="280"
-        stroke="rgba(244,184,96,0.18)"
-        strokeDasharray="3 4"
+        stroke="rgba(232,163,61,0.3)"
+        strokeWidth="2"
+        strokeDasharray="4 6"
       />
-      {[
-        [40, 50],
-        [80, 30],
-        [140, 60],
-        [60, 80],
-      ].map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r="1" fill="#FFE9C2" opacity="0.6" />
-      ))}
 
       {/* === Saif side (left): standing on dhow with pearl === */}
       <g transform="translate(70 180)">
-        <path d="M -50 30 Q -30 40 50 38 L 60 30 L -60 30 Z" fill="#3D2A1E" />
-        <line x1="0" y1="-40" x2="0" y2="30" stroke="#5A3618" strokeWidth="1.5" />
-        <path d="M 0 -36 L 30 -10 L 0 -10 Z" fill="#D9C49C" opacity="0.85" />
-        <g transform="translate(-12 -20)">
-          <path
-            d="M -8 0 Q -10 22 -8 38 L 8 38 Q 10 22 8 0 Q 4 -4 0 -4 Q -4 -4 -8 0 Z"
-            fill="#F0E4C9"
-          />
-          <ellipse cx="0" cy="-10" rx="6" ry="6" fill="url(#bk_skin)" />
-          <path
-            d="M -8 -16 Q -8 -22 0 -22 Q 8 -22 8 -16 Q 8 -10 6 -8 L -6 -8 Q -8 -10 -8 -16 Z"
-            fill="#F0E4C9"
-          />
-          <line x1="-7" y1="-15" x2="7" y2="-15" stroke="#1A1410" strokeWidth="0.8" />
-          <path
-            d="M 8 4 Q 18 -8 24 -22"
-            stroke="#F0E4C9"
-            strokeWidth="4"
-            strokeLinecap="round"
-            fill="none"
-          />
-          <circle cx="24" cy="-22" r="2.5" fill="url(#bk_skin)" />
+        {/* Dhow */}
+        <path d="M -60 30 Q -20 45 60 30 C 50 20 -50 20 -60 30 Z" fill="#2A1C12" />
+        <path d="M -60 30 Q -20 40 60 30 L 60 32 Q -20 45 -60 32 Z" fill="#150E09" />
+        <line x1="0" y1="-50" x2="0" y2="30" stroke="#4A2D16" strokeWidth="2.5" />
+        <path d="M 0 -45 Q 40 -20 30 5 Q 15 -10 0 5 Z" fill="#E8D1A7" opacity="0.85" />
+        
+        {/* Saif */}
+        <g transform="translate(-14 -20)">
+          <path d="M -10 0 Q -12 25 -10 40 L 10 40 Q 12 25 10 0 Q 5 -5 0 -5 Q -5 -5 -10 0 Z" fill="#E5D6B6" />
+          <ellipse cx="0" cy="-12" rx="7" ry="7" fill="url(#bk_skin)" />
+          <path d="M -10 -18 Q -10 -25 0 -25 Q 10 -25 10 -18 Q 10 -12 8 -10 L -8 -10 Q -10 -12 -10 -18 Z" fill="#F0E4C9" />
+          <line x1="-8" y1="-17" x2="8" y2="-17" stroke="#1A1410" strokeWidth="1" />
+          {/* Arm extending pearl */}
+          <path d="M 10 6 Q 22 -6 32 -18" stroke="#E5D6B6" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+          <circle cx="32" cy="-18" r="3" fill="url(#bk_skin)" />
         </g>
         <text
           x="0"
-          y="55"
+          y="60"
           textAnchor="middle"
           fill="#F4D77A"
-          fontSize="9"
-          letterSpacing="2.4"
-          fontFamily="serif"
+          fontSize="10"
+          letterSpacing="3"
+          fontFamily="var(--font-cormorant), serif"
+          opacity="0.8"
         >
           SAIF
         </text>
@@ -275,11 +283,12 @@ function BraidKeyframe({ stage, active }: { stage: number; active: boolean }) {
 
       {/* === Layla side (right): seated at loom, hand reaching === */}
       <g transform="translate(320 180)">
-        <rect x="-50" y="-80" width="100" height="6" fill="#5A3618" />
-        <rect x="-50" y="40" width="100" height="6" fill="#5A3618" />
-        <rect x="-54" y="-80" width="6" height="126" fill="#5A3618" />
-        <rect x="48" y="-80" width="6" height="126" fill="#5A3618" />
-        {[-40, -28, -16, -4, 8, 20, 32, 44].map((x) => (
+        {/* Loom */}
+        <rect x="-52" y="-82" width="104" height="8" rx="2" fill="#4A2D16" />
+        <rect x="-52" y="40" width="104" height="8" rx="2" fill="#4A2D16" />
+        <rect x="-56" y="-82" width="8" height="130" rx="2" fill="#3A2110" />
+        <rect x="48" y="-82" width="8" height="130" rx="2" fill="#3A2110" />
+        {[-42, -28, -14, 0, 14, 28, 42].map((x) => (
           <line
             key={x}
             x1={x}
@@ -287,46 +296,48 @@ function BraidKeyframe({ stage, active }: { stage: number; active: boolean }) {
             x2={x}
             y2="40"
             stroke="#D9C49C"
-            strokeWidth="0.5"
-            opacity="0.6"
+            strokeWidth="0.8"
+            opacity="0.5"
           />
         ))}
-        <rect x="-48" y="20" width="96" height="20" fill="#1B2D5C" />
-        <rect x="-48" y="0" width="96" height="20" fill="#B5341E" />
+        <rect x="-48" y="16" width="96" height="24" fill="#1B2D5C" />
+        <rect x="-48" y="-4" width="96" height="20" fill="#B5341E" />
         <rect
           x="-48"
-          y="-20"
+          y="-24"
           width="96"
           height="20"
-          fill={stage === 2 ? "#E8A33D" : "rgba(232,163,61,0.18)"}
-          stroke={stage === 2 ? "#F4B860" : "rgba(232,163,61,0.4)"}
-          strokeWidth={stage === 2 ? 1.5 : 0.6}
-          strokeDasharray={stage === 2 ? "0" : "3 2"}
+          fill={stage === 2 ? "#E8A33D" : "rgba(232,163,61,0.25)"}
+          stroke={stage === 2 ? "#F4B860" : "rgba(232,163,61,0.5)"}
+          strokeWidth={stage === 2 ? 2 : 1}
+          strokeDasharray={stage === 2 ? "0" : "4 2"}
         />
-        <g transform="translate(-30 60)">
+        
+        {/* Layla */}
+        <g transform="translate(-32 60)">
           <path
-            d="M -14 -20 Q -16 0 -12 20 L 12 20 Q 16 0 14 -20 Q 8 -24 0 -24 Q -8 -24 -14 -20 Z"
+            d="M -16 -22 Q -18 2 -14 24 L 14 24 Q 18 2 16 -22 Q 8 -28 0 -28 Q -8 -28 -16 -22 Z"
             fill="#1B2D5C"
           />
-          <ellipse cx="0" cy="-30" rx="8" ry="9" fill="url(#bk_skin)" />
+          <ellipse cx="0" cy="-34" rx="9" ry="10" fill="url(#bk_skin)" />
           <path
-            d="M -10 -36 Q -10 -44 0 -44 Q 10 -44 10 -36 Q 10 -28 8 -24 L -8 -24 Q -10 -28 -10 -36 Z"
+            d="M -12 -42 Q -12 -52 0 -52 Q 12 -52 12 -42 Q 12 -32 10 -28 L -10 -28 Q -12 -32 -12 -42 Z"
             fill="#B5341E"
           />
           <path
-            d={stage >= 1 ? "M 10 -10 Q 22 -28 32 -50" : "M 10 -10 Q 14 0 18 8"}
+            d={stage >= 1 ? "M 12 -12 Q 24 -32 38 -54" : "M 12 -12 Q 18 0 22 10"}
             stroke="#1B2D5C"
-            strokeWidth="4"
+            strokeWidth="5"
             strokeLinecap="round"
             fill="none"
-            style={{ transition: "all 0.6s ease" }}
+            style={{ transition: "all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)" }}
           />
           <circle
-            cx={stage >= 1 ? 32 : 18}
-            cy={stage >= 1 ? -50 : 8}
-            r="3"
+            cx={stage >= 1 ? 38 : 22}
+            cy={stage >= 1 ? -54 : 10}
+            r="3.5"
             fill="url(#bk_skin)"
-            style={{ transition: "all 0.6s ease" }}
+            style={{ transition: "all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)" }}
           />
         </g>
         <text
@@ -334,9 +345,10 @@ function BraidKeyframe({ stage, active }: { stage: number; active: boolean }) {
           y="65"
           textAnchor="middle"
           fill="#F4D77A"
-          fontSize="9"
-          letterSpacing="2.4"
-          fontFamily="serif"
+          fontSize="10"
+          letterSpacing="3"
+          fontFamily="var(--font-cormorant), serif"
+          opacity="0.8"
         >
           LAYLA
         </text>
@@ -345,24 +357,14 @@ function BraidKeyframe({ stage, active }: { stage: number; active: boolean }) {
       {/* Stage-specific overlays */}
       {stage === 0 && (
         <g>
-          <circle cx="82" cy="138" r="8" fill="url(#bk_pearl)">
+          <circle cx="88" cy="142" r="8" fill="url(#bk_pearl)" filter="url(#glow)">
             {active && (
-              <animate
-                attributeName="r"
-                values="6;9;6"
-                dur="0.8s"
-                repeatCount="indefinite"
-              />
+              <animate attributeName="r" values="7;10;7" dur="1s" repeatCount="indefinite" />
             )}
           </circle>
-          <circle cx="82" cy="138" r="14" fill="#F4D77A" opacity="0.18">
+          <circle cx="88" cy="142" r="16" fill="#F4D77A" opacity="0.25">
             {active && (
-              <animate
-                attributeName="r"
-                values="10;18;10"
-                dur="0.8s"
-                repeatCount="indefinite"
-              />
+              <animate attributeName="r" values="12;22;12" dur="1s" repeatCount="indefinite" />
             )}
           </circle>
         </g>
@@ -371,90 +373,50 @@ function BraidKeyframe({ stage, active }: { stage: number; active: boolean }) {
       {stage === 1 && (
         <g>
           <path
-            d="M 82 138 Q 200 30 318 130"
+            d="M 88 142 Q 200 10 326 186"
             stroke="url(#bk_trail)"
-            strokeWidth="2.5"
+            strokeWidth="3"
             fill="none"
             strokeLinecap="round"
-            opacity="0.85"
-            strokeDasharray="240"
-            strokeDashoffset={active ? "0" : "240"}
+            opacity="0.9"
+            filter="url(#glow)"
+            strokeDasharray="400"
+            strokeDashoffset={active ? "0" : "400"}
             style={{ transition: "stroke-dashoffset 0.6s ease-out" }}
           />
-          {[0.15, 0.3, 0.45, 0.6, 0.75, 0.9].map((tt, i) => {
-            const x = 82 + (318 - 82) * tt;
-            const y = 138 - 110 * Math.sin(tt * Math.PI);
-            return (
-              <circle
-                key={i}
-                cx={x}
-                cy={y}
-                r={2.4 - i * 0.2}
-                fill={tt < 0.5 ? "#0E5E7B" : "#B5341E"}
-                opacity={0.7 - i * 0.05}
-              />
-            );
-          })}
-          <circle cx="200" cy="40" r="9" fill="url(#bk_pearl)" />
-          <circle cx="200" cy="40" r="14" fill="#F4D77A" opacity="0.3" />
+          <circle cx="204" cy="87" r="10" fill="url(#bk_pearl)" filter="url(#glow)" />
+          <circle cx="204" cy="87" r="20" fill="#F4D77A" opacity="0.3" />
         </g>
       )}
 
       {stage === 2 && (
         <g>
-          <circle cx="306" cy="160" r="7" fill="url(#bk_pearl)" />
-          <circle cx="306" cy="160" r="13" fill="#F4B860" opacity="0.4">
+          <circle cx="320" cy="166" r="8" fill="url(#bk_pearl)" filter="url(#glow)" />
+          <circle cx="320" cy="166" r="16" fill="#F4B860" opacity="0.4">
             {active && (
-              <animate
-                attributeName="r"
-                values="10;18;10"
-                dur="1.2s"
-                repeatCount="indefinite"
-              />
+              <animate attributeName="r" values="12;20;12" dur="1.5s" repeatCount="indefinite" />
             )}
             {active && (
-              <animate
-                attributeName="opacity"
-                values="0.5;0.1;0.5"
-                dur="1.2s"
-                repeatCount="indefinite"
-              />
+              <animate attributeName="opacity" values="0.6;0.2;0.6" dur="1.5s" repeatCount="indefinite" />
             )}
           </circle>
           <path
-            d="M 280 160 Q 293 152 306 160 Q 319 168 332 160"
+            d="M 290 166 Q 305 156 320 166 Q 335 176 350 166"
             stroke="#F4B860"
-            strokeWidth="1.4"
+            strokeWidth="2"
             fill="none"
-            opacity="0.85"
-          />
-          <line
-            x1="272"
-            y1="160"
-            x2="266"
-            y2="160"
-            stroke="#F4B860"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <line
-            x1="340"
-            y1="160"
-            x2="346"
-            y2="160"
-            stroke="#F4B860"
-            strokeWidth="2"
-            strokeLinecap="round"
+            opacity="0.9"
           />
           <text
-            x="306"
-            y="195"
+            x="320"
+            y="200"
             textAnchor="middle"
             fill="#F4B860"
-            fontSize="8"
-            letterSpacing="2.2"
-            fontFamily="serif"
+            fontSize="9"
+            letterSpacing="2.5"
+            fontFamily="var(--font-cormorant), serif"
             fontStyle="italic"
+            filter="url(#glow)"
           >
             ROW WOVEN
           </text>

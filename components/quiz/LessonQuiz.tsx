@@ -98,10 +98,16 @@ export function LessonQuiz({ path }: Props) {
           subtitle={`${t("quiz.eyebrow").toUpperCase()}`}
         />
         {/* Confetti only on a passing score — celebrate the win, not the
-            attempt. Honors prefers-reduced-motion via its own internal
-            media query. Re-keys per attempt count so retries get a fresh
-            burst. */}
-        {passing && <Confetti key={`celebrate-${path}-${correctSoFar}`} />}
+            attempt. Theme matches the path so Saif's celebration leans
+            sea-and-sun, Layla's stays saffron-and-madder. Honors
+            prefers-reduced-motion via its own internal media query.
+            Re-keys per attempt count so retries get a fresh burst. */}
+        {passing && (
+          <Confetti
+            key={`celebrate-${path}-${correctSoFar}`}
+            theme={path}
+          />
+        )}
         <div className="quiz-stage">
           <div className="quiz-result-card">
             <div className="quiz-eyebrow">{t("quiz.yourScore")}</div>
@@ -236,6 +242,18 @@ export function LessonQuiz({ path }: Props) {
 function Style({ isLayla }: { isLayla: boolean }) {
   const accent = isLayla ? "var(--saffron)" : "var(--sunset-gold)";
   const accentSoft = isLayla ? "var(--saffron-soft)" : "#F4C783";
+  // Card body — Layla gets warm sandalwood tones, Saif gets a deep
+  // sea-blue gradient so the quiz reads of-a-piece with the dive scene.
+  const cardBg = isLayla
+    ? "linear-gradient(180deg, rgba(36,24,14,0.92) 0%, rgba(14,10,8,0.94) 100%)"
+    : "linear-gradient(180deg, rgba(8,55,74,0.92) 0%, rgba(5,30,44,0.94) 100%)";
+  const cardBorder = isLayla ? "rgba(232,163,61,0.45)" : "rgba(244,184,96,0.45)";
+  const cardInnerGlow = isLayla
+    ? "rgba(232,163,61,0.06)"
+    : "rgba(244,184,96,0.08)";
+  // Letter pill background — saffron tint for Layla, sea-blue tint for Saif
+  const pillBg = isLayla ? "rgba(232,163,61,0.18)" : "rgba(14,94,123,0.4)";
+  const pillBorder = isLayla ? "rgba(232,163,61,0.5)" : "rgba(244,184,96,0.55)";
   return (
     <style>{`
       .quiz-stage {
@@ -251,14 +269,14 @@ function Style({ isLayla }: { isLayla: boolean }) {
       .quiz-result-card {
         width: min(560px, 100%);
         padding: 28px clamp(20px, 3.5vw, 36px);
-        background: linear-gradient(180deg, rgba(36,24,14,0.92) 0%, rgba(14,10,8,0.94) 100%);
-        border: 1px solid rgba(232,163,61,0.45);
+        background: ${cardBg};
+        border: 1px solid ${cardBorder};
         border-radius: 24px;
-        color: var(--wool);
+        color: ${isLayla ? "var(--wool)" : "var(--foam)"};
         font-family: var(--font-tajawal), sans-serif;
         box-shadow:
           0 28px 80px rgba(0,0,0,0.55),
-          inset 0 0 60px rgba(232,163,61,0.06);
+          inset 0 0 60px ${cardInnerGlow};
         animation: qzRise 0.45s var(--ease-loom);
       }
       @keyframes qzRise {
@@ -287,11 +305,11 @@ function Style({ isLayla }: { isLayla: boolean }) {
         transition: width 0.4s var(--ease-loom);
       }
       .quiz-prompt {
-        margin-top: 20px;
+        margin-top: 22px;
         font-family: var(--font-cormorant), serif;
         font-style: italic;
-        font-size: clamp(20px, 2.6vw, 24px);
-        color: var(--wool);
+        font-size: clamp(22px, 2.8vw, 26px);
+        color: ${isLayla ? "var(--wool)" : "var(--foam)"};
         line-height: 1.4;
       }
       .quiz-options {
@@ -304,30 +322,30 @@ function Style({ isLayla }: { isLayla: boolean }) {
         display: flex;
         align-items: center;
         gap: 14px;
-        padding: 14px 18px;
-        background: rgba(245,235,211,0.04);
-        border: 1.5px solid rgba(232,163,61,0.3);
+        padding: 15px 20px;
+        background: ${isLayla ? "rgba(245,235,211,0.04)" : "rgba(240,244,242,0.05)"};
+        border: 1.5px solid ${isLayla ? "rgba(232,163,61,0.3)" : "rgba(240,244,242,0.18)"};
         border-radius: 18px;
-        color: var(--wool);
+        color: ${isLayla ? "var(--wool)" : "var(--foam)"};
         cursor: pointer;
         font-family: var(--font-tajawal), sans-serif;
-        font-size: 15px;
+        font-size: 16.5px;
         text-align: start;
         line-height: 1.4;
         transition: all 0.2s var(--ease-loom);
       }
       .quiz-option:not(:disabled):hover {
-        background: rgba(232,163,61,0.12);
-        border-color: rgba(232,163,61,0.7);
+        background: ${isLayla ? "rgba(232,163,61,0.12)" : "rgba(244,184,96,0.16)"};
+        border-color: ${accent};
       }
       .quiz-option.is-picked {
-        background: rgba(232,163,61,0.18);
+        background: ${isLayla ? "rgba(232,163,61,0.18)" : "rgba(244,184,96,0.22)"};
         border-color: ${accent};
       }
       .quiz-option.is-correct {
         background: rgba(86,150,80,0.22);
         border-color: rgba(112,180,98,0.85);
-        color: var(--wool);
+        color: ${isLayla ? "var(--wool)" : "var(--foam)"};
       }
       .quiz-option.is-wrong {
         background: rgba(180,68,52,0.22);
@@ -336,16 +354,16 @@ function Style({ isLayla }: { isLayla: boolean }) {
       .quiz-option:disabled { cursor: default; }
       .quiz-option-letter {
         flex: 0 0 auto;
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
-        background: rgba(232,163,61,0.18);
-        border: 1px solid rgba(232,163,61,0.5);
+        background: ${pillBg};
+        border: 1px solid ${pillBorder};
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-family: var(--font-cormorant), serif;
-        font-size: 12px;
+        font-size: 14px;
         font-weight: 700;
         letter-spacing: 0;
         color: ${accent};
@@ -378,15 +396,15 @@ function Style({ isLayla }: { isLayla: boolean }) {
       }
       .quiz-feedback-verdict {
         font-family: var(--font-cormorant), serif;
-        font-size: 14px;
-        letter-spacing: 0.18em;
+        font-size: 15.5px;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
         font-weight: 600;
       }
       .quiz-feedback-why {
-        font-size: 13px;
+        font-size: 14.5px;
         line-height: 1.55;
-        color: rgba(240,228,201,0.85);
+        color: ${isLayla ? "rgba(240,228,201,0.9)" : "rgba(240,244,242,0.95)"};
       }
       .quiz-actions {
         margin-top: 22px;
@@ -439,11 +457,11 @@ function Style({ isLayla }: { isLayla: boolean }) {
         font-weight: 700;
         color: ${accent};
         line-height: 1;
-        text-shadow: 0 0 40px rgba(232,163,61,0.4);
+        text-shadow: 0 0 40px ${isLayla ? "rgba(232,163,61,0.4)" : "rgba(244,184,96,0.5)"};
       }
       .quiz-score-of {
         font-size: 0.5em;
-        color: rgba(240,228,201,0.55);
+        color: ${isLayla ? "rgba(240,228,201,0.55)" : "rgba(240,244,242,0.55)"};
         font-weight: 400;
       }
       .quiz-result-msg {
@@ -451,7 +469,7 @@ function Style({ isLayla }: { isLayla: boolean }) {
         font-family: var(--font-cormorant), serif;
         font-style: italic;
         font-size: clamp(16px, 2vw, 19px);
-        color: var(--wool);
+        color: ${isLayla ? "var(--wool)" : "var(--foam)"};
         line-height: 1.5;
       }
       .quiz-result-best {
@@ -459,7 +477,7 @@ function Style({ isLayla }: { isLayla: boolean }) {
         font-size: 11px;
         letter-spacing: 0.22em;
         text-transform: uppercase;
-        color: rgba(232,163,61,0.7);
+        color: ${isLayla ? "rgba(232,163,61,0.7)" : "rgba(244,184,96,0.85)"};
       }
       .quiz-result-actions {
         margin-top: 22px;

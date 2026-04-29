@@ -11,7 +11,6 @@ const empty: AchievementCheckInput = {
   pearls: [],
   ops: [],
   streak: 0,
-  unlockedItems: [],
   hasToggledLang: false,
   hasToggledNumerals: false,
   quizBestScores: { layla: 0, saif: 0 },
@@ -103,12 +102,6 @@ describe("ACHIEVEMENT predicates", () => {
     expect(
       def.check(withOverrides({ diveLessonsCompleted: ["coralGarden"] })),
     ).toBe(true);
-  });
-
-  it("souk_visitor fires once any souk item is unlocked", () => {
-    const def = ACHIEVEMENT_BY_ID.souk_visitor;
-    expect(def.check(empty)).toBe(false);
-    expect(def.check(withOverrides({ unlockedItems: ["thread.saffron-charcoal"] }))).toBe(true);
   });
 
   it("streak_3 / streak_7 fire at thresholds", () => {

@@ -67,39 +67,55 @@ export function HeroTitle() {
       </h1>
 
       {/* Thesis line — flanked by horizontal rules */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "clamp(10px, 1.4vw, 18px)",
-          color: "var(--saffron)",
-          fontSize: "clamp(11px, 1vw, 13px)",
-          letterSpacing: "0.32em",
-          textTransform: "uppercase",
-          fontFamily:
-            lang === "ar"
-              ? "var(--font-tajawal), sans-serif"
-              : "var(--font-cormorant), serif",
-          opacity: 0.92,
-          flexWrap: "wrap",
-          marginTop: "clamp(4px, 0.8vw, 10px)",
-        }}
-      >
-        <span
-          aria-hidden
-          style={{ width: 28, height: 1, background: "var(--saffron)", opacity: 0.4 }}
-        />
+      <div className="hero-thesis">
+        <span className="hero-thesis-rule" aria-hidden />
         <span>{lang === "en" ? "Two crafts" : "حرفتان"}</span>
-        <span style={{ opacity: 0.4 }}>·</span>
+        <span className="hero-thesis-dot" aria-hidden>·</span>
         <span>{lang === "en" ? "One family" : "عائلة واحدة"}</span>
-        <span style={{ opacity: 0.4 }}>·</span>
+        <span className="hero-thesis-dot" aria-hidden>·</span>
         <span>{lang === "en" ? "One heirloom" : "إرث واحد"}</span>
-        <span
-          aria-hidden
-          style={{ width: 28, height: 1, background: "var(--saffron)", opacity: 0.4 }}
-        />
+        <span className="hero-thesis-rule" aria-hidden />
       </div>
+      <style>{`
+        .hero-thesis {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: clamp(10px, 1.4vw, 18px);
+          color: var(--saffron);
+          font-size: clamp(11px, 1vw, 13px);
+          letter-spacing: 0.32em;
+          text-transform: uppercase;
+          font-family: ${lang === "ar" ? "var(--font-tajawal), sans-serif" : "var(--font-cormorant), serif"};
+          opacity: 0.92;
+          margin-top: clamp(4px, 0.8vw, 10px);
+          white-space: nowrap;
+        }
+        .hero-thesis-rule {
+          width: 28px;
+          height: 1px;
+          background: var(--saffron);
+          opacity: 0.4;
+        }
+        .hero-thesis-dot {
+          opacity: 0.4;
+        }
+        @media (max-width: 640px) {
+          .hero-thesis {
+            font-size: 9px;
+            letter-spacing: 0.22em;
+            gap: 6px;
+          }
+          .hero-thesis-rule {
+            width: 16px;
+          }
+        }
+        @media (max-width: 400px) {
+          .hero-thesis-rule {
+            display: none;
+          }
+        }
+      `}</style>
     </div>
   );
 }

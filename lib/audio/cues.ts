@@ -15,7 +15,6 @@ export type CueId =
   | "dive.splash"
   | "ui.tap"
   | "achievement.unlock"
-  | "souk.purchase"
   | "ceremony.heirloom";
 
 export function playCue(id: CueId) {
@@ -104,20 +103,6 @@ export function playCue(id: CueId) {
         attack: 0.002,
         release: 0.28,
         gain: 0.16,
-      });
-      break;
-    }
-    case "souk.purchase": {
-      // Coin / brass-bowl clink.
-      bell({ freq: 1480, dur: 0.4, gain: 0.16 });
-      bell({ freq: 2200, dur: 0.3, gain: 0.1, startAt: 0.06 });
-      noise({
-        dur: 0.02,
-        attack: 0.001,
-        release: 0.08,
-        gain: 0.12,
-        filterType: "highpass",
-        filterFreq: 2400,
       });
       break;
     }

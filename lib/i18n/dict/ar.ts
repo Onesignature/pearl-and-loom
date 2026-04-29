@@ -115,6 +115,9 @@ export const ar: Dict = {
     luster: "البريق",
     toChest: "إلى الإرث",
     diveAgain: "اغطس مجددًا",
+    nextDive: "الغوصة التالية",
+    takeQuiz: "ابدأ الاختبار",
+    backToDives: "العودة للغوصات",
   },
   heirloom: {
     title: "إرث العائلة",

@@ -112,6 +112,9 @@ export const en = {
     luster: "Luster",
     toChest: "TO HEIRLOOM",
     diveAgain: "DIVE AGAIN",
+    nextDive: "NEXT DIVE",
+    takeQuiz: "TAKE THE QUIZ",
+    backToDives: "BACK TO DIVES",
   },
   heirloom: {
     title: "Family Heirloom",
