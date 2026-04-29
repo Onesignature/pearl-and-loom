@@ -285,20 +285,21 @@ function TapestryFullPage() {
           }}
         >
           <div
-            className="paper-aged"
+            className="paper-aged tap-frame"
             style={{
-              padding: 22,
+              padding: "clamp(12px, 3vw, 22px)",
               border: "2px solid #6B4423",
               boxShadow: "0 30px 80px rgba(0,0,0,0.55)",
               background: "linear-gradient(170deg, #5A3618, #3D2A1E)",
               transform: `scale(${zoom})`,
               transition: "transform 0.6s var(--ease-loom)",
+              maxWidth: "100%",
             }}
           >
             <div
-              className="ltr-internal"
+              className="ltr-internal tap-rows"
               style={{
-                width: 360,
+                width: "min(360px, 78vw)",
                 display: "flex",
                 flexDirection: "column-reverse",
                 border: "1px solid rgba(0,0,0,0.4)",
@@ -355,7 +356,7 @@ function TapestryFullPage() {
           </div>
         </div>
 
-        <div style={{ width: 280, color: "var(--wool)", overflowY: "auto" }}>
+        <div className="tap-side" style={{ width: 280, color: "var(--wool)", overflowY: "auto" }}>
           {!isShared && (
             <div
               style={{
@@ -510,6 +511,7 @@ function TapestryFullPage() {
       </div>
 
       <div
+        className="tap-controls"
         style={{
           position: "absolute",
           bottom: 20,
@@ -518,6 +520,8 @@ function TapestryFullPage() {
           display: "flex",
           gap: 18,
           alignItems: "center",
+          flexWrap: "wrap",
+          justifyContent: "center",
         }}
       >
         <div
@@ -762,6 +766,16 @@ function TapestryFullPage() {
         }
         .tap-btn:hover { background: rgba(245,235,211,0.16); }
         .tap-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        @media (max-width: 640px) {
+          .tap-side { width: 100% !important; max-width: 100% !important; }
+          .tap-controls {
+            inset-inline-start: 16px !important;
+            inset-inline-end: 16px !important;
+            bottom: 12px !important;
+            gap: 10px !important;
+          }
+          .tap-frame { padding: 10px !important; }
+        }
         .tap-btn--accent {
           background: var(--saffron);
           color: var(--charcoal);

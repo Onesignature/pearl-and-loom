@@ -15,17 +15,31 @@ export function RouteScrollReset() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      // Window first (covers the home page + body-scrolling routes).
+    function reset() {
+      // Window first (covers home + body-scrolling routes).
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      // Then any inner scroll containers — checking scrollTop > 0 keeps
-      // the assignment cost trivial for elements that aren't scrolled.
+      // Then any inner scroll containers — many inner pages use
+      // `position: absolute, inset: 0, overflowY: auto`, so window.scrollTo
+      // alone misses them.
       const all = document.querySelectorAll<HTMLElement>("*");
       for (const el of all) {
         if (el.scrollTop !== 0) el.scrollTop = 0;
       }
-    });
-    return () => cancelAnimationFrame(id);
+    }
+
+    // Reset across multiple timing windows so we catch:
+    //   - synchronous content (immediate)
+    //   - layout after the first paint (rAF)
+    //   - late hydration of dynamic Suspense boundaries (50 ms / 200 ms)
+    reset();
+    const raf = requestAnimationFrame(reset);
+    const t1 = window.setTimeout(reset, 50);
+    const t2 = window.setTimeout(reset, 200);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
   }, [pathname]);
 
   return null;

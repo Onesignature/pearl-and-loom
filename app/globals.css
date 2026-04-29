@@ -66,6 +66,12 @@
     repeating-linear-gradient(90deg,
       rgba(201,168,118,0.55) 0 1px,
       transparent 1px 6px);
+
+  /* Subtle rounding — applied only to interactive controls so the
+     geometric Sadu motifs / chest / dhow / tent SVG art stays sharp. */
+  --radius-chip: 4px;
+  --radius-btn: 6px;
+  --radius-input: 6px;
 }
 
 /* Tapestry SVG internals stay LTR even under [dir="rtl"]. */
@@ -110,6 +116,9 @@ html, body {
   text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Prevent any horizontal overflow on phone widths without breaking
+     iOS touch-scroll (which `overflow-x: hidden` did historically). */
+  overflow-x: clip;
 }
 
 * { box-sizing: border-box; }
@@ -169,10 +178,74 @@ html, body {
   color: var(--charcoal);
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(180,140,80,0.3); border-radius: 4px; }
+/* Scrollbar — saffron-on-translucent, soft hover state */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track {
+  background: rgba(28,18,12,0.18);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(232,163,61,0.42);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(232,163,61,0.7);
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-corner { background: transparent; }
+* { scrollbar-color: rgba(232,163,61,0.42) rgba(28,18,12,0.18); }
+
+/* Focus rings — saffron, 2 px, slightly inset for visibility against
+   the brand backgrounds. Replaces the default browser ring everywhere. */
+:focus-visible {
+  outline: 2px solid var(--saffron);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--saffron);
+  outline-offset: 2px;
+}
+
+/* Subtle rounding on every interactive control. Geometric Sadu motifs,
+   chest, dhow, and tent SVG art remain sharp — only the buttons + chips
+   + inputs soften so they feel tappable without losing the dignified
+   museum-quality language. */
+button,
+.tap-btn, .braid-btn, .souk-btn, .dive-btn, .weave-cta, .surface-btn,
+.anim-btn, .reveal-btn, .back-btn, .ceremony-save, .ceremony-close,
+.onb-back, .onb-next, .splash-btn, .stone-btn, .seed-copy,
+.ans-btn, .ang-btn, .tess-option, .dim-btn, .item-buy, .item-owned {
+  border-radius: var(--radius-btn);
+}
+.home-chip, .chrome-btn, .mnav-trigger, .mnav-close, .mnav-item {
+  border-radius: var(--radius-chip);
+}
+input[type="text"], input[type="number"], input[type="email"], textarea {
+  border-radius: var(--radius-input);
+}
+/* Specific overrides — circle buttons keep their shape, not rounded-rect */
+button[aria-label="Close"],
+button[aria-label="إغلاق"],
+.mnav-glyph,
+.ceremony-pearl {
+  border-radius: 50%;
+}
+
+/* Page-mount fade — every route's body fades in subtly on first paint
+   so navigations don't pop. Fast enough not to feel laggy. */
+@keyframes routeFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+main, body > div[data-world],
+.tent-stage, .sea-stage {
+  animation: routeFadeIn 0.32s var(--ease-loom);
+}
 
 /* Animations used across screens */
 @keyframes bubble {
