@@ -1,6 +1,3 @@
-"use client";
-
-import { use } from "react";
 import { notFound } from "next/navigation";
 import { SymmetryLesson } from "@/components/loom/lessons/SymmetryLesson";
 import { FractionsLesson } from "@/components/loom/lessons/FractionsLesson";
@@ -12,8 +9,18 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function LoomLessonPage({ params }: PageProps) {
-  const { id } = use(params);
+export function generateStaticParams() {
+  return [
+    { id: "symmetry" },
+    { id: "fractions" },
+    { id: "tessellation" },
+    { id: "arrays" },
+    { id: "angles" },
+  ];
+}
+
+export default async function LoomLessonPage({ params }: PageProps) {
+  const { id } = await params;
   switch (id) {
     case "symmetry":
       return <SymmetryLesson />;
@@ -26,6 +33,6 @@ export default function LoomLessonPage({ params }: PageProps) {
     case "angles":
       return <AnglesLesson />;
     default:
-      return notFound();
+      notFound();
   }
 }
