@@ -5,10 +5,14 @@
 // TopChrome (no dialogs — those only live on home). Dismiss via backdrop
 // click, Escape, or the close button. Body-scroll locked while open.
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useAudioToggle } from "@/components/ui/useAudioToggle";
+import { useSettings } from "@/lib/store/settings";
+import { useProgress } from "@/lib/store/progress";
+import { computeHikma, hikmaTier } from "@/lib/hikma/points";
+import { AvatarToken } from "@/components/onboarding/AvatarToken";
 
 interface MobileNavProps {
   /** Home page only — opens the 90s walkthrough video modal. */
@@ -24,24 +28,49 @@ interface NavItem {
   glyph: string;
 }
 
+// Trimmed list — five top-level destinations only. Pearl Chest is a
+// sub-page of /sea, reachable from there. Tapestry View is reachable
+// from the Loom completion flow + the heirloom footer counters.
 const NAV_ITEMS: NavItem[] = [
   { href: "/", labelEn: "Family Tent", labelAr: "خيمة العائلة", glyph: "◇" },
   { href: "/loom", labelEn: "Layla's Loom", labelAr: "نَول ليلى", glyph: "▦" },
   { href: "/sea", labelEn: "Saif's Sea", labelAr: "بحر سيف", glyph: "≈" },
-  { href: "/sea/chest", labelEn: "Pearl Chest", labelAr: "صندوق اللؤلؤ", glyph: "◉" },
   { href: "/souk", labelEn: "Souk al-Lulu", labelAr: "سوق اللؤلؤ", glyph: "✦" },
-  { href: "/tapestry", labelEn: "Tapestry View", labelAr: "النسيج كاملًا", glyph: "▤" },
+  { href: "/leaderboard", labelEn: "Leaderboard", labelAr: "لوحة الصدارة", glyph: "🏆" },
 ];
 
 export function MobileNav({ onOpenWalkthrough, onOpenTutorial }: MobileNavProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { lang, setLang, numeralMode, setNumeralMode } = useI18n();
+  const { lang, setLang, numeralMode, setNumeralMode, t, fmt } = useI18n();
   const { audioEnabled, toggle: toggleAudio } = useAudioToggle();
   const useArabicDigits =
     numeralMode === "arabic-indic" ||
     (numeralMode === "auto" && lang === "ar");
   const [open, setOpen] = useState(false);
+
+  const learnerName = useSettings((s) => s.learnerName);
+  const learnerGrade = useSettings((s) => s.learnerGrade);
+  const learnerAvatar = useSettings((s) => s.learnerAvatar);
+  const resetProfile = useSettings((s) => s.resetProfile);
+  const loomLessonsCompleted = useProgress((s) => s.loomLessonsCompleted);
+  const pearls = useProgress((s) => s.pearls);
+  const achievements = useProgress((s) => s.achievements);
+  const streak = useProgress((s) => s.streak);
+  const unlockedItems = useProgress((s) => s.unlockedItems);
+  const points = useMemo(
+    () =>
+      computeHikma({
+        loomLessonsCompleted,
+        pearls,
+        achievements,
+        streak,
+        unlockedItems,
+      }),
+    [loomLessonsCompleted, pearls, achievements, streak, unlockedItems],
+  );
+  const tier = hikmaTier(points);
+  const firstName = learnerName.trim().split(/\s+/)[0];
 
   useEffect(() => {
     if (!open) return;
@@ -103,6 +132,38 @@ export function MobileNav({ onOpenWalkthrough, onOpenTutorial }: MobileNavProps)
                 ✕
               </button>
             </div>
+
+            {firstName && learnerAvatar && (
+              <div className="mnav-profile">
+                <AvatarToken avatar={learnerAvatar} size={48} />
+                <div className="mnav-profile-text">
+                  <div className="mnav-profile-name">{firstName}</div>
+                  <div className="mnav-profile-meta">
+                    {learnerGrade !== null && (
+                      <>
+                        {t("profile.gradeOption")} {fmt(learnerGrade)} ·{" "}
+                      </>
+                    )}
+                    <span className="mnav-profile-spark">✦</span> {fmt(points)}{" "}
+                    <span className="mnav-profile-tier">
+                      {t(`hikma.tier.${tier}` as never)}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetProfile();
+                    close();
+                  }}
+                  className="mnav-profile-edit"
+                  aria-label={t("profile.edit")}
+                  title={t("profile.edit")}
+                >
+                  ✎
+                </button>
+              </div>
+            )}
 
             <div className="mnav-section-label">
               {lang === "en" ? "Navigate" : "التنقّل"}
@@ -167,18 +228,6 @@ export function MobileNav({ onOpenWalkthrough, onOpenTutorial }: MobileNavProps)
                       </span>
                     </button>
                   )}
-                  <a
-                    href="/The Pearl and the Loom — ADEK Pitch.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={close}
-                    className="mnav-item"
-                  >
-                    <span className="mnav-glyph" aria-hidden>▤</span>
-                    <span className="mnav-label">
-                      {lang === "en" ? "Pitch deck (PDF)" : "العرض التقديمي"}
-                    </span>
-                  </a>
                 </div>
               </>
             )}
@@ -243,6 +292,7 @@ export function MobileNav({ onOpenWalkthrough, onOpenTutorial }: MobileNavProps)
           background:
             linear-gradient(180deg, rgba(48,30,18,0.78) 0%, rgba(20,12,8,0.78) 100%);
           border: 1px solid rgba(232,163,61,0.42);
+          border-radius: 999px;
           color: var(--wool);
           padding: 0;
           cursor: pointer;
@@ -311,6 +361,7 @@ export function MobileNav({ onOpenWalkthrough, onOpenTutorial }: MobileNavProps)
           height: 40px;
           background: transparent;
           border: 1px solid rgba(240,228,201,0.32);
+          border-radius: 999px;
           color: var(--wool);
           font-size: 16px;
           cursor: pointer;
@@ -332,9 +383,10 @@ export function MobileNav({ onOpenWalkthrough, onOpenTutorial }: MobileNavProps)
           align-items: center;
           gap: 14px;
           width: 100%;
-          padding: 16px 14px;
+          padding: 16px 18px;
           background: rgba(245,235,211,0.04);
           border: 1px solid rgba(232,163,61,0.2);
+          border-radius: 18px;
           color: var(--wool);
           font-family: var(--font-tajawal), sans-serif;
           font-size: 15px;
@@ -376,6 +428,55 @@ export function MobileNav({ onOpenWalkthrough, onOpenTutorial }: MobileNavProps)
           text-transform: uppercase;
           opacity: 0.55;
         }
+        .mnav-profile {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 12px 16px;
+          margin: 4px 0 6px;
+          background: linear-gradient(180deg, rgba(48,30,18,0.78) 0%, rgba(20,12,8,0.78) 100%);
+          border: 1px solid rgba(232,163,61,0.55);
+          border-radius: 22px;
+        }
+        .mnav-profile-text { flex: 1; min-width: 0; }
+        .mnav-profile-name {
+          font-family: var(--font-cormorant), serif;
+          font-style: italic;
+          font-size: 18px;
+          color: var(--wool);
+          letter-spacing: 0.04em;
+          line-height: 1.2;
+        }
+        .mnav-profile-meta {
+          margin-top: 2px;
+          font-size: 11px;
+          color: rgba(240,228,201,0.7);
+          letter-spacing: 0.06em;
+        }
+        .mnav-profile-spark { color: var(--saffron); }
+        .mnav-profile-tier {
+          color: rgba(232,163,61,0.85);
+          font-family: var(--font-cormorant), serif;
+          font-size: 10px;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          padding-inline-start: 6px;
+        }
+        .mnav-profile-edit {
+          width: 36px;
+          height: 36px;
+          background: rgba(245,235,211,0.06);
+          border: 1px solid rgba(232,163,61,0.4);
+          border-radius: 999px;
+          color: var(--saffron);
+          font-size: 14px;
+          cursor: pointer;
+          flex: 0 0 auto;
+        }
+        .mnav-profile-edit:active {
+          background: rgba(232,163,61,0.18);
+        }
+
         @keyframes mnavFade { from { opacity: 0; } to { opacity: 1; } }
         @keyframes mnavRise {
           from { opacity: 0; transform: translateY(8px); }

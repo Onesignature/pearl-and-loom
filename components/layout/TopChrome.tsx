@@ -148,6 +148,7 @@ export function TopChrome({
           background: linear-gradient(180deg, rgba(245,235,211,0.10) 0%, rgba(245,235,211,0.04) 100%);
           color: var(--wool);
           border: 1px solid rgba(240,228,201,0.22);
+          border-radius: 999px;
           padding: 9px 14px;
           font-family: var(--font-tajawal), sans-serif;
           font-size: 13px;
