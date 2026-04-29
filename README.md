@@ -13,7 +13,7 @@
   <a href="https://tailwindcss.com/"><img alt="Tailwind CSS v4" src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white"></a>
   <a href="https://zustand-demo.pmnd.rs/"><img alt="Zustand 5" src="https://img.shields.io/badge/Zustand-5-433E38?style=flat-square"></a>
   <a href="https://www.framer.com/motion/"><img alt="Framer Motion 12" src="https://img.shields.io/badge/Framer_Motion-12-0055FF?style=flat-square&logo=framer&logoColor=white"></a>
-  <a href="https://vitest.dev/"><img alt="Vitest · 82 tests" src="https://img.shields.io/badge/Vitest-82_tests-6E9F18?style=flat-square&logo=vitest&logoColor=white"></a>
+  <a href="https://vitest.dev/"><img alt="Vitest · 122 tests" src="https://img.shields.io/badge/Vitest-122_tests-6E9F18?style=flat-square&logo=vitest&logoColor=white"></a>
   <a href="https://eslint.org/"><img alt="ESLint 9" src="https://img.shields.io/badge/ESLint-9-4B32C3?style=flat-square&logo=eslint&logoColor=white"></a>
   <a href="https://pnpm.io/"><img alt="pnpm" src="https://img.shields.io/badge/pnpm-F69220?style=flat-square&logo=pnpm&logoColor=white"></a>
   <img alt="Web Audio API synth" src="https://img.shields.io/badge/Audio-Web_Audio_API_synth-E8A33D?style=flat-square">
@@ -128,7 +128,7 @@ The five rubric axes, each mapped to specific shipped features and the file path
 
 ### 3. UI / UX
 
-- Branded home header (favicon + wordmark + ornament rule + saffron chip row) with a mobile hamburger drawer at ≤ 640 px.
+- Branded home header (favicon + wordmark + ornament rule) decluttered from 7 standalone chips down to 4 cohesive surfaces: **Profile** (avatar + name + grade), **Hikma** (live ✦ + tier badge), **Souk** (shortcut), and two combined popovers — **Help** (Walkthrough + How-it-works) and **Settings** (Audio + Numerals + Language). Less visual competition with the Family Tent scene, same functionality. Mobile hamburger drawer at ≤ 640 px also surfaces the Profile + Hikma block at the top.
 - Mobile-first responsiveness audited across iPhone SE 375 → iPad Air 820/1180 → desktop 1920.
 - `TopChrome` on every inner page — back/home button + locale chips that collapse to the hamburger on phone.
 - First-visit guided tour (4-step coach-marks) with Skip / Back / Next / replay-from-FAQ.
@@ -160,6 +160,12 @@ The five rubric axes, each mapped to specific shipped features and the file path
 
 ### 5. Student journey / gamification
 
+- **Learner profile** — first-run flow (language splash → name + grade picker (4–8) + avatar token → tent) gives the student an identity from second one. The Family Tent greets by name and time of day; every header surface (desktop chip + mobile drawer) shows the learner's avatar, grade, and live ✦ score. *Why a profile matters:* a Grade 4 kid disengages from a generic "Welcome home" screen in seconds; the same kid stays for a screen that says "Good morning, Layla."
+- **Hikma points (✦)** — حِكْمة, "wisdom" — a unified score derived (not separately persisted) from existing actions: loom lesson +50, common pearl +20 / fine +50 / royal +100, achievement +30, streak milestones (+30 at 3 days, +70 at 7, +140 at 14), souk purchase +20. Tier badge re-projects the same total (Novice → Weaver → Diver → Master) so the kid sees a "level" without inventing a separate concept. Visible at all times in the header chip row.
+- **Grade-aware path nudge** — the Family Tent shows both Layla and Saif cards side by side, but the sibling appropriate for the learner's age band (4–5 → Layla, 7–8 → Saif, 6 → balanced) gets a saffron "Recommended for you" pill. Neither path is locked — the recommendation is a nudge, not a gate. Once a path's final quiz is taken, that card swaps the pill for a green "Completed · N/5" badge.
+- **End-of-path quizzes** — five multiple-choice questions per sibling, gated until every lesson on that path is finished. Layla covers Grade 4 math (symmetry / fractions / tessellation / arrays / angles); Saif covers Grade 8 science (buoyancy / pressure / marine biology / refraction). Each question shows correct/incorrect with a one-line "why" explainer; the result screen fires confetti on a passing score (4/5+) and awards the *Layla's Apprentice* / *Saif's Apprentice* achievements, each tied to a real Sadu motif.
+- **Leaderboard (`/leaderboard`)** — ranked by ✦ Hikma. The current learner is inserted live alongside 8 seeded fictional UAE-themed kids (mock data — the brief explicitly accepts it; there is no backend). Top 3 get gold/silver/bronze podium pills; the user row is highlighted with a saffron "YOU" tag. Columns: rank · avatar+name · ✦ score · 🏆 trophies (= achievement count) · ⏱ time-taken (anchored on first lesson completion → heirloom-complete achievement). Tiebreak: completed > in-progress > shorter time.
+- **"Next lesson" workflow** — after a Layla lesson the weave-animation page surfaces a single primary CTA: the next available lesson (or "Take the quiz" once all 5 are done, or "Back to lessons" once the quiz is also done). View Tapestry stays as a secondary outline button. Removes "what now?" decision fatigue between lessons.
 - **Real currency loop** — pearls earned in dives become spendable at Souk al-Lulu (9 items across 3 stalls). Owned items have *real downstream effects*: the *fattam* noseclip extends starting breath by 10 and slows drain by 15%, the *diveen* stone speeds Saif's descent 1.5×, the *deyeen* net awards a free common pearl per dive, the brass-lantern + dawn-sky heirlooms re-skin every TentScene.
 - 11 achievement badges (Wasm) — each is an authentic Sadu motif with a cultural footnote. Locked = grayscale silhouette; unlocked = saffron with a brass-toast slide-in.
 - Daily-weave streak tracking — increments per calendar day a lesson or dive is completed, resets after a 1-day gap. Powers the `streak_3` / `streak_7` achievement badges and is baked into the saved tapestry / certificate captions.
@@ -169,7 +175,7 @@ The five rubric axes, each mapped to specific shipped features and the file path
 - Per-user deterministic `seed` exposed as a shareable permalink (`/tapestry?seed=…`) — opens a read-only view of someone else's finished heirloom.
 - Lesson unlock gate (`arrays`, `angles` unlock at 3 core completions).
 
-**Where to find it:** `lib/store/progress.ts` (Zustand + persist v4) · `lib/souk/{catalog,effects}.ts` · `app/souk/page.tsx` · `lib/achievements/registry.ts` · `components/achievements/*` · `lib/tapestry/{exportPng,buildCertificate}.ts` · `components/ceremony/HeirloomCeremony.tsx`
+**Where to find it:** `lib/store/{progress,settings}.ts` (Zustand + persist; settings v5 with profile fields, progress v3 with quiz scores + start/complete timestamps) · `lib/hikma/points.ts` (✦ derivation + tier projection) · `lib/quiz/banks.ts` (5+5 questions, bilingual) · `lib/leaderboard/seed.ts` (mock board + tiebreak logic) · `components/quiz/{LessonQuiz,QuizHubCard,Confetti}.tsx` · `app/{loom,sea}/quiz/page.tsx` · `app/leaderboard/page.tsx` · `components/onboarding/ProfileSetup.tsx` · `components/home/{HikmaCounter,ProfileChip,CharacterCard}.tsx` · `lib/souk/{catalog,effects}.ts` · `app/souk/page.tsx` · `lib/achievements/registry.ts` · `components/achievements/*` · `lib/tapestry/{exportPng,buildCertificate}.ts` · `components/ceremony/HeirloomCeremony.tsx`
 
 ---
 
@@ -220,7 +226,7 @@ Sources: UNESCO ICH Register entry **00010** (Pearling, testimonies, and ways of
 | **Web Audio API synth (no sample files)** | Eight named cues are rendered live via composed `OscillatorNode` + `BufferSourceNode` + `BiquadFilterNode` graphs in `lib/audio/synth.ts`. **Zero asset bytes shipped for audio.** No third-party audio license to credit. |
 | **Custom canvas tapestry exporter** | `lib/tapestry/exportPng.ts` re-implements every Sadu motif natively in `CanvasRenderingContext2D` and emits a 2× DPI PNG with saffron frame and the user's date / row-count / streak baked in. No `html-to-image` dep. |
 | **SVG everywhere for art** | Loom, dhow, oysters, characters, motifs, chest — all hand-authored SVG. Resolution-independent, animatable, and small. |
-| **Vitest + RTL + jsdom** | **84 unit tests** (82 passing + 2 canvas-skipped) across 10 files. Wired into a `prebuild` hook so every Vercel deploy runs the full verify chain — typecheck, lint, tests — before bundling. No E2E (deliberate scope cut for time). |
+| **Vitest + RTL + jsdom** | **122 unit tests** (120 passing + 2 canvas-skipped) across 15 files. Wired into a `prebuild` hook so every Vercel deploy runs the full verify chain — typecheck, lint, tests — before bundling. No E2E (deliberate scope cut for time). |
 | **Framer Motion** | Used only for the home language-splash `AnimatePresence`. Every other animation is CSS keyframes — keeps the JS bundle lean. |
 
 ---
@@ -246,12 +252,13 @@ flowchart LR
     end
 
     subgraph stores["lib/store/"]
-        progress[("progress<br/>zustand + persist<br/>ops · pearls · achievements<br/>streak · unlockedItems")]
-        settings[("settings<br/>zustand + persist<br/>lang · numeralMode<br/>audioEnabled · hasOnboarded")]
+        progress[("progress<br/>zustand + persist v2<br/>ops · pearls · achievements<br/>streak · unlockedItems")]
+        settings[("settings<br/>zustand + persist v5<br/>lang · numeralMode · audioEnabled<br/>learnerName · learnerGrade<br/>learnerAvatar · hasProfile")]
     end
 
     subgraph services["lib/"]
         audio["audio/{bus,synth,cues}.ts<br/>playCue(id)"]
+        hikma["hikma/points.ts<br/>computeHikma · hikmaTier"]
         achievements["achievements/registry.ts<br/>predicates"]
         souk_cat["souk/catalog.ts"]
         export["tapestry/exportPng.ts"]
@@ -273,6 +280,8 @@ flowchart LR
     souk -- spendPearls --> progress
     progress --> watch --> achievements
     achievements -- unlockAchievement --> progress
+    progress --> hikma
+    hikma -- "✦ score + tier" --> home
     home & loomHub & seaHub & dive --> audio
     home & tapestry --> export
 ```
@@ -288,7 +297,7 @@ pnpm dev          # http://localhost:3000
 # focused checks
 pnpm typecheck    # tsc --noEmit
 pnpm lint         # eslint
-pnpm test         # vitest run (all 84 tests, 2 canvas-skipped)
+pnpm test         # vitest run (all 122 tests, 2 canvas-skipped)
 pnpm test:watch   # vitest watch mode
 
 # orchestrated
@@ -324,8 +333,8 @@ Sample pipeline output:
 
 ✓ tsc --noEmit                    (0 errors)
 ✓ eslint                          (0 errors, 0 warnings)
-✓ Test Files  10 passed
-✓      Tests  82 passed | 2 skipped (84)
+✓ Test Files  15 passed
+✓      Tests  120 passed | 2 skipped (122)
 
 ▲ Next.js 16.2.4 (Turbopack)
 ✓ Compiled successfully in 2.1s
@@ -336,7 +345,7 @@ Sample pipeline output:
 
 ## Testing
 
-**84 unit tests** across **10 test files**, all running in **~2 s** under Vitest + jsdom.
+**122 unit tests** across **15 test files**, all running in **~3 s** under Vitest + jsdom.
 
 | File | Coverage |
 |---|---|
@@ -350,6 +359,11 @@ Sample pipeline output:
 | `tests/tapestry-composition.test.ts` | TAPESTRY_25 has exactly 25 rows, every motif resolves to a registered SVG component, every pearl-bearing row uses a valid grade, motif vocabulary is broad. |
 | `tests/pearl-colors.test.ts` | `PEARL_TIERS` integrity — every grade, well-formed hex / rgba, escalating glow size, royal-only ring. |
 | `tests/tapestry-export.test.ts` | Smoke: `buildTapestryPng` resolves to a PNG `Blob` (skipped under non-canvas). |
+| `tests/hikma-points.test.ts` | `computeHikma` reward table — loom +50, common 20 / fine 50 / royal 100, achievement +30, streak milestone bonuses (3/7/14), souk +20, plus full composition. `hikmaTier` band partitioning at 150 / 400 / 800. |
+| `tests/settings-profile.test.ts` | Profile fields — `setLearnerName` truncates at 60, `setLearnerGrade` accepts 4–8, `setLearnerAvatar` accepts the four named tokens, `completeProfileSetup` writes everything + flips `hasProfile`, `resetProfile` clears identity but keeps lang + audio prefs. |
+| `tests/quiz-banks.test.ts` | Both quiz banks — 5 questions each, every question has a 0-3 correct index, 4 EN + 4 AR options, bilingual prompt + explainer, unique ids per path. |
+| `tests/progress-quiz.test.ts` | `recordQuizScore` — stamps lastAttemptAt, tracks bestScore as the maximum across attempts, layla/saif tracked independently. `markCompleted` is idempotent. `startedAt` stamps once on first lesson and never overwrites. |
+| `tests/leaderboard.test.ts` | `buildLeaderboard` — seed-only when no profile, "you" inserted with first-name normalised, sorted by hikma desc, tiebreak by completed > shorter time, null startedAt leaves timeMs null. `formatTime` covers d/h/m bands and the null case. |
 
 **Deliberately not tested:** E2E, visual regression, audio output (no headless WebAudio in CI), Framer Motion timelines, R3F / WebGL scenes. The cost-to-coverage on those isn't worth a take-home's deadline; the regressions they'd catch are caught by the integrity tests above.
 
