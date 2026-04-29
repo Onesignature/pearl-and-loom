@@ -163,37 +163,6 @@ export function HomeHeader() {
         </div>
       </div>
 
-      {/* Decorative rule under the header — ornament line with central diamond */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 14,
-          marginTop: 20,
-          opacity: 0.55,
-        }}
-      >
-        <div
-          style={{
-            flex: 1,
-            height: 1,
-            background:
-              "linear-gradient(to right, transparent, var(--saffron) 50%, transparent)",
-          }}
-        />
-        <svg width="12" height="12" viewBox="0 0 10 10">
-          <path d="M 5 0 L 10 5 L 5 10 L 0 5 Z" fill="var(--saffron)" />
-        </svg>
-        <div
-          style={{
-            flex: 1,
-            height: 1,
-            background:
-              "linear-gradient(to right, transparent, var(--saffron) 50%, transparent)",
-          }}
-        />
-      </div>
-
       <style>{`
         @media (max-width: 1100px) {
           .home-era { display: none !important; }

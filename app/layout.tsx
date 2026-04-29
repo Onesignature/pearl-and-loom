@@ -4,6 +4,7 @@ import "./globals.css";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { AchievementWatcher } from "@/components/achievements/AchievementWatcher";
 import { HeirloomCeremony } from "@/components/ceremony/HeirloomCeremony";
+import { RouteScrollReset } from "@/components/layout/RouteScrollReset";
 
 const tajawal = Tajawal({
   variable: "--font-tajawal",
@@ -52,6 +53,7 @@ export default function RootLayout({
       <body className="min-h-dvh flex flex-col" suppressHydrationWarning>
         <I18nProvider>
           {children}
+          <RouteScrollReset />
           <AchievementWatcher />
           <HeirloomCeremony />
         </I18nProvider>

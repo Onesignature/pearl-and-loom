@@ -1,6 +1,10 @@
-# The Pearl and the Loom · اللؤلؤة والنّول
+<p align="center">
+  <img src="./public/favicon.svg" alt="The Pearl and the Loom" width="120" height="120" />
+</p>
 
-> *Two crafts. One family. One heirloom.*
+<h1 align="center">The Pearl and the Loom · اللؤلؤة والنّول</h1>
+
+<p align="center"><em>Two crafts. One family. One heirloom.</em></p>
 
 A bilingual UAE-themed gamified learning path. **Layla** weaves Grade 4 math at the Sadu loom inside her family's tent. **Saif** dives Grade 8 science in the *ghasa* (pearling season). The pearls he brings home become beads in her tapestry — one heirloom, braided from two lives. Set in **Abu Dhabi, 1948** — the season before oil.
 

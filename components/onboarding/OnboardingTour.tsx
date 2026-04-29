@@ -218,17 +218,33 @@ export function OnboardingTour({ forceOpen = false, onClose }: Props) {
         }
         .onb-bottom-center, .onb-top-center { animation-name: onbRiseCenter; }
 
-        /* On phone, all cards bottom-stack so they don't overlap stacked content. */
+        /* On phone, switch the overlay itself to flex-center and let the
+           card sit naturally in the middle. Drops all absolute positioning
+           so the card never sits off-screen, never overflows, and never
+           competes with the actual page chrome. Card grows up to viewport
+           height; if content is taller it scrolls internally. */
         @media (max-width: 640px) {
+          .onb-overlay {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 20px !important;
+          }
           .onb-card,
           .onb-top-start, .onb-top-end, .onb-top-center, .onb-bottom-center {
+            position: relative !important;
             top: auto !important;
-            bottom: clamp(20px, 4vh, 40px) !important;
-            left: 50% !important;
+            bottom: auto !important;
+            left: auto !important;
             inset-inline-start: auto !important;
             inset-inline-end:   auto !important;
-            transform: translateX(-50%);
-            animation-name: onbRiseCenter;
+            transform: none !important;
+            margin: 0 !important;
+            width: 100% !important;
+            max-width: 420px !important;
+            max-height: calc(100dvh - 40px) !important;
+            overflow-y: auto !important;
+            animation-name: onbRise !important;
           }
         }
 
@@ -282,6 +298,7 @@ export function OnboardingTour({ forceOpen = false, onClose }: Props) {
           align-items: center;
           justify-content: space-between;
           gap: 10px;
+          flex-wrap: wrap;
         }
         .onb-controls-end {
           display: flex;
