@@ -17,7 +17,39 @@ Submitted to the ADEK Frontend Developer (Interactive UI & Gamification) take-ho
 - **App:** *(deployed by submitter — Vercel link goes here)*
 - **Repo:** *(this repo)*
 - **Pitch deck:** [`The Pearl and the Loom — ADEK Pitch.pdf`](./public/The%20Pearl%20and%20the%20Loom%20%E2%80%94%20ADEK%20Pitch.pdf)
-- **Walkthrough video (90 s):** ▶ button on the home navbar opens an embedded inline tour.
+
+---
+
+## Walkthrough (90 s)
+
+<!--
+  To embed an inline video on GitHub: record the walkthrough as MP4, drag
+  the file into a GitHub issue / PR comment box (don't submit), copy the
+  resulting `user-attachments/assets/...` URL it generates, then replace
+  the `src` below. GitHub's markdown sanitizer strips <iframe> + <script>,
+  so the raw inline HTML can't be embedded as-is.
+-->
+
+<!-- Inline video — paste a GitHub user-attachments URL here once recorded:
+<video src="https://github.com/user-attachments/assets/REPLACE-WITH-YOUR-VIDEO-ID"
+       controls
+       width="100%"
+       muted
+       playsinline>
+</video>
+-->
+
+In the meantime, the walkthrough plays inline inside the deployed app — click the **▶ Walkthrough** chip in the home navbar of the live site:
+
+<p align="center">
+  <a href="./public/Pearl-and-Loom-inline.html">
+    <img src="./public/favicon.svg" width="96" alt="▶ Watch the walkthrough" />
+  </a>
+  <br/>
+  <sub><strong>▶ Open the walkthrough on the live site</strong> &nbsp;·&nbsp; 90 s · narrated · embedded audio</sub>
+</p>
+
+> *(GitHub serves HTML files as plain text, so opening the file on github.com just shows the source. The walkthrough runs as expected once the project is deployed to Vercel — `https://<deploy>.vercel.app/Pearl-and-Loom-inline.html`. For a no-deploy preview, the htmlpreview proxy works too: `https://htmlpreview.github.io/?https://github.com/<owner>/<repo>/blob/main/public/Pearl-and-Loom-inline.html`.)*
 
 ---
 
