@@ -117,7 +117,7 @@ export function ProfileSetup() {
                   className={`ps-avatar${avatar === a ? " is-active" : ""}`}
                   title={t(AVATAR_LABEL_KEY[a] as never)}
                 >
-                  <AvatarToken avatar={a} size={64} />
+                  <AvatarToken avatar={a} size={52} />
                   <span className="ps-avatar-name">
                     {t(AVATAR_LABEL_KEY[a] as never)}
                   </span>
@@ -150,6 +150,8 @@ export function ProfileSetup() {
           justify-content: center;
           padding: 28px 18px;
           overflow-y: auto;
+          overflow-x: hidden;
+          -webkit-overflow-scrolling: touch;
         }
         .ps-card {
           width: min(540px, 100%);
@@ -164,6 +166,7 @@ export function ProfileSetup() {
             inset 0 0 60px rgba(232,163,61,0.06);
           backdrop-filter: blur(12px);
           animation: psRise 0.5s var(--ease-loom);
+          margin: auto;
         }
         @keyframes psRise {
           from { opacity: 0; transform: translateY(14px); }
@@ -348,19 +351,82 @@ export function ProfileSetup() {
           font-style: normal;
         }
 
-        @media (max-width: 480px) {
-          .ps-card {
-            padding: 22px 18px 22px;
-            border-radius: 22px;
+        /* Phone — kid-friendly card without overflow. The wave + title +
+           three fields + button must fit a 375px-wide / ~640px-tall
+           viewport without forcing the overlay to scroll, so every
+           dimension here is one notch smaller than desktop. */
+        @media (max-width: 640px) {
+          .ps-overlay {
+            padding: 12px 12px;
+            align-items: flex-start;
           }
-          .ps-grades {
+          .ps-card {
+            padding: 20px 16px 18px;
+            border-radius: 20px;
+            border-width: 1px;
+          }
+          .ps-header { margin-bottom: 14px; }
+          .ps-wave {
+            font-size: 28px;
+            margin-bottom: 4px;
+          }
+          .ps-title {
+            font-size: 20px !important;
+            line-height: 1.2;
+          }
+          .ps-subtitle {
+            margin-top: 4px;
+            font-size: 12px;
+          }
+          .ps-field { margin-top: 14px; }
+          .ps-label {
+            font-size: 11px;
+            margin-bottom: 8px;
             gap: 8px;
           }
+          .ps-step {
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+          }
+          .ps-input {
+            padding: 12px 16px;
+            font-size: 17px;
+          }
+          .ps-grades {
+            gap: 6px;
+          }
           .ps-grade {
-            font-size: 22px;
+            font-size: 17px;
+            border-width: 1px;
           }
           .ps-avatars {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+          }
+          .ps-avatar {
+            padding: 8px 4px 6px;
+            border-radius: 14px;
+            border-width: 1px;
+            gap: 4px;
+            font-size: 9px;
+            letter-spacing: 0.04em;
+          }
+          .ps-begin {
+            margin-top: 18px;
+            padding: 14px 18px;
+            font-size: 13px;
+            letter-spacing: 0.16em;
+          }
+        }
+        /* Very narrow phones (e.g. iPhone SE 320-360px) — drop avatars
+           to two columns so each tile has room to breathe. */
+        @media (max-width: 360px) {
+          .ps-avatars {
             grid-template-columns: repeat(2, 1fr);
+          }
+          .ps-grade {
+            font-size: 15px;
           }
         }
       `}</style>
