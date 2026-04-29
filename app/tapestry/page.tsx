@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useProgress } from "@/lib/store/progress";
@@ -10,6 +11,7 @@ import { TAPESTRY_25, TAPESTRY_TOTAL_ROWS } from "@/lib/tapestry/composition";
 import { MOTIF_COMPONENTS, MOTIF_REGISTRY } from "@/components/motifs";
 import { buildTapestryPng, downloadBlob } from "@/lib/tapestry/exportPng";
 import { buildCertificatePng } from "@/lib/tapestry/buildCertificate";
+import { SaduSeal } from "@/components/ui/SaduSeal";
 import { playCue } from "@/lib/audio/cues";
 import { PEARL_TIERS } from "@/lib/pearl/colors";
 import { useSettings } from "@/lib/store/settings";
@@ -18,11 +20,17 @@ export default function TapestryFullPageWrapper() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-dvh items-center justify-center bg-charcoal">
-          <div
-            className="h-8 w-8 animate-pulse rounded-full bg-saffron/40"
-            aria-hidden
-          />
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "var(--charcoal, #2A2522)",
+          }}
+        >
+          <SaduSeal size={96} theme="loom" caption="Weaving" />
         </div>
       }
     >
@@ -272,7 +280,7 @@ function TapestryFullPage() {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            gap: 20,
+            gap: 16,
             overflow: "hidden",
           }}
         >
@@ -300,11 +308,38 @@ function TapestryFullPage() {
               {TAPESTRY_25.slice(0, wovenCount).map((row, i) => {
                 const Motif = MOTIF_COMPONENTS[row.motif];
                 if (!Motif) return null;
+                // Each row weaves in left-to-right via clip-path with a
+                // ~50ms stagger from oldest (bottom) → newest (top).
+                // The pearl bead pops in after its row finishes
+                // weaving — like a finishing bead added by hand. flex
+                // direction is column-reverse so DOM index 0 is the
+                // bottom (oldest) row, which is exactly the order we
+                // want the weave-in to fire.
+                const baseDelay = 0.06 * i;
                 return (
-                  <div key={i} style={{ position: "relative", height: 22 }}>
+                  <motion.div
+                    key={i}
+                    initial={{ clipPath: "inset(0 100% 0 0)", opacity: 0.4 }}
+                    animate={{ clipPath: "inset(0 0% 0 0)", opacity: 1 }}
+                    transition={{
+                      delay: baseDelay,
+                      duration: 0.42,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    style={{ position: "relative", height: 22 }}
+                  >
                     <Motif {...row.palette} w="100%" h="100%" />
                     {row.pearl && (
-                      <div
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{
+                          delay: baseDelay + 0.32,
+                          duration: 0.45,
+                          type: "spring",
+                          damping: 12,
+                          stiffness: 280,
+                        }}
                         style={{
                           position: "absolute",
                           top: "50%",
@@ -319,7 +354,7 @@ function TapestryFullPage() {
                         }}
                       />
                     )}
-                  </div>
+                  </motion.div>
                 );
               })}
               {Array.from({ length: TAPESTRY_TOTAL_ROWS - wovenCount }).map((_, i) => (

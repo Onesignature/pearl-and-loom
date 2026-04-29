@@ -1,10 +1,13 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useProgress } from "@/lib/store/progress";
 import { TopChrome } from "@/components/layout/TopChrome";
+import { SaduSeal } from "@/components/ui/SaduSeal";
+import { TitleReveal } from "@/components/ui/TitleReveal";
 import type { PearlGrade } from "@/lib/store/progress";
 
 const TIERS: PearlGrade[] = ["common", "fine", "royal"];
@@ -24,8 +27,18 @@ export default function PearlRevealPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-dvh items-center justify-center bg-sea-abyss">
-          <div className="h-8 w-8 animate-pulse rounded-full bg-sunset-gold/40" aria-hidden />
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background:
+              "radial-gradient(ellipse 80% 80% at 50% 50%, #1B2D5C 0%, #051E2C 60%, #000 100%)",
+          }}
+        >
+          <SaduSeal size={96} theme="sea" caption="Surfacing" />
         </div>
       }
     >
@@ -268,8 +281,12 @@ function PearlHero({ tier }: { tier: PearlGrade }) {
     >
       {/* Tier label */}
       <div className="pearl-hero-label">
-        <div
+        <TitleReveal
+          as="div"
           className="font-display pearl-hero-label-en"
+          text={t(labelKey).toUpperCase()}
+          stagger={0.05}
+          delay={0.85}
           style={{
             color:
               tier === "royal"
@@ -279,9 +296,7 @@ function PearlHero({ tier }: { tier: PearlGrade }) {
                   : "#F4EBDC",
             textShadow: `0 0 18px ${colors.glow}`,
           }}
-        >
-          {t(labelKey).toUpperCase()}
-        </div>
+        />
         {lang !== "ar" && (
           <div className="pearl-hero-label-ar">
             {tier === "royal" ? "لؤلؤة ملكية" : tier === "fine" ? "لؤلؤة نفيسة" : "لؤلؤة عادية"}
@@ -371,6 +386,38 @@ function PearlHero({ tier }: { tier: PearlGrade }) {
         </g>
       </svg>
 
+      {/* Light burst — fires once when the oyster opens. A radial flare
+          expands and fades in ~1.4s. */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="burst"
+            aria-hidden
+            initial={{ opacity: 0, scale: 0.55 }}
+            animate={{ opacity: [0, 0.95, 0], scale: [0.55, 2.4, 3.4] }}
+            transition={{
+              duration: 1.6,
+              ease: [0.22, 1, 0.36, 1],
+              times: [0, 0.32, 1],
+            }}
+            style={{
+              position: "absolute",
+              top: "55%",
+              left: "50%",
+              translateX: "-50%",
+              translateY: "-50%",
+              width: 220,
+              height: 220,
+              borderRadius: "50%",
+              background: `radial-gradient(circle, ${colors.glow} 0%, ${colors.glow} 18%, transparent 60%)`,
+              pointerEvents: "none",
+              zIndex: 4,
+              mixBlendMode: "screen",
+            }}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Pearl rises from inside — single clean orb with one highlight */}
       <div
         className="pearl-hero-orb-wrap"
@@ -389,9 +436,33 @@ function PearlHero({ tier }: { tier: PearlGrade }) {
         <div className="pearl-hero-orb-highlight" aria-hidden />
       </div>
 
-      {/* Stars */}
+      {/* Stars — stagger-revealed after the pearl settles. Five total;
+          filled stars first, hollow stars last. */}
       <div className="pearl-hero-stars">
-        {"★".repeat(stars) + "☆".repeat(5 - stars)}
+        {Array.from({ length: 5 }).map((_, i) => {
+          const filled = i < stars;
+          return (
+            <motion.span
+              key={i}
+              initial={{ opacity: 0, y: 6, scale: 0.7 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{
+                delay: 1.55 + i * 0.09,
+                duration: 0.45,
+                type: "spring",
+                damping: 14,
+                stiffness: 260,
+              }}
+              style={{
+                display: "inline-block",
+                color: filled ? colors.rim : "rgba(255,255,255,0.32)",
+                textShadow: filled ? `0 0 10px ${colors.glow}` : "none",
+              }}
+            >
+              {filled ? "★" : "☆"}
+            </motion.span>
+          );
+        })}
       </div>
 
       <style>{`
@@ -407,8 +478,6 @@ function PearlHero({ tier }: { tier: PearlGrade }) {
           font-size: 24px;
           letter-spacing: 0.3em;
           line-height: 1;
-          animation: pearlLabelIn 0.6s var(--ease-pearl, cubic-bezier(0.22,1,0.36,1)) both;
-          animation-delay: 0.3s;
         }
         .pearl-hero-label-ar {
           font-size: 12px;

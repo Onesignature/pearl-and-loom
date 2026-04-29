@@ -11,6 +11,7 @@ import { CharacterChoice } from "@/components/home/CharacterChoice";
 import { HeirloomFooter } from "@/components/home/HeirloomFooter";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { ProfileSetup } from "@/components/onboarding/ProfileSetup";
+import { TitleReveal } from "@/components/ui/TitleReveal";
 
 const subscribeHydration = (cb: () => void) =>
   useSettings.persist.onFinishHydration(cb);
@@ -97,9 +98,21 @@ function LanguageSplash() {
             <img src="/favicon.svg" alt="" width={88} height={88} />
           </div>
           <div className="splash-eyebrow">Abu Dhabi · 1948</div>
-          <h1 className="splash-title">The Pearl and the Loom</h1>
+          <TitleReveal
+            as="h1"
+            className="splash-title"
+            text="The Pearl and the Loom"
+            stagger={0.045}
+            delay={0.25}
+          />
           <p className="splash-title-ar" lang="ar" dir="rtl">
-            اللؤلؤة والنَّول
+            <TitleReveal
+              text="اللؤلؤة والنَّول"
+              stagger={0.07}
+              delay={0.95}
+              block={false}
+              ariaLabel="اللؤلؤة والنَّول"
+            />
           </p>
           <div className="splash-thesis">
             A family story, woven row by row · حكاية عائلة، تُنسَج صفًّا بعد صف
