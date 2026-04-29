@@ -35,6 +35,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/", labelEn: "Family Tent", labelAr: "خيمة العائلة", glyph: "◇" },
   { href: "/loom", labelEn: "Layla's Loom", labelAr: "نَول ليلى", glyph: "▦" },
   { href: "/sea", labelEn: "Saif's Sea", labelAr: "بحر سيف", glyph: "≈" },
+  { href: "/forge", labelEn: "The Forge", labelAr: "المسبك", glyph: "✦" },
   { href: "/leaderboard", labelEn: "Leaderboard", labelAr: "لوحة الصدارة", glyph: "🏆" },
 ];
 

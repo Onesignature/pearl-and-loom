@@ -5,6 +5,7 @@
 // unlockAchievement for any newly-met milestone, then surfaces a toast.
 
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { useProgress } from "@/lib/store/progress";
 import { useSettings } from "@/lib/store/settings";
 import { ACHIEVEMENTS, type AchievementDef } from "@/lib/achievements/registry";
@@ -62,6 +63,15 @@ export function AchievementWatcher() {
     };
   }, []);
 
-  if (!toast) return null;
-  return <UnlockToast achievement={toast} onDismiss={() => setToast(null)} />;
+  return (
+    <AnimatePresence>
+      {toast && (
+        <UnlockToast
+          key={toast.id}
+          achievement={toast}
+          onDismiss={() => setToast(null)}
+        />
+      )}
+    </AnimatePresence>
+  );
 }

@@ -143,13 +143,16 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     motif: "shajarah",
     titleEn: "The Heirloom Complete",
     titleAr: "الإرث مكتمل",
-    taglineEn: "Twenty-five rows + a chest of pearls",
-    taglineAr: "خمسة وعشرون صفًّا وصندوق لؤلؤ",
+    taglineEn: "Five lessons woven · pearls in the chest",
+    taglineAr: "خمسة دروس مَنسوجة · لؤلؤ في الصندوق",
     noteEn:
       "A finished tapestry was wrapped around the bride's mother's hand and passed down — the family memory in cloth.",
     noteAr: "النسيج التام يُلفّ حول يد الأم ويُورَّث — ذاكرة العائلة في القماش.",
+    // Trigger when the kid has woven the full 5-lesson Layla curriculum
+    // AND brought home at least three pearls from Saif's dives. Gates the
+    // HeirloomCeremony modal + the /tapestry Certificate button.
     check: (s) =>
-      s.ops.filter((o) => o.kind !== "bead").length >= 25 && s.pearls.length >= 12,
+      s.loomLessonsCompleted.length >= 5 && s.pearls.length >= 3,
   },
   {
     id: "laylas_apprentice",

@@ -5,7 +5,15 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useProgress } from "@/lib/store/progress";
 import { LessonShell, ProblemCard } from "./LessonShell";
+import { LessonSaduPreview } from "./LessonSaduPreview";
 import { playCue } from "@/lib/audio/cues";
+import type { PatternOp } from "@/lib/pattern-engine/types";
+
+const PLANNED_OP: PatternOp = {
+  kind: "symmetry",
+  axis: "vertical",
+  lessonId: "symmetry",
+};
 
 const COLS = 8;
 const ROWS = 4;
@@ -45,7 +53,7 @@ export function SymmetryLesson() {
     if (!isCorrect) return;
     setCelebrating(true);
     playCue("loom.thump");
-    completeLoomLesson("symmetry", { kind: "symmetry", axis: "vertical", lessonId: "symmetry" });
+    completeLoomLesson("symmetry", PLANNED_OP);
     setTimeout(() => router.push("/loom/weave"), 1400);
   }
 
@@ -121,6 +129,9 @@ export function SymmetryLesson() {
             </span>
           )}
         </div>
+      </div>
+      <div className="lesson-preview-row">
+        <LessonSaduPreview plannedOp={PLANNED_OP} locked={isCorrect} />
       </div>
     </LessonShell>
   );

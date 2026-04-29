@@ -5,8 +5,17 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useProgress } from "@/lib/store/progress";
 import { LessonShell, ProblemCard } from "./LessonShell";
+import { LessonSaduPreview } from "./LessonSaduPreview";
 import { MotifMthalath } from "@/components/motifs";
 import { playCue } from "@/lib/audio/cues";
+import type { PatternOp } from "@/lib/pattern-engine/types";
+
+const PLANNED_OP: PatternOp = {
+  kind: "tessellation",
+  motif: "mthalath",
+  tilesPerRow: 14,
+  lessonId: "tessellation",
+};
 
 interface Option {
   id: "tri60" | "pent" | "tri90";
@@ -43,12 +52,7 @@ export function TessellationLesson() {
   function onCta() {
     if (!picked?.correct) return;
     playCue("loom.thump");
-    completeLoomLesson("tessellation", {
-      kind: "tessellation",
-      motif: "mthalath",
-      tilesPerRow: 14,
-      lessonId: "tessellation",
-    });
+    completeLoomLesson("tessellation", PLANNED_OP);
     router.push("/loom/weave");
   }
 
@@ -186,6 +190,9 @@ export function TessellationLesson() {
             )}
           </div>
         </div>
+      </div>
+      <div className="lesson-preview-row">
+        <LessonSaduPreview plannedOp={PLANNED_OP} locked={picked?.correct === true} />
       </div>
       <style>{`
         .tess-option {

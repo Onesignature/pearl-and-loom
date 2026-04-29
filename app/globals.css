@@ -216,10 +216,10 @@ input:focus-visible,
    + inputs soften so they feel tappable without losing the dignified
    museum-quality language. */
 button,
-.tap-btn, .braid-btn, .souk-btn, .dive-btn, .weave-cta, .surface-btn,
+.tap-btn, .braid-btn, .dive-btn, .weave-cta, .surface-btn,
 .anim-btn, .reveal-btn, .back-btn, .ceremony-save, .ceremony-close,
 .onb-back, .onb-next, .splash-btn, .stone-btn, .seed-copy,
-.ans-btn, .ang-btn, .tess-option, .dim-btn, .item-buy, .item-owned {
+.ans-btn, .ang-btn, .tess-option, .dim-btn {
   border-radius: var(--radius-btn);
 }
 .home-chip, .chrome-btn, .mnav-trigger, .mnav-close, .mnav-item {

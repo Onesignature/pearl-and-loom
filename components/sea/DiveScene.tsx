@@ -35,7 +35,7 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
   const completeDiveLesson = useProgress((s) => s.completeDiveLesson);
   const collectPearl = useProgress((s) => s.collectPearl);
 
-  // Starting breath — fixed now that the souk's noseclip-extension is gone.
+  // Starting breath — every dive begins at full lung capacity.
   const startingBreath = 100;
   const [breath, setBreath] = useState(startingBreath);
   const [depth, setDepth] = useState(0);
@@ -56,7 +56,7 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
     }
   }, [breath, depth, answered]);
 
-  // Move toward target — fixed descent rate now that the diveen stone is gone.
+  // Move toward target depth — constant descent rate.
   useEffect(() => {
     if (target == null || depth === target) return;
     const step = 0.3;
@@ -1038,24 +1038,7 @@ function ProblemOverlay({
   const { t, fmt, lang } = useI18n();
   const locked = !!answered;
   return (
-    <div
-      className="dive-problem-card"
-      style={{
-        position: "absolute",
-        insetInlineStart: "50%",
-        top: "50%",
-        transform: "translate(-50%, -50%)",
-        width: "min(540px, calc(100vw - 32px))",
-        maxHeight: "calc(100dvh - 160px)",
-        overflowY: "auto",
-        padding: "clamp(18px, 4vw, 32px) clamp(18px, 4vw, 32px) 0",
-        background: "rgba(8,55,74,0.55)",
-        border: "1px solid rgba(244,184,96,0.4)",
-        backdropFilter: "blur(20px) saturate(140%)",
-        boxShadow:
-          "0 30px 80px rgba(0,0,0,0.5), inset 0 0 40px rgba(244,184,96,0.08)",
-      }}
-    >
+    <div className="dive-problem-card">
       <div
         className="font-display"
         style={{
@@ -1068,12 +1051,12 @@ function ProblemOverlay({
         {problem.trialLabel} · {fmt(Math.round(breath))}% {t("dive.breath")}
       </div>
       <div
+        className="dive-question-text"
         style={{
           fontFamily:
             lang === "ar"
               ? "var(--font-tajawal), sans-serif"
               : "var(--font-cormorant), serif",
-          fontSize: 24,
           color: "var(--foam)",
           marginTop: 14,
           lineHeight: 1.4,
@@ -1087,7 +1070,7 @@ function ProblemOverlay({
           (buoyancy column / pressure compression / oyster filter feed /
           breath rhythm / refracting light) so the kid has a concrete
           picture to anchor the question to. */}
-      <div style={{ marginTop: 16, display: "flex", justifyContent: "center" }}>
+      <div className="dive-concept-row">
         <DiveConceptVisual
           diveKey={diveKey}
           depth={problem.depth}
@@ -1095,14 +1078,7 @@ function ProblemOverlay({
         />
       </div>
 
-      <div
-        style={{
-          marginTop: 20,
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 10,
-        }}
-      >
+      <div className="dive-options">
         {problem.options.map((opt, i) => {
           const isCorrect = i === problem.answer;
           const isPicked = answered?.idx === i;
@@ -1185,16 +1161,7 @@ function ProblemOverlay({
         </div>
       )}
 
-      <div
-        className="ltr-internal"
-        style={{
-          marginTop: 26,
-          height: 18,
-          marginInline: -32,
-          marginBottom: 0,
-          display: "flex",
-        }}
-      >
+      <div className="dive-card-chevron-strip ltr-internal">
         {Array.from({ length: 12 }).map((_, i) => (
           <div key={i} style={{ flex: 1 }}>
             <MotifChevron
@@ -1208,6 +1175,52 @@ function ProblemOverlay({
       </div>
 
       <style>{`
+        .dive-problem-card {
+          position: absolute;
+          inset-inline-start: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: min(540px, calc(100vw - 24px));
+          max-height: calc(100dvh - 140px);
+          overflow-y: auto;
+          /* Symmetric padding all around so the chevron strip can use a
+             matching negative inline margin without overflowing the card.
+             Kept lean on phone (14px), generous on desktop (32px). */
+          padding: clamp(14px, 4vw, 32px);
+          padding-bottom: 0;
+          background: rgba(8,55,74,0.55);
+          border: 1px solid rgba(244,184,96,0.4);
+          backdrop-filter: blur(20px) saturate(140%);
+          box-shadow:
+            0 30px 80px rgba(0,0,0,0.5),
+            inset 0 0 40px rgba(244,184,96,0.08);
+        }
+        .dive-question-text {
+          /* Scales with viewport so long questions don't blow out small
+             phones, but reads cleanly at 24px on desktop. */
+          font-size: clamp(17px, 4.4vw, 24px);
+        }
+        .dive-concept-row {
+          margin-top: 16px;
+          display: flex;
+          justify-content: center;
+        }
+        .dive-options {
+          margin-top: 20px;
+          display: grid;
+          /* auto-fit + minmax so options collapse to one column whenever
+             the card is too narrow for two side-by-side. Avoids the
+             "answer text wraps to 4 lines per option" problem on phones. */
+          grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+          gap: 10px;
+        }
+        .dive-card-chevron-strip {
+          margin-top: 26px;
+          height: 18px;
+          margin-inline: calc(-1 * clamp(14px, 4vw, 32px));
+          margin-bottom: 0;
+          display: flex;
+        }
         .answer-btn {
           padding: 14px 18px;
           background: rgba(240,244,242,0.06);
@@ -1222,10 +1235,20 @@ function ProblemOverlay({
           display: inline-flex;
           align-items: center;
           line-height: 1.35;
+          /* Block iOS Safari's grey tap-flash so the locked is-correct /
+             is-wrong colours stay readable when tapped. */
+          -webkit-tap-highlight-color: transparent;
         }
-        .answer-btn:not(:disabled):hover {
-          background: rgba(244,184,96,0.18);
-          border-color: var(--sunset-gold);
+        /* Only apply the gold "live" hover state on devices that can
+           actually hover (mouse / trackpad). Touch devices emulate :hover
+           after a tap and leave the button visually highlighted until the
+           next tap elsewhere — which made the dive question read as if a
+           random answer was selected. */
+        @media (hover: hover) and (pointer: fine) {
+          .answer-btn:not(:disabled):hover {
+            background: rgba(244,184,96,0.18);
+            border-color: var(--sunset-gold);
+          }
         }
         .answer-btn-letter {
           width: 30px;

@@ -9,14 +9,23 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useProgress } from "@/lib/store/progress";
 import { LessonShell, ProblemCard } from "./LessonShell";
+import { LessonSaduPreview } from "./LessonSaduPreview";
 import { MotifMthalath } from "@/components/motifs";
 import { playCue } from "@/lib/audio/cues";
+import type { PatternOp } from "@/lib/pattern-engine/types";
 
 const TARGET_ROWS = 4;
 const TARGET_COLS = 6;
 const TARGET_PRODUCT = TARGET_ROWS * TARGET_COLS;
 const MIN_DIM = 2;
 const MAX_DIM = 8;
+
+const PLANNED_OP: PatternOp = {
+  kind: "arrays",
+  rows: TARGET_ROWS,
+  cols: TARGET_COLS,
+  lessonId: "arrays",
+};
 
 export function ArraysLesson() {
   const router = useRouter();
@@ -36,27 +45,18 @@ export function ArraysLesson() {
     if (!allCorrect || celebrating) return;
     setCelebrating(true);
     playCue("loom.thump");
-    completeLoomLesson("arrays", {
-      kind: "arrays",
-      rows: TARGET_ROWS,
-      cols: TARGET_COLS,
-      lessonId: "arrays",
-    });
+    completeLoomLesson("arrays", PLANNED_OP);
     setTimeout(() => router.push("/loom/weave"), 1400);
   }
 
   const question =
     lang === "en"
-      ? `Layla wants to weave ${fmt(TARGET_ROWS)} rows of ${fmt(TARGET_COLS)} motifs. Set the dimensions, then count the total.`
-      : `تريد ليلى نسج ${fmt(TARGET_ROWS)} صفوف من ${fmt(TARGET_COLS)} زخارف. اضبط الأبعاد واحسب المجموع.`;
+      ? `Make a ${fmt(TARGET_ROWS)} × ${fmt(TARGET_COLS)} array, then count the motifs.`
+      : `اصنع مصفوفة ${fmt(TARGET_ROWS)} × ${fmt(TARGET_COLS)}، ثم احسب الزخارف.`;
   const hint =
     lang === "en"
       ? "Multiplication is just patterned counting — the array makes that visible."
       : "الضرب ما هو إلا عدّ منمَّط — المصفوفة تجعل ذلك مرئيًا.";
-  const sadu =
-    lang === "en"
-      ? "A weaver counts threads in pairs of warp and weft — every cell of cloth is a small multiplication kept by hand."
-      : "تحسب النسّاجة الخيوط بأزواج من السدى واللُّحمة — كل خلية من القماش ضربٌ صغير محفوظ باليد.";
 
   const ctaLabel = celebrating
     ? t("loom.woven")
@@ -71,7 +71,6 @@ export function ArraysLesson() {
       <ProblemCard
         question={question}
         hint={hint}
-        saduNote={sadu}
         ctaLabel={ctaLabel}
         ctaDisabled={!allCorrect || celebrating}
         onCta={weave}
@@ -167,6 +166,9 @@ export function ArraysLesson() {
             </div>
           ))}
         </div>
+      </div>
+      <div className="lesson-preview-row">
+        <LessonSaduPreview plannedOp={PLANNED_OP} locked={allCorrect} />
       </div>
       <style>{`
         @keyframes arraysCellIn {

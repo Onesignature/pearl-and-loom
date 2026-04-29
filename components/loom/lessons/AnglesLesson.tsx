@@ -9,8 +9,15 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useProgress } from "@/lib/store/progress";
 import { LessonShell, ProblemCard } from "./LessonShell";
+import { LessonSaduPreview } from "./LessonSaduPreview";
 import { playCue } from "@/lib/audio/cues";
-import type { Rotation } from "@/lib/pattern-engine/types";
+import type { PatternOp, Rotation } from "@/lib/pattern-engine/types";
+
+const PLANNED_OP: PatternOp = {
+  kind: "angles",
+  rotation: 60,
+  lessonId: "angles",
+};
 
 const OPTIONS: { angle: Rotation; correct: boolean }[] = [
   { angle: 60, correct: true },
@@ -32,11 +39,7 @@ export function AnglesLesson() {
     if (!correct || celebrating) return;
     setCelebrating(true);
     playCue("loom.thump");
-    completeLoomLesson("angles", {
-      kind: "angles",
-      rotation: 60,
-      lessonId: "angles",
-    });
+    completeLoomLesson("angles", PLANNED_OP);
     setTimeout(() => router.push("/loom/weave"), 1400);
   }
 
@@ -189,6 +192,9 @@ export function AnglesLesson() {
               ? lang === "en" ? "✓ Tiles cleanly" : "✓ يبلِّط بلا فجوات"
               : lang === "en" ? "Leaves gaps" : "يترك فجوات"}
         </div>
+      </div>
+      <div className="lesson-preview-row">
+        <LessonSaduPreview plannedOp={PLANNED_OP} locked={correct} />
       </div>
     </LessonShell>
   );

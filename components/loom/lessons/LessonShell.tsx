@@ -46,6 +46,17 @@ export function LessonShell({ titleKey, index, children }: LessonShellProps) {
         /* Belt-and-suspenders — never let a wide child blow out the
            viewport on phone. Every flex child is allowed to shrink. */
         .lesson-stage > * { min-width: 0; max-width: 100%; }
+        /* Bottom-row preview — full width under the problem + puzzle
+           pair on web, flowing inline on phone (where everything is
+           already a single column). */
+        .lesson-preview-row {
+          flex-basis: 100%;
+          width: 100%;
+          max-width: 1080px;
+          margin: 0 auto;
+          padding-top: 6px;
+          border-top: 1px solid rgba(232, 163, 61, 0.18);
+        }
         @media (max-width: 640px) {
           .lesson-stage {
             align-items: flex-start !important;
@@ -59,6 +70,10 @@ export function LessonShell({ titleKey, index, children }: LessonShellProps) {
           .lesson-stage > * {
             flex-basis: 100% !important;
           }
+          .lesson-preview-row {
+            border-top: none;
+            padding-top: 0;
+          }
         }
       `}</style>
     </TentScene>
@@ -69,7 +84,10 @@ interface ProblemCardProps {
   problemNumber?: { current: number; total: number };
   question: string;
   hint?: string;
-  saduNote: string;
+  /** Optional Bedouin / Sadu cultural note. Omit on lessons whose card
+   *  would otherwise push past the viewport on desktop (e.g. the Arrays
+   *  lesson, which already has 3 stacked dimension controls). */
+  saduNote?: string;
   ctaLabel: string;
   ctaDisabled?: boolean;
   onCta?: () => void;
@@ -89,10 +107,11 @@ export function ProblemCard({
   const { t, fmt, lang } = useI18n();
   return (
     <div
-      className="paper-bg"
+      className="paper-bg lesson-problem-card"
       style={{
-        flex: "0 1 360px",
+        flex: "1 1 460px",
         minWidth: "min(100%, 280px)",
+        maxWidth: 560,
         padding: "clamp(20px, 2.5vw, 32px)",
       }}
     >
@@ -137,27 +156,29 @@ export function ProblemCard({
         </div>
       )}
       {children}
-      <div
-        style={{
-          marginTop: 20,
-          padding: "10px 14px",
-          background: "rgba(27,45,92,0.08)",
-          borderInlineStart: "3px solid var(--indigo)",
-        }}
-      >
+      {saduNote && (
         <div
           style={{
-            fontSize: 10,
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-            color: "var(--indigo)",
-            marginBottom: 4,
+            marginTop: 20,
+            padding: "10px 14px",
+            background: "rgba(27,45,92,0.08)",
+            borderInlineStart: "3px solid var(--indigo)",
           }}
         >
-          {t("loom.saduNote")}
+          <div
+            style={{
+              fontSize: 10,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "var(--indigo)",
+              marginBottom: 4,
+            }}
+          >
+            {t("loom.saduNote")}
+          </div>
+          <div style={{ fontSize: 12, color: "var(--ink)", lineHeight: 1.5 }}>{saduNote}</div>
         </div>
-        <div style={{ fontSize: 12, color: "var(--ink)", lineHeight: 1.5 }}>{saduNote}</div>
-      </div>
+      )}
       <button
         onClick={onCta}
         disabled={ctaDisabled}

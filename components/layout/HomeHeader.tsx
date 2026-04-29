@@ -95,6 +95,14 @@ export function HomeHeader() {
             <span aria-hidden style={{ marginInlineEnd: 6 }}>🏆</span>
             <span>{lang === "en" ? "Leaderboard" : "الصدارة"}</span>
           </Link>
+          <Link
+            href="/forge"
+            className="hp-chip hp-chip--forge"
+            title={lang === "en" ? "The Forge — pattern engine playground" : "المسبك — محرّك الزخارف الحيّ"}
+          >
+            <span aria-hidden style={{ marginInlineEnd: 6 }}>✦</span>
+            <span>{lang === "en" ? "Forge" : "المسبك"}</span>
+          </Link>
           <HelpPopover
             onOpenWalkthrough={() => setWalkthroughOpen(true)}
             onOpenTutorial={() => setTutorialOpen(true)}
@@ -171,6 +179,49 @@ export function HomeHeader() {
           box-shadow:
             inset 0 1px 0 rgba(255,238,210,0.65),
             0 8px 24px rgba(232,163,61,0.45);
+        }
+        /* The Forge chip is the home header's "look at this thing" — it
+           points at the live pattern engine, the technical centerpiece
+           of the project. Saffron-tinted background + a slow ambient
+           pulse so judges scanning the chip row notice it without it
+           reading as a primary CTA. Pulse stops on hover and respects
+           prefers-reduced-motion. */
+        .hp-chip--forge {
+          background:
+            linear-gradient(180deg, rgba(232,163,61,0.32) 0%, rgba(181,120,40,0.22) 100%);
+          border-color: rgba(244,200,90,0.85);
+          color: var(--saffron-soft);
+          box-shadow:
+            inset 0 1px 0 rgba(255,238,210,0.18),
+            0 4px 14px rgba(232,163,61,0.22),
+            0 0 0 0 rgba(244,200,90,0.55);
+          animation: forgeChipPulse 3.4s ease-in-out infinite;
+        }
+        .hp-chip--forge:hover {
+          background:
+            linear-gradient(180deg, rgba(244,200,90,0.45) 0%, rgba(232,163,61,0.32) 100%);
+          border-color: var(--saffron);
+          box-shadow:
+            inset 0 1px 0 rgba(255,238,210,0.28),
+            0 8px 22px rgba(232,163,61,0.4);
+          animation: none;
+        }
+        @keyframes forgeChipPulse {
+          0%, 100% {
+            box-shadow:
+              inset 0 1px 0 rgba(255,238,210,0.18),
+              0 4px 14px rgba(232,163,61,0.22),
+              0 0 0 0 rgba(244,200,90,0);
+          }
+          50% {
+            box-shadow:
+              inset 0 1px 0 rgba(255,238,210,0.22),
+              0 6px 18px rgba(232,163,61,0.32),
+              0 0 0 6px rgba(244,200,90,0.18);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hp-chip--forge { animation: none; }
         }
 
         .hp-pop {

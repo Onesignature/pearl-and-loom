@@ -2,8 +2,11 @@
 
 // Brass-banner toast that slides down from the top of the viewport when an
 // achievement unlocks, plays its motif, and self-dismisses after 3.5 s.
+// Framer-motion drives the enter/exit transition so the toast eases out
+// gracefully on tap (or auto-dismiss) rather than disappearing instantly.
 
 import { useEffect } from "react";
+import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n/provider";
 import { MOTIF_COMPONENTS } from "@/components/motifs";
 import type { AchievementDef } from "@/lib/achievements/registry";
@@ -23,11 +26,15 @@ export function UnlockToast({ achievement, onDismiss }: Props) {
   }, [onDismiss]);
 
   return (
-    <div
+    <motion.div
       role="status"
       aria-live="polite"
       className="ach-toast"
       onClick={onDismiss}
+      initial={{ opacity: 0, y: -64 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -64, transition: { duration: 0.32 } }}
+      transition={{ type: "spring", damping: 18, stiffness: 220 }}
     >
       <div className="ach-toast-motif" aria-hidden>
         {Motif ? (
@@ -49,8 +56,9 @@ export function UnlockToast({ achievement, onDismiss }: Props) {
         .ach-toast {
           position: fixed;
           top: 24px;
-          left: 50%;
-          transform: translateX(-50%);
+          left: 0;
+          right: 0;
+          margin-inline: auto;
           z-index: 200;
           display: flex;
           align-items: center;
@@ -65,13 +73,7 @@ export function UnlockToast({ achievement, onDismiss }: Props) {
             0 18px 48px rgba(0,0,0,0.55),
             inset 0 0 30px rgba(232,163,61,0.12);
           cursor: pointer;
-          animation: achSlide 0.5s var(--ease-loom);
           font-family: var(--font-tajawal), sans-serif;
-        }
-        @keyframes achSlide {
-          0% { opacity: 0; transform: translate(-50%, -120%); }
-          70% { opacity: 1; transform: translate(-50%, 6%); }
-          100% { opacity: 1; transform: translate(-50%, 0); }
         }
         .ach-toast-motif {
           flex: 0 0 auto;
@@ -103,6 +105,6 @@ export function UnlockToast({ achievement, onDismiss }: Props) {
           margin-top: 2px;
         }
       `}</style>
-    </div>
+    </motion.div>
   );
 }

@@ -113,16 +113,27 @@ describe("ACHIEVEMENT predicates", () => {
     expect(s7.check(withOverrides({ streak: 7 }))).toBe(true);
   });
 
-  it("heirloom_complete requires 25 non-bead rows AND 12 pearls", () => {
+  it("heirloom_complete requires all 5 loom lessons AND 3+ pearls", () => {
     const def = ACHIEVEMENT_BY_ID.heirloom_complete;
-    const ops = Array.from({ length: 25 }, () => ({ kind: "tessellation" }));
-    const pearls = Array.from({ length: 12 }, () => ({
+    const fiveLessons = ["symmetry", "fractions", "tessellation", "arrays", "angles"];
+    const fourLessons = fiveLessons.slice(0, 4);
+    const threePearls = Array.from({ length: 3 }, () => ({
       grade: "common" as const,
       diveId: "shallowBank",
     }));
-    expect(def.check(withOverrides({ ops, pearls: [] }))).toBe(false);
-    expect(def.check(withOverrides({ ops: [], pearls }))).toBe(false);
-    expect(def.check(withOverrides({ ops, pearls }))).toBe(true);
+    const twoPearls = threePearls.slice(0, 2);
+    // Need both: 5 lessons alone is not enough.
+    expect(
+      def.check(withOverrides({ loomLessonsCompleted: fiveLessons, pearls: twoPearls })),
+    ).toBe(false);
+    // Pearls alone is not enough.
+    expect(
+      def.check(withOverrides({ loomLessonsCompleted: fourLessons, pearls: threePearls })),
+    ).toBe(false);
+    // Both gates met → fires.
+    expect(
+      def.check(withOverrides({ loomLessonsCompleted: fiveLessons, pearls: threePearls })),
+    ).toBe(true);
   });
 
   it("laylas_apprentice fires at quiz score 4/5 or better", () => {

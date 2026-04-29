@@ -5,7 +5,16 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useProgress } from "@/lib/store/progress";
 import { LessonShell, ProblemCard } from "./LessonShell";
+import { LessonSaduPreview } from "./LessonSaduPreview";
 import { playCue } from "@/lib/audio/cues";
+import type { PatternOp } from "@/lib/pattern-engine/types";
+
+const PLANNED_OP: PatternOp = {
+  kind: "fraction",
+  numerator: 3,
+  denominator: 8,
+  lessonId: "fractions",
+};
 
 export function FractionsLesson() {
   const router = useRouter();
@@ -27,12 +36,7 @@ export function FractionsLesson() {
       return;
     }
     playCue("loom.thump");
-    completeLoomLesson("fractions", {
-      kind: "fraction",
-      numerator: 3,
-      denominator: 8,
-      lessonId: "fractions",
-    });
+    completeLoomLesson("fractions", PLANNED_OP);
     router.push("/loom/weave");
   }
 
@@ -132,6 +136,9 @@ export function FractionsLesson() {
           target={6}
           label={lang === "en" ? `16 cells — color 6` : `١٦ خلية — لوّن ٦`}
         />
+      </div>
+      <div className="lesson-preview-row">
+        <LessonSaduPreview plannedOp={PLANNED_OP} locked={both} />
       </div>
     </LessonShell>
   );
