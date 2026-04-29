@@ -75,9 +75,7 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
       !problem &&
       !answered
     ) {
-      // Setting state in an effect is the right pattern here: `problem`
-      // persists after the trigger conditions stop holding (e.g. once
-      // answered) so it can't be derived purely from props.
+      // `problem` must persist after the arrival window closes; can't be derived from props alone.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setProblem(problemFor(target, lang));
     }

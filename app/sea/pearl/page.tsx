@@ -44,6 +44,7 @@ function PearlReveal() {
         transparent
       />
       <div
+        className="pearl-scroll"
         style={{
           position: "absolute",
           inset: 0,
@@ -110,6 +111,17 @@ function PearlReveal() {
       </div>
 
       <style>{`
+        @media (max-width: 900px) {
+          .pearl-scroll {
+            justify-content: flex-start !important;
+            padding-top: 124px !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .pearl-scroll {
+            padding-top: 132px !important;
+          }
+        }
         .reveal-btn {
           padding: 12px 24px;
           background: rgba(245,235,211,0.08);

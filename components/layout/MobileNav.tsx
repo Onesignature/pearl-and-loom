@@ -292,9 +292,8 @@ export function MobileNav({ onOpenWalkthrough, onOpenTutorial }: MobileNavProps)
           align-items: center;
           justify-content: space-between;
           gap: 12px;
-          padding-bottom: 18px;
-          margin-bottom: 10px;
-          border-bottom: 1px solid rgba(232,163,61,0.28);
+          padding-bottom: 14px;
+          margin-bottom: 6px;
         }
         .mnav-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
         .mnav-brand-text {

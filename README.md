@@ -406,7 +406,7 @@ Honest list of what didn't land in the time budget:
 
 - **Real Dives 4 & 5** (lung capacity / refraction). Currently locked content; the gate is itself a deliberate signal but real lessons would close the loop.
 - **Active palette feeding the live pattern engine.** The Souk's thread skeins are inventory unlocks today — wiring the active palette into `lib/pattern-engine/palette.ts` would re-tint future tapestry rows on purchase.
-- **WebGL dive scene.** The current SVG dive is good but a real WebGL scene (R3F + a custom water shader, animated god rays, fish models) would push the visual axis further. R3F + Drei + Three are installed and ready.
+- **WebGL dive scene.** The current SVG dive is good but a real WebGL scene (R3F + a custom water shader, animated god rays, fish models) would push the visual axis further.
 - **Voice narration.** Short EN/AR clips for Layla and Saif's intros. Skipped for content-sourcing risk.
 - **Server-rendered mock analytics** — a "your weekly heirloom progress" line chart fed by stored event timestamps.
 

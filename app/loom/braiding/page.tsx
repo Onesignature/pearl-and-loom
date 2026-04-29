@@ -57,6 +57,7 @@ export default function BraidingPage() {
         }
       />
       <div
+        className="braid-scroll"
         style={{
           position: "absolute",
           inset: 0,
@@ -148,6 +149,17 @@ export default function BraidingPage() {
         </div>
       </div>
       <style>{`
+        @media (max-width: 900px) {
+          .braid-scroll {
+            justify-content: flex-start !important;
+            padding-top: 124px !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .braid-scroll {
+            padding-top: 132px !important;
+          }
+        }
         .anim-btn {
           padding: 12px 22px;
           background: rgba(245,235,211,0.08);

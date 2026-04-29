@@ -102,9 +102,7 @@ export function OnboardingTour({ forceOpen = false, onClose }: Props) {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
-    // `finish` recreates every render — including it would rebind the
-    // listener constantly. Closure over `finish` is fine since it only
-    // calls stable setters and `onClose`.
+    // `finish` rebinds every render; including it would re-attach Esc on each render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 

@@ -30,6 +30,7 @@ export default function WeaveAnimPage() {
         subtitle={t("weave.subtitle")}
       />
       <div
+        className="weave-scroll"
         style={{
           position: "absolute",
           inset: 0,
@@ -98,6 +99,17 @@ export default function WeaveAnimPage() {
         </div>
       </div>
       <style>{`
+        @media (max-width: 900px) {
+          .weave-scroll {
+            justify-content: flex-start !important;
+            padding-top: 124px !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .weave-scroll {
+            padding-top: 132px !important;
+          }
+        }
         .anim-btn {
           padding: 12px 22px;
           background: rgba(245,235,211,0.08);

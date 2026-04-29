@@ -165,6 +165,13 @@ export default function SoukPage() {
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
           gap: 12px;
         }
+        @media (max-width: 640px) {
+          .souk-stage { padding-top: 132px !important; padding-bottom: 60px !important; }
+          .souk-stall { margin-bottom: 22px !important; }
+          .souk-stall-head { padding-bottom: 6px !important; margin-bottom: 10px !important; gap: 10px !important; }
+          .souk-stall-sub { letter-spacing: 0.22em !important; font-size: 10px !important; }
+          .souk-grid { gap: 8px !important; }
+        }
         .souk-feedback {
           position: fixed;
           bottom: 24px;
@@ -236,6 +243,11 @@ function Wallet({
           gap: 18px;
           flex-wrap: wrap;
           align-items: center;
+        }
+        @media (max-width: 640px) {
+          .souk-wallet { padding: 8px 12px; gap: 12px; margin-bottom: 16px; }
+          .souk-wallet-label { display: none; }
+          .souk-wallet-counts { gap: 14px; }
         }
       `}</style>
     </div>
@@ -471,6 +483,18 @@ function ItemCard({
           border: 1px solid rgba(232,163,61,0.65);
           border-radius: var(--radius-btn, 6px);
           background: rgba(232,163,61,0.08);
+        }
+        @media (max-width: 640px) {
+          .item-card { padding: 12px 12px 11px; gap: 8px; }
+          .item-head { gap: 10px; }
+          .item-seal { width: 32px; height: 32px; font-size: 17px; }
+          .item-name { font-size: 16px; }
+          .item-tag { display: none; }
+          .item-effect { font-size: 11px; padding: 4px 0 4px 9px; line-height: 1.4; }
+          .item-note { display: none; }
+          .item-foot { margin-top: 2px; }
+          .item-buy { padding: 7px 14px; font-size: 10px; letter-spacing: 0.26em; }
+          .item-owned { padding: 6px 12px; font-size: 10px; letter-spacing: 0.26em; }
         }
       `}</style>
     </div>
