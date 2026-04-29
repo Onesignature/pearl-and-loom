@@ -86,7 +86,10 @@ export function OnboardingTour({ forceOpen = false, onClose }: Props) {
   const { lang, fmt } = useI18n();
   const hasOnboarded = useSettings((s) => s.hasOnboarded);
   const acknowledgeOnboarding = useSettings((s) => s.acknowledgeOnboarding);
+  const learnerName = useSettings((s) => s.learnerName);
+  const learnerGrade = useSettings((s) => s.learnerGrade);
   const [step, setStep] = useState(0);
+  const firstName = learnerName.trim().split(/\s+/)[0];
 
   const open = forceOpen || !hasOnboarded;
 
@@ -131,6 +134,28 @@ export function OnboardingTour({ forceOpen = false, onClose }: Props) {
 
   if (!open) return null;
   const s = STEPS[step];
+  // Personalize step 1: greet by first name and reference the learner's
+  // grade band so the tour reads as written for *this* kid, not generic.
+  let title = lang === "en" ? s.titleEn : s.titleAr;
+  let body = lang === "en" ? s.bodyEn : s.bodyAr;
+  if (step === 0 && firstName) {
+    title =
+      lang === "en"
+        ? `${firstName}, solve math — weave a row`
+        : `${firstName}، حلّ المسائل — انسج صفًّا`;
+    if (learnerGrade !== null && learnerGrade <= 5) {
+      body =
+        lang === "en"
+          ? `Layla weaves with you. Each lesson she finishes adds a real row to your tapestry. Grade ${learnerGrade} math — perfect for you.`
+          : `ليلى تنسج معك. كل درس تُنهيه يضيف صفًّا حقيقيًا إلى نسيجك. رياضيات الصف ${fmt(learnerGrade)} — مناسبة لك تمامًا.`;
+    }
+  }
+  if (step === 1 && firstName && learnerGrade !== null && learnerGrade >= 7) {
+    body =
+      lang === "en"
+        ? `Saif dives the pearling banks. Each Grade 8 science problem he solves earns a pearl. ${firstName}, this is your level.`
+        : `سيف يغوص في مغاصات اللؤلؤ. كل سؤال علوم للصف الثامن يربح لؤلؤة. ${firstName}، هذه فئتك.`;
+  }
 
   return (
     <div
@@ -150,12 +175,8 @@ export function OnboardingTour({ forceOpen = false, onClose }: Props) {
             {fmt(step + 1)} / {fmt(STEPS.length)}
           </span>
         </div>
-        <div className="onb-title">
-          {lang === "en" ? s.titleEn : s.titleAr}
-        </div>
-        <div className="onb-body">
-          {lang === "en" ? s.bodyEn : s.bodyAr}
-        </div>
+        <div className="onb-title">{title}</div>
+        <div className="onb-body">{body}</div>
         <div className="onb-controls">
           <button onClick={finish} className="onb-skip">
             {lang === "en" ? "Skip tour" : "تخطّي الجولة"}
@@ -193,6 +214,7 @@ export function OnboardingTour({ forceOpen = false, onClose }: Props) {
           padding: 22px 22px 18px;
           background: linear-gradient(180deg, #1A1208 0%, #0A0807 100%);
           border: 1px solid var(--saffron);
+          border-radius: 22px;
           color: var(--wool);
           box-shadow:
             0 24px 60px rgba(0,0,0,0.6),
@@ -317,6 +339,7 @@ export function OnboardingTour({ forceOpen = false, onClose }: Props) {
           padding: 8px 14px;
           background: transparent;
           border: 1px solid rgba(240,228,201,0.3);
+          border-radius: 999px;
           color: var(--wool);
           font-family: var(--font-cormorant), serif;
           font-size: 11px;
@@ -329,6 +352,7 @@ export function OnboardingTour({ forceOpen = false, onClose }: Props) {
           padding: 9px 18px;
           background: var(--saffron);
           border: 1px solid var(--saffron);
+          border-radius: 999px;
           color: var(--charcoal);
           font-family: var(--font-cormorant), serif;
           font-size: 11px;

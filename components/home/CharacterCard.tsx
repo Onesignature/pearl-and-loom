@@ -10,9 +10,23 @@ interface CharacterCardProps {
   onClick?: () => void;
   locked?: boolean;
   progress?: { current: number; total: number; label: DictPath };
+  /** When true, show a "Recommended for you" saffron pill above the portrait. */
+  recommended?: boolean;
+  /** True once the learner has finished the path's final quiz. */
+  completed?: boolean;
+  /** Best quiz score / 5, surfaced under the completed badge. */
+  quizScore?: number | null;
 }
 
-export function CharacterCard({ who, onClick, locked = false, progress }: CharacterCardProps) {
+export function CharacterCard({
+  who,
+  onClick,
+  locked = false,
+  progress,
+  recommended = false,
+  completed = false,
+  quizScore = null,
+}: CharacterCardProps) {
   const { t, fmt, lang } = useI18n();
   const isLayla = who === "layla";
   const nameKey = (isLayla ? "home.layla.name" : "home.saif.name") as DictPath;
@@ -23,13 +37,32 @@ export function CharacterCard({ who, onClick, locked = false, progress }: Charac
     <button
       onClick={onClick}
       disabled={locked}
-      className="char-card"
+      className={`char-card${recommended ? " char-card--recommended" : ""}${completed ? " char-card--completed" : ""}`}
       style={{
         background: isLayla
           ? "linear-gradient(170deg, #2C1F1A 0%, #1B2D5C 50%, #2A2522 100%)"
           : "linear-gradient(170deg, #08374A 0%, #0E5E7B 50%, #051E2C 100%)",
       }}
     >
+      {recommended && !completed && (
+        <div className="char-recommended" aria-hidden>
+          {lang === "en" ? "Recommended for you" : "موصى لك"}
+        </div>
+      )}
+      {completed && (
+        <div className="char-completed" aria-hidden>
+          <span className="char-completed-glyph">✓</span>
+          <span className="char-completed-text">
+            {lang === "en" ? "Completed" : "مكتمل"}
+            {quizScore !== null && (
+              <span className="char-completed-score">
+                {" "}
+                · {fmt(quizScore)}/{fmt(5)}
+              </span>
+            )}
+          </span>
+        </div>
+      )}
       <div
         className="char-portrait"
         style={{
@@ -107,6 +140,7 @@ export function CharacterCard({ who, onClick, locked = false, progress }: Charac
       </div>
       <style>{`
         .char-card {
+          position: relative;
           border: 1px solid rgba(240,228,201,0.15);
           padding: 0;
           cursor: pointer;
@@ -136,6 +170,76 @@ export function CharacterCard({ who, onClick, locked = false, progress }: Charac
           border-color: rgba(240,228,201,0.35);
         }
         .char-card:disabled { opacity: 0.5; cursor: not-allowed; }
+        .char-card--recommended {
+          border-color: rgba(232,163,61,0.55);
+          box-shadow:
+            0 20px 60px rgba(0,0,0,0.4),
+            0 0 0 1px rgba(232,163,61,0.35);
+        }
+        .char-recommended {
+          position: absolute;
+          top: 10px;
+          inset-inline-end: 10px;
+          z-index: 5;
+          padding: 5px 10px;
+          border-radius: 999px;
+          background: linear-gradient(180deg, var(--saffron-soft) 0%, var(--saffron) 100%);
+          color: var(--charcoal);
+          font-family: var(--font-cormorant), serif;
+          font-size: 10px;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          font-weight: 600;
+          box-shadow: 0 4px 14px rgba(232,163,61,0.36);
+        }
+        .char-card--completed {
+          border-color: rgba(112,180,98,0.65);
+          box-shadow:
+            0 20px 60px rgba(0,0,0,0.4),
+            0 0 0 1px rgba(112,180,98,0.35),
+            0 0 24px rgba(112,180,98,0.18);
+        }
+        .char-completed {
+          position: absolute;
+          top: 10px;
+          inset-inline-end: 10px;
+          z-index: 5;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 5px 12px 5px 6px;
+          border-radius: 999px;
+          background: linear-gradient(180deg, rgba(140,200,120,0.95) 0%, rgba(86,150,80,0.95) 100%);
+          color: #fff;
+          font-family: var(--font-cormorant), serif;
+          font-size: 10px;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          font-weight: 600;
+          box-shadow:
+            0 4px 14px rgba(86,150,80,0.45),
+            inset 0 1px 0 rgba(225,245,210,0.5);
+        }
+        .char-completed-glyph {
+          width: 18px;
+          height: 18px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255,255,255,0.22);
+          border-radius: 50%;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0;
+        }
+        .char-completed-text { line-height: 1; }
+        .char-completed-score {
+          opacity: 0.85;
+          font-weight: 500;
+        }
+        [dir="rtl"] .char-completed {
+          padding: 5px 6px 5px 12px;
+        }
       `}</style>
     </button>
   );

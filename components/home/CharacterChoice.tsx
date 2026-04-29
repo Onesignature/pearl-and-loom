@@ -1,12 +1,15 @@
 "use client";
 
-// Character choice section — "Whose journey today?" prompt + the two
-// sibling cards. Self-contained so the home page can place it inside any
-// layout without worrying about internal spacing.
+// Character choice — the primary hero on the home / family tent. Always
+// visible: two large sibling cards side-by-side with a "Whose journey
+// today?" prompt. Grade-aware: the sibling appropriate for the learner's
+// age band gets a saffron "Recommended for you" pill but neither path is
+// ever locked.
 
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useProgress } from "@/lib/store/progress";
+import { useSettings } from "@/lib/store/settings";
 import { CharacterCard } from "./CharacterCard";
 
 export function CharacterChoice() {
@@ -14,7 +17,18 @@ export function CharacterChoice() {
   const { t } = useI18n();
   const ops = useProgress((s) => s.ops);
   const pearls = useProgress((s) => s.pearls);
+  const laylaQuizBest = useProgress((s) => s.quizScores.layla.bestScore);
+  const saifQuizBest = useProgress((s) => s.quizScores.saif.bestScore);
+  const grade = useSettings((s) => s.learnerGrade);
   const wovenCount = ops.filter((op) => op.kind !== "bead").length;
+
+  // Grade 4-5 → Layla, Grade 7-8 → Saif, Grade 6 + null → balanced (no flag).
+  const recommendLayla = grade !== null && grade <= 5;
+  const recommendSaif = grade !== null && grade >= 7;
+  // A path is "completed" once its quiz has been attempted at all — that's
+  // the terminal step in the curriculum from the learner's POV.
+  const completedLayla = laylaQuizBest !== null;
+  const completedSaif = saifQuizBest !== null;
 
   return (
     <div
@@ -48,11 +62,17 @@ export function CharacterChoice() {
           who="layla"
           onClick={() => router.push("/loom")}
           progress={{ current: wovenCount, total: 30, label: "home.rowsWoven" }}
+          recommended={recommendLayla}
+          completed={completedLayla}
+          quizScore={laylaQuizBest}
         />
         <CharacterCard
           who="saif"
           onClick={() => router.push("/sea")}
           progress={{ current: pearls.length, total: 12, label: "home.pearlsCollected" }}
+          recommended={recommendSaif}
+          completed={completedSaif}
+          quizScore={saifQuizBest}
         />
       </div>
     </div>
