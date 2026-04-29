@@ -23,16 +23,16 @@ Submitted to the ADEK Frontend Developer (Interactive UI & Gamification) take-ho
 ## Walkthrough
 
 <p align="center">
-  <video src="./public/pearlandloom.mp4"
-         controls
-         playsinline
-         width="100%"
-         poster="./public/favicon.svg">
-    Your browser doesn't render inline video. <a href="./public/pearlandloom.mp4">Download the walkthrough</a> instead.
-  </video>
+  <a href="https://youtu.be/YLkedUFAqDk" target="_blank" rel="noopener">
+    <img src="https://img.youtube.com/vi/YLkedUFAqDk/maxresdefault.jpg"
+         alt="▶ Watch the walkthrough on YouTube"
+         width="720" />
+  </a>
+  <br/>
+  <sub><a href="https://youtu.be/YLkedUFAqDk" target="_blank" rel="noopener"><strong>▶ Watch on YouTube</strong></a> &nbsp;·&nbsp; narrated tour of every screen</sub>
 </p>
 
-A narrated tour of every screen — Layla's loom and lessons, Saif's dive, the pearl reveal, the souk economy, the heirloom ceremony. The file is tracked via Git LFS, so it streams from GitHub's CDN and plays inline directly on the README.
+A walkthrough of Layla's loom and lessons, Saif's dive, the pearl reveal, the souk economy, and the heirloom ceremony.
 
 ---
 
