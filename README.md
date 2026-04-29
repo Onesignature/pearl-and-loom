@@ -20,36 +20,19 @@ Submitted to the ADEK Frontend Developer (Interactive UI & Gamification) take-ho
 
 ---
 
-## Walkthrough (90 s)
-
-<!--
-  To embed an inline video on GitHub: record the walkthrough as MP4, drag
-  the file into a GitHub issue / PR comment box (don't submit), copy the
-  resulting `user-attachments/assets/...` URL it generates, then replace
-  the `src` below. GitHub's markdown sanitizer strips <iframe> + <script>,
-  so the raw inline HTML can't be embedded as-is.
--->
-
-<!-- Inline video — paste a GitHub user-attachments URL here once recorded:
-<video src="https://github.com/user-attachments/assets/REPLACE-WITH-YOUR-VIDEO-ID"
-       controls
-       width="100%"
-       muted
-       playsinline>
-</video>
--->
-
-In the meantime, the walkthrough plays inline inside the deployed app — click the **▶ Walkthrough** chip in the home navbar of the live site:
+## Walkthrough
 
 <p align="center">
-  <a href="./public/Pearl-and-Loom-inline.html">
-    <img src="./public/favicon.svg" width="96" alt="▶ Watch the walkthrough" />
-  </a>
-  <br/>
-  <sub><strong>▶ Open the walkthrough on the live site</strong> &nbsp;·&nbsp; 90 s · narrated · embedded audio</sub>
+  <video src="./public/pearlandloom.mp4"
+         controls
+         playsinline
+         width="100%"
+         poster="./public/favicon.svg">
+    Your browser doesn't render inline video. <a href="./public/pearlandloom.mp4">Download the walkthrough</a> instead.
+  </video>
 </p>
 
-> *(GitHub serves HTML files as plain text, so opening the file on github.com just shows the source. The walkthrough runs as expected once the project is deployed to Vercel — `https://<deploy>.vercel.app/Pearl-and-Loom-inline.html`. For a no-deploy preview, the htmlpreview proxy works too: `https://htmlpreview.github.io/?https://github.com/<owner>/<repo>/blob/main/public/Pearl-and-Loom-inline.html`.)*
+A narrated tour of every screen — Layla's loom and lessons, Saif's dive, the pearl reveal, the souk economy, the heirloom ceremony. The file is tracked via Git LFS, so it streams from GitHub's CDN and plays inline directly on the README.
 
 ---
 
