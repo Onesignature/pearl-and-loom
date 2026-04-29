@@ -273,6 +273,7 @@ function TapestryFullPage() {
           justifyContent: "center",
           flexWrap: "wrap",
           overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
         <div

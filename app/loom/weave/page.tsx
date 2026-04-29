@@ -40,6 +40,7 @@ export default function WeaveAnimPage() {
           flexDirection: "column",
           justifyContent: "center",
           overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>

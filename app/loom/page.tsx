@@ -45,6 +45,7 @@ export default function LoomHubPage() {
         subtitle={`${t("loom.laylaSubtitle")} · ${fmt(completed.length)}/${fmt(LESSONS.length)} ${t("loom.completed").toUpperCase()}`}
       />
       <div
+        className="loom-stage"
         style={{
           position: "absolute",
           inset: 0,
@@ -58,6 +59,7 @@ export default function LoomHubPage() {
           paddingInline: "clamp(16px, 3vw, 32px)",
           gap: "clamp(16px, 2.5vw, 28px)",
           overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
         <div
@@ -125,6 +127,16 @@ export default function LoomHubPage() {
           })}
         </div>
       </div>
+      <style>{`
+        @media (max-width: 640px) {
+          .loom-stage {
+            align-items: flex-start !important;
+            align-content: flex-start !important;
+            padding-top: 96px !important;
+            padding-bottom: 40px !important;
+          }
+        }
+      `}</style>
     </TentScene>
   );
 }

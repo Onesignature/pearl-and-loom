@@ -55,6 +55,7 @@ function PearlReveal() {
           alignItems: "center",
           justifyContent: "center",
           overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
         <PearlHero tier={tier} />

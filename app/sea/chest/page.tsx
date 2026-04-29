@@ -163,6 +163,7 @@ export default function PearlChestPage() {
           alignItems: "center",
           justifyContent: "center",
           overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
         <div

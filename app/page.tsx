@@ -9,7 +9,6 @@ import { HomeHeader } from "@/components/layout/HomeHeader";
 import { HeroTitle } from "@/components/home/HeroTitle";
 import { CharacterChoice } from "@/components/home/CharacterChoice";
 import { HeirloomFooter } from "@/components/home/HeirloomFooter";
-import { StreakChain } from "@/components/home/StreakChain";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 
 const subscribeHydration = (cb: () => void) =>
@@ -192,23 +191,6 @@ function FamilyTent() {
     <TentScene>
       <HomeHeader />
       <div
-        className="streak-slot"
-        style={{
-          position: "absolute",
-          top: "clamp(118px, 14vh, 158px)",
-          insetInlineStart: 0,
-          insetInlineEnd: 0,
-          display: "flex",
-          justifyContent: "center",
-          pointerEvents: "none",
-          zIndex: 30,
-        }}
-      >
-        <div style={{ pointerEvents: "auto" }}>
-          <StreakChain />
-        </div>
-      </div>
-      <div
         className="family-tent-stage"
         style={{
           position: "absolute",
@@ -246,7 +228,6 @@ function FamilyTent() {
             padding-top: 96px !important;
             padding-bottom: 220px !important;
           }
-          .streak-slot { display: none !important; }
         }
       `}</style>
     </TentScene>

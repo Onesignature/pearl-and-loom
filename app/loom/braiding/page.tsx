@@ -67,6 +67,7 @@ export default function BraidingPage() {
           flexDirection: "column",
           justifyContent: "center",
           overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
         <div style={{ display: "flex", gap: 22, flexWrap: "wrap" }}>

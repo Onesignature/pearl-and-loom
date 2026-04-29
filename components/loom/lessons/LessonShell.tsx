@@ -23,6 +23,7 @@ export function LessonShell({ titleKey, index, children }: LessonShellProps) {
         subtitle={`${t("loom.lessonLabel").toUpperCase()} ${fmt(index)} · ${t("loom.laylaSubtitle")}`}
       />
       <div
+        className="lesson-stage"
         style={{
           position: "absolute",
           inset: 0,
@@ -36,10 +37,21 @@ export function LessonShell({ titleKey, index, children }: LessonShellProps) {
           justifyContent: "center",
           flexWrap: "wrap",
           overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
         {children}
       </div>
+      <style>{`
+        @media (max-width: 640px) {
+          .lesson-stage {
+            align-items: flex-start !important;
+            align-content: flex-start !important;
+            padding-top: 96px !important;
+            padding-bottom: 40px !important;
+          }
+        }
+      `}</style>
     </TentScene>
   );
 }

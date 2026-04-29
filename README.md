@@ -10,6 +10,12 @@ A bilingual UAE-themed gamified learning path. **Layla** weaves Grade 4 math at 
 
 Submitted to the ADEK Frontend Developer (Interactive UI & Gamification) take-home challenge.
 
+<p align="center">
+  <img src="./public/readme/home.png" alt="Family Tent — choose Layla or Saif" width="820" />
+  <br/>
+  <sub><em>The Family Tent. Pick a sibling. The chosen path is the lesson.</em></sub>
+</p>
+
 ---
 
 ## Live demo
@@ -109,14 +115,14 @@ The five rubric axes, each mapped to specific shipped features and the file path
 
 - **Real currency loop** — pearls earned in dives become spendable at Souk al-Lulu (9 items across 3 stalls). Owned items have *real downstream effects*: the *fattam* noseclip extends starting breath by 10 and slows drain by 15%, the *diveen* stone speeds Saif's descent 1.5×, the *deyeen* net awards a free common pearl per dive, the brass-lantern + dawn-sky heirlooms re-skin every TentScene.
 - 11 achievement badges (Wasm) — each is an authentic Sadu motif with a cultural footnote. Locked = grayscale silhouette; unlocked = saffron with a brass-toast slide-in.
-- Daily-weave streak counter — saffron-diamond chain at the top of home, increments per calendar day, resets after a 1-day gap.
+- Daily-weave streak tracking — increments per calendar day a lesson or dive is completed, resets after a 1-day gap. Powers the `streak_3` / `streak_7` achievement badges and is baked into the saved tapestry / certificate captions.
 - Onboarding tour explains the braid in 25 seconds — *math weaves rows, science earns pearls, pearls braid into the tapestry*.
 - Tapestry PNG export bakes the user's date / row-count / streak into the saved image; Web Share API integration for native mobile share-sheets with the PNG attached.
 - **Heirloom-complete certificate** — full-screen ceremony fires once on completion; user signs their name; downloads a tapestry-themed PNG certificate with their name as the centerpiece, two Sadu motif bands, and a sealed-at-Abu-Dhabi date line. Also accessible from `/tapestry` once complete.
 - Per-user deterministic `seed` exposed as a shareable permalink (`/tapestry?seed=…`) — opens a read-only view of someone else's finished heirloom.
 - Lesson unlock gate (`arrays`, `angles` unlock at 3 core completions).
 
-**Where to find it:** `lib/store/progress.ts` (Zustand + persist v4) · `lib/souk/{catalog,effects}.ts` · `app/souk/page.tsx` · `lib/achievements/registry.ts` · `components/achievements/*` · `components/home/StreakChain.tsx` · `lib/tapestry/{exportPng,buildCertificate}.ts` · `components/ceremony/HeirloomCeremony.tsx`
+**Where to find it:** `lib/store/progress.ts` (Zustand + persist v4) · `lib/souk/{catalog,effects}.ts` · `app/souk/page.tsx` · `lib/achievements/registry.ts` · `components/achievements/*` · `lib/tapestry/{exportPng,buildCertificate}.ts` · `components/ceremony/HeirloomCeremony.tsx`
 
 ---
 

@@ -46,6 +46,7 @@ export default function SeaHubPage() {
           paddingInline: "clamp(16px, 3vw, 32px)",
           gap: "clamp(16px, 2.5vw, 28px)",
           overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
         <div
