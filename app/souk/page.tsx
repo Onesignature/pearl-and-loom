@@ -166,11 +166,13 @@ export default function SoukPage() {
           gap: 12px;
         }
         @media (max-width: 640px) {
-          .souk-stage { padding-top: 132px !important; padding-bottom: 60px !important; }
-          .souk-stall { margin-bottom: 22px !important; }
-          .souk-stall-head { padding-bottom: 6px !important; margin-bottom: 10px !important; gap: 10px !important; }
-          .souk-stall-sub { letter-spacing: 0.22em !important; font-size: 10px !important; }
-          .souk-grid { gap: 8px !important; }
+          .souk-stage { padding-top: 132px !important; padding-bottom: 60px !important; padding-inline: 14px !important; }
+          .souk-stall { margin-bottom: 18px !important; }
+          .souk-stall-head { padding-bottom: 4px !important; margin-bottom: 8px !important; gap: 8px !important; border-bottom-color: rgba(232,163,61,0.16) !important; }
+          .souk-stall-head::before { display: none; }
+          .souk-stall-title { font-size: 17px !important; }
+          .souk-stall-sub { display: none !important; }
+          .souk-grid { display: flex !important; flex-direction: column !important; gap: 6px !important; }
         }
         .souk-feedback {
           position: fixed;
@@ -317,16 +319,10 @@ function ItemCard({
           <div className="item-name">
             {lang === "en" ? item.nameEn : item.nameAr}
           </div>
-          <div className="item-tag">
-            {lang === "en" ? item.taglineEn : item.taglineAr}
+          <div className="item-effect">
+            {lang === "en" ? item.effectEn : item.effectAr}
           </div>
         </div>
-      </div>
-      <div className="item-effect">
-        {lang === "en" ? item.effectEn : item.effectAr}
-      </div>
-      <div className="item-note">
-        {lang === "en" ? item.noteEn : item.noteAr}
       </div>
       <div className="item-foot">
         <CostBadge cost={item.cost} lang={lang} />
@@ -357,10 +353,10 @@ function ItemCard({
           position: relative;
           display: flex;
           flex-direction: column;
-          gap: 10px;
-          padding: 14px 14px 12px;
+          gap: 14px;
+          padding: 16px 16px 14px;
           background:
-            linear-gradient(180deg, rgba(48,30,18,0.42) 0%, rgba(20,12,8,0.52) 100%);
+            linear-gradient(180deg, rgba(48,30,18,0.38) 0%, rgba(20,12,8,0.48) 100%);
           border: 1px solid rgba(232,163,61,0.18);
           border-radius: var(--radius-btn, 6px);
           color: var(--wool);
@@ -371,25 +367,25 @@ function ItemCard({
         }
         .item-card:hover {
           transform: translateY(-2px);
-          border-color: rgba(232,163,61,0.55);
+          border-color: rgba(232,163,61,0.5);
           box-shadow:
             inset 0 1px 0 rgba(245,235,211,0.08),
-            0 8px 22px rgba(0,0,0,0.32);
+            0 8px 22px rgba(0,0,0,0.30);
         }
         .item-card.owned {
           background:
-            linear-gradient(180deg, rgba(232,163,61,0.16) 0%, rgba(232,163,61,0.05) 100%);
-          border-color: rgba(232,163,61,0.55);
+            linear-gradient(180deg, rgba(232,163,61,0.14) 0%, rgba(232,163,61,0.04) 100%);
+          border-color: rgba(232,163,61,0.5);
         }
         .item-head {
           display: flex;
-          align-items: flex-start;
-          gap: 12px;
+          align-items: center;
+          gap: 14px;
         }
         .item-seal {
           flex: 0 0 auto;
-          width: 38px;
-          height: 38px;
+          width: 40px;
+          height: 40px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -397,47 +393,32 @@ function ItemCard({
           color: var(--saffron);
           line-height: 1;
           background:
-            radial-gradient(circle at 32% 28%, rgba(232,163,61,0.25), rgba(232,163,61,0.06) 70%);
-          border: 1px solid rgba(232,163,61,0.4);
+            radial-gradient(circle at 32% 28%, rgba(232,163,61,0.22), rgba(232,163,61,0.05) 70%);
+          border: 1px solid rgba(232,163,61,0.38);
           border-radius: 50%;
           box-shadow: inset 0 1px 0 rgba(245,235,211,0.10);
         }
-        .item-head-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+        .item-head-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
         .item-name {
           font-family: var(--font-cormorant), serif;
-          font-size: 17px;
+          font-size: 18px;
           color: var(--wool);
           letter-spacing: 0.04em;
-          line-height: 1.15;
-        }
-        .item-tag {
-          font-size: 10px;
-          color: var(--saffron);
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          opacity: 0.82;
+          line-height: 1.2;
         }
         .item-effect {
-          padding: 6px 0 6px 10px;
-          border-inline-start: 2px solid var(--saffron);
           font-family: var(--font-tajawal), sans-serif;
-          font-size: 11.5px;
-          color: var(--saffron-soft);
-          line-height: 1.45;
-          letter-spacing: 0.01em;
-        }
-        .item-note {
           font-size: 12px;
-          color: rgba(240,228,201,0.7);
-          line-height: 1.5;
-          flex: 1;
+          color: rgba(240,228,201,0.72);
+          line-height: 1.4;
         }
         .item-foot {
           display: flex;
           justify-content: space-between;
           align-items: center;
           gap: 10px;
-          margin-top: 4px;
+          margin-top: auto;
+          padding-top: 4px;
         }
         .item-buy {
           padding: 8px 16px;
@@ -485,16 +466,38 @@ function ItemCard({
           background: rgba(232,163,61,0.08);
         }
         @media (max-width: 640px) {
-          .item-card { padding: 12px 12px 11px; gap: 8px; }
-          .item-head { gap: 10px; }
-          .item-seal { width: 32px; height: 32px; font-size: 17px; }
-          .item-name { font-size: 16px; }
-          .item-tag { display: none; }
-          .item-effect { font-size: 11px; padding: 4px 0 4px 9px; line-height: 1.4; }
-          .item-note { display: none; }
-          .item-foot { margin-top: 2px; }
-          .item-buy { padding: 7px 14px; font-size: 10px; letter-spacing: 0.26em; }
-          .item-owned { padding: 6px 12px; font-size: 10px; letter-spacing: 0.26em; }
+          .item-card {
+            display: grid !important;
+            grid-template-columns: auto 1fr auto;
+            grid-template-rows: auto;
+            align-items: center;
+            gap: 12px !important;
+            padding: 10px 12px !important;
+            min-height: 56px;
+          }
+          .item-head { display: contents; }
+          .item-seal {
+            grid-column: 1; grid-row: 1;
+            width: 30px; height: 30px; font-size: 16px;
+          }
+          .item-head-text {
+            grid-column: 2; grid-row: 1;
+            gap: 0 !important;
+          }
+          .item-name { font-size: 15px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+          .item-tag { display: none !important; }
+          .item-effect { display: none !important; }
+          .item-note { display: none !important; }
+          .item-foot {
+            grid-column: 3; grid-row: 1;
+            margin-top: 0 !important;
+            display: flex !important;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px !important;
+          }
+          .item-buy { padding: 6px 12px; font-size: 9px; letter-spacing: 0.22em; }
+          .item-owned { padding: 5px 10px; font-size: 9px; letter-spacing: 0.22em; }
         }
       `}</style>
     </div>
@@ -520,6 +523,7 @@ function CostBadge({ cost, lang }: { cost: PearlCost; lang: "en" | "ar" }) {
         </span>
       ))}
       <span
+        className="cost-label"
         style={{
           fontSize: 9,
           letterSpacing: "0.22em",
@@ -530,6 +534,11 @@ function CostBadge({ cost, lang }: { cost: PearlCost; lang: "en" | "ar" }) {
       >
         {lang === "en" ? "pay in" : "ادفع بـ"}
       </span>
+      <style>{`
+        @media (max-width: 640px) {
+          .cost-label { display: none !important; }
+        }
+      `}</style>
     </span>
   );
 }

@@ -63,6 +63,12 @@ export const useSettings = create<SettingsState>()(
       name: "pearl-and-loom:settings",
       version: 4,
       storage: createJSONStorage(() => localStorage),
+      // `hasOnboarded` is intentionally NOT persisted — the guided tour replays on every refresh.
+      partialize: (state) => {
+        const { hasOnboarded: _drop, ...rest } = state;
+        void _drop;
+        return rest as SettingsState;
+      },
       migrate: (persisted, fromVersion) => {
         const p = (persisted ?? {}) as Partial<SettingsState>;
         if (fromVersion < 4) {

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#3a2a1f"></stop>
+      <stop offset="100%" stop-color="#0a0807"></stop>
+    </radialGradient>
+    <radialGradient id="pearl" cx="38%" cy="38%" r="62%">
+      <stop offset="0%" stop-color="#fff5d8"></stop>
+      <stop offset="40%" stop-color="#f5d28a"></stop>
+      <stop offset="80%" stop-color="#e8a33d"></stop>
+      <stop offset="100%" stop-color="#a85f1c"></stop>
+    </radialGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f5d28a" stop-opacity="0.55"></stop>
+      <stop offset="100%" stop-color="#e8a33d" stop-opacity="0"></stop>
+    </radialGradient>
+  </defs>
+
+  
+  <rect width="64" height="64" rx="14" ry="14" fill="url(#bg)"></rect>
+
+  
+  <circle cx="32" cy="26" r="22" fill="url(#halo)"></circle>
+
+  
+  <circle cx="32" cy="26" r="12" fill="url(#pearl)"></circle>
+  <circle cx="28.5" cy="22.5" r="3" fill="#fff5d8" opacity="0.85"></circle>
+
+  
+  <g transform="translate(12 46)">
+    <rect x="0" y="0" width="40" height="3" rx="0.5" fill="#7a2a25"></rect>
+    <rect x="0" y="4" width="40" height="3" rx="0.5" fill="#1f3a6e"></rect>
+    <rect x="0" y="8" width="40" height="3" rx="0.5" fill="#e8a33d"></rect>
+    
+    <path d="M 8 5.5 L 10 4 L 12 5.5 L 10 7 Z M 20 5.5 L 22 4 L 24 5.5 L 22 7 Z M 32 5.5 L 34 4 L 36 5.5 L 34 7 Z" fill="#e8a33d" opacity="0.9"></path>
+  </g>
+</svg>
