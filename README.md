@@ -6,6 +6,20 @@
 
 <p align="center"><em>Two crafts. One family. One heirloom.</em></p>
 
+<p align="center">
+  <a href="https://nextjs.org/"><img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs&logoColor=white"></a>
+  <a href="https://react.dev/"><img alt="React 19" src="https://img.shields.io/badge/React-19-149ECA?style=flat-square&logo=react&logoColor=white"></a>
+  <a href="https://www.typescriptlang.org/"><img alt="TypeScript 5 strict" src="https://img.shields.io/badge/TypeScript-5_strict-3178C6?style=flat-square&logo=typescript&logoColor=white"></a>
+  <a href="https://tailwindcss.com/"><img alt="Tailwind CSS v4" src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white"></a>
+  <a href="https://zustand-demo.pmnd.rs/"><img alt="Zustand 5" src="https://img.shields.io/badge/Zustand-5-433E38?style=flat-square"></a>
+  <a href="https://www.framer.com/motion/"><img alt="Framer Motion 12" src="https://img.shields.io/badge/Framer_Motion-12-0055FF?style=flat-square&logo=framer&logoColor=white"></a>
+  <a href="https://vitest.dev/"><img alt="Vitest · 82 tests" src="https://img.shields.io/badge/Vitest-82_tests-6E9F18?style=flat-square&logo=vitest&logoColor=white"></a>
+  <a href="https://eslint.org/"><img alt="ESLint 9" src="https://img.shields.io/badge/ESLint-9-4B32C3?style=flat-square&logo=eslint&logoColor=white"></a>
+  <a href="https://pnpm.io/"><img alt="pnpm" src="https://img.shields.io/badge/pnpm-F69220?style=flat-square&logo=pnpm&logoColor=white"></a>
+  <img alt="Web Audio API synth" src="https://img.shields.io/badge/Audio-Web_Audio_API_synth-E8A33D?style=flat-square">
+  <img alt="Bilingual EN · AR (RTL)" src="https://img.shields.io/badge/i18n-EN_·_AR_(RTL)-1B2D5C?style=flat-square">
+</p>
+
 A bilingual UAE-themed gamified learning path. **Layla** weaves Grade 4 math at the Sadu loom inside her family's tent. **Saif** dives Grade 8 science in the *ghasa* (pearling season). The pearls he brings home become beads in her tapestry — one heirloom, braided from two lives. Set in **Abu Dhabi, 1948** — the season before oil.
 
 Submitted to the ADEK Frontend Developer (Interactive UI & Gamification) take-home challenge.
