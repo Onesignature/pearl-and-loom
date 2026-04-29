@@ -12,7 +12,7 @@ Submitted to the ADEK Frontend Developer (Interactive UI & Gamification) take-ho
 
 - **App:** *(deployed by submitter — Vercel link goes here)*
 - **Repo:** *(this repo)*
-- **Pitch deck:** [`/public/The Pearl and the Loom — ADEK Pitch.pdf`](./public/The%20Pearl%20and%20the%20Loom%20—%20ADEK%20Pitch.pdf)
+- **Pitch deck:** [`The Pearl and the Loom — ADEK Pitch.pdf`](./public/The%20Pearl%20and%20the%20Loom%20%E2%80%94%20ADEK%20Pitch.pdf)
 - **Walkthrough video (90 s):** ▶ button on the home navbar opens an embedded inline tour.
 
 ---
@@ -34,15 +34,70 @@ The point isn't novelty for its own sake. The point is that **two UNESCO heritag
 
 ## Evaluation-axis self-mapping
 
-This is the section judges should read first. Every shipped feature is mapped to the rubric.
+The five rubric axes, each mapped to specific shipped features and the file paths where the work lives.
 
-| Axis | What's shipped | Where to find it |
-|---|---|---|
-| **UAE cultural integration** | • Two UNESCO heritages braided into one mechanic (Sadu 2011 + Pearling 2005)<br>• 8 authentic Sadu motifs with Arabic names + cultural notes (al-mthalath, al-shajarah, al-eyoun, al-mushat, hubub, dhurs al-khail, uwairjan, khat)<br>• Pearling vocabulary (*ghasa, nahham, taab, fattam, deyeen, diveen*) surfaced in lesson copy and souk items<br>• 1948 setting referenced in chrome and pitch ("Abu Dhabi · 1948")<br>• Souk al-Lulu (سوق اللؤلؤ) — every shop item carries a one-sentence pearling-era cultural footnote<br>• 11 achievement badges named after real Sadu motifs with Bedouin weaving footnotes<br>• Bilingual EN ⇄ AR everywhere with full RTL, Tajawal font for Arabic, Arabic-Indic numerals (٠–٩) toggle | `components/motifs/index.tsx`<br>`lib/souk/catalog.ts`<br>`lib/achievements/registry.ts`<br>`lib/i18n/dict/{en,ar}.ts`<br>`lib/i18n/numerals.ts` |
-| **Visual design** | • Two distinct palettes (Sadu indigo / madder / saffron / wool · Sea blue / coral / sunset-gold / foam) under one type system<br>• Cormorant Garamond × Tajawal type pairing<br>• Character portraits as composed SVG (`CinematicLayla` + `SaifOnDeck` — not raster art)<br>• Bedouin sandalwood pearl chest with mother-of-pearl Sadu inlay, brass strapping, indigo velvet interior — drawn entirely in SVG<br>• Underwater dive scene: gradient depth fog, animated god rays, particulates, sea grass, caustics<br>• Aged-paper, lantern-glow, and warp-line CSS textures used consistently<br>• `/styleguide` exposes tokens, type ramp, motifs, and a live tapestry sandbox | `components/portraits/*.tsx`<br>`app/sea/chest/page.tsx`<br>`components/sea/{DiveScene,fx}.tsx`<br>`app/globals.css`<br>`app/styleguide/page.tsx` |
-| **UI / UX** | • Branded home header (favicon + wordmark + ornament rule + saffron chip row) with mobile hamburger drawer at ≤640px<br>• Mobile-first responsiveness audited across iPhone SE 375 → iPad Air 820/1180 → desktop 1920<br>• On-canvas TopChrome on every inner page with back/home + locale chips collapsing to hamburger on phone<br>• First-visit guided tour (4-step coach-marks) with Skip / Back / Next / replay-from-FAQ<br>• "How it works" FAQ dialog<br>• Embedded 90-second walkthrough video<br>• `prefers-reduced-motion` respected globally<br>• Audio toggle persists; aria-pressed / aria-modal / aria-live used where relevant | `components/layout/{HomeHeader,TopChrome,MobileNav}.tsx`<br>`components/onboarding/OnboardingTour.tsx`<br>`components/home/{Tutorial,Walkthrough}Dialog.tsx`<br>`app/globals.css` (reduced-motion block) |
-| **Micro-animations** | • Web Audio API synth with 8 named cues — every interaction has a sound (loom thump, glass-pearl ping, royal-pearl chord flourish, water splash, brass coin clink for souk purchase, achievement bells)<br>• Loom row weave-in animation (clip-path reveal + shimmer)<br>• Cinematic dive plunge<br>• Pearl reveal — oyster opens 58° around its hinge, light flare bursts, pearl rises<br>• Achievement unlock toast slides down with motif badge<br>• Onboarding tour rises from below with saffron arrow callouts<br>• Streak-chain saffron diamonds animate in as days accumulate<br>• Saif's animated `saifBreathe` on the dhow, swaying sea grass, rising bubbles, depth-tinted Saif underwater | `lib/audio/{bus,synth,cues}.ts`<br>`components/sea/{DiveScene,fx}.tsx`<br>`components/portraits/Portraits.tsx`<br>`components/achievements/UnlockToast.tsx` |
-| **Student journey / gamification** | • **Real currency loop**: pearls earned in dives → spendable at the Souk al-Lulu (9 items × 3 stalls)<br>• 11 achievement badges (Wasm) — each is an authentic Sadu motif with cultural footnote, locked badges grayscale, unlocked saffron, auto-toast on fire, persistent grid on chest screen<br>• Daily-weave streak counter — saffron-diamond chain at top of home, increments per calendar day, resets after a 1-day gap<br>• Onboarding tour explains the braid ("math weaves rows, science earns pearls, pearls braid into the tapestry")<br>• Tapestry PNG export — saves the user's heirloom with their date / row-count / streak baked into the image<br>• Web Share API integration for native mobile share-sheet with the PNG attached<br>• Lesson unlock gate (`arrays`, `angles` unlock at 3 core completions) | `lib/store/progress.ts` (Zustand + persist v2)<br>`app/souk/page.tsx`<br>`lib/souk/catalog.ts`<br>`lib/achievements/registry.ts`<br>`components/achievements/*`<br>`components/home/StreakChain.tsx`<br>`lib/tapestry/exportPng.ts` |
+### 1. UAE cultural integration
+
+- Two UNESCO Intangible Cultural Heritage entries braided into one mechanic — Al Sadu (2011) + Pearling (2005).
+- 8 authentic Sadu motifs rendered as live SVG with their Arabic names and cultural notes: *al-mthalath, al-shajarah, al-eyoun, al-mushat, hubub, dhurs al-khail, uwairjan, khat*.
+- Pearling vocabulary surfaced in lesson copy, souk items, and achievement footnotes: *ghasa, nahham, taab, fattam, deyeen, diveen*.
+- 1948 setting threaded through chrome ("Abu Dhabi · 1948") and pitch.
+- Souk al-Lulu (سوق اللؤلؤ) — every shop item carries a one-sentence pearling-era cultural footnote.
+- 11 achievement badges (Wasm), each named after a real Sadu motif with a Bedouin weaving cultural note.
+- Bilingual EN ⇄ AR everywhere, full RTL layout, Tajawal font for Arabic, Arabic-Indic numerals (٠–٩) with a per-user toggle.
+
+**Where to find it:** `components/motifs/index.tsx` · `lib/souk/catalog.ts` · `lib/achievements/registry.ts` · `lib/i18n/dict/{en,ar}.ts` · `lib/i18n/numerals.ts`
+
+### 2. Visual design
+
+- Two distinct palettes (Sadu indigo / madder / saffron / wool · Sea blue / coral / sunset-gold / foam) under one type system.
+- Cormorant Garamond × Tajawal type pairing via `next/font/google`.
+- Character portraits as composed SVG (`CinematicLayla`, `SaifOnDeck`) — not raster art.
+- Bedouin sandalwood pearl chest with mother-of-pearl Sadu inlay, brass strapping, indigo velvet interior — entirely SVG.
+- Underwater dive scene with gradient depth fog, animated god rays, particulates, sea grass, caustics.
+- Aged-paper, lantern-glow, and warp-line CSS textures used consistently.
+- `/styleguide` exposes tokens, type ramp, motifs, and a live tapestry sandbox.
+
+**Where to find it:** `components/portraits/*.tsx` · `app/sea/chest/page.tsx` · `components/sea/{DiveScene,fx}.tsx` · `app/globals.css` · `app/styleguide/page.tsx`
+
+### 3. UI / UX
+
+- Branded home header (favicon + wordmark + ornament rule + saffron chip row) with a mobile hamburger drawer at ≤ 640 px.
+- Mobile-first responsiveness audited across iPhone SE 375 → iPad Air 820/1180 → desktop 1920.
+- `TopChrome` on every inner page — back/home button + locale chips that collapse to the hamburger on phone.
+- First-visit guided tour (4-step coach-marks) with Skip / Back / Next / replay-from-FAQ.
+- "How it works" FAQ dialog and an embedded 90-second walkthrough video (Space-bar play/pause, mouse passthrough blocked).
+- `prefers-reduced-motion` respected globally; audio defaults on but is one-tap mutable from three nav surfaces.
+- `aria-pressed` / `aria-modal` / `aria-live` used where relevant; every dialog dismisses on Escape and traps body scroll.
+
+**Where to find it:** `components/layout/{HomeHeader,TopChrome,MobileNav}.tsx` · `components/onboarding/OnboardingTour.tsx` · `components/home/{Tutorial,Walkthrough}Dialog.tsx` · `app/globals.css`
+
+### 4. Micro-animations
+
+- Web Audio API synth with 9 named cues — every meaningful interaction has a sound: loom thump, glass-pearl ping, royal-pearl chord flourish, water splash, brass coin clink for souk purchase, achievement bells, ceremony chord.
+- Loom row weave-in animation (clip-path reveal + shimmer).
+- Cinematic dive plunge.
+- Pearl reveal — oyster shell opens 58° around its hinge, light flare bursts, pearl rises.
+- Achievement unlock toast slides down with the motif badge rendered live.
+- Onboarding tour rises from below with saffron arrow callouts.
+- Streak-chain saffron diamonds animate in as days accumulate.
+- Saif's animated `saifBreathe` on the dhow, swaying sea grass, rising bubbles, depth-tinted Saif underwater.
+- Heirloom-complete ceremony — staggered row fade-in, ornament reveal, layered chord cue, save-as-PNG / save-certificate CTAs.
+
+**Where to find it:** `lib/audio/{bus,synth,cues}.ts` · `components/sea/{DiveScene,fx}.tsx` · `components/portraits/Portraits.tsx` · `components/achievements/UnlockToast.tsx` · `components/ceremony/HeirloomCeremony.tsx`
+
+### 5. Student journey / gamification
+
+- **Real currency loop** — pearls earned in dives become spendable at Souk al-Lulu (9 items across 3 stalls). Owned items have *real downstream effects*: the *fattam* noseclip extends starting breath by 10 and slows drain by 15%, the *diveen* stone speeds Saif's descent 1.5×, the *deyeen* net awards a free common pearl per dive, the brass-lantern + dawn-sky heirlooms re-skin every TentScene.
+- 11 achievement badges (Wasm) — each is an authentic Sadu motif with a cultural footnote. Locked = grayscale silhouette; unlocked = saffron with a brass-toast slide-in.
+- Daily-weave streak counter — saffron-diamond chain at the top of home, increments per calendar day, resets after a 1-day gap.
+- Onboarding tour explains the braid in 25 seconds — *math weaves rows, science earns pearls, pearls braid into the tapestry*.
+- Tapestry PNG export bakes the user's date / row-count / streak into the saved image; Web Share API integration for native mobile share-sheets with the PNG attached.
+- **Heirloom-complete certificate** — full-screen ceremony fires once on completion; user signs their name; downloads a tapestry-themed PNG certificate with their name as the centerpiece, two Sadu motif bands, and a sealed-at-Abu-Dhabi date line. Also accessible from `/tapestry` once complete.
+- Per-user deterministic `seed` exposed as a shareable permalink (`/tapestry?seed=…`) — opens a read-only view of someone else's finished heirloom.
+- Lesson unlock gate (`arrays`, `angles` unlock at 3 core completions).
+
+**Where to find it:** `lib/store/progress.ts` (Zustand + persist v4) · `lib/souk/{catalog,effects}.ts` · `app/souk/page.tsx` · `lib/achievements/registry.ts` · `components/achievements/*` · `components/home/StreakChain.tsx` · `lib/tapestry/{exportPng,buildCertificate}.ts` · `components/ceremony/HeirloomCeremony.tsx`
 
 ---
 
@@ -119,20 +174,20 @@ flowchart LR
     end
 
     subgraph stores["lib/store/"]
-        progress[("progress (zustand+persist v2)\n• ops, beads, pearls\n• achievements, streak\n• unlockedItems")]
-        settings[("settings (zustand+persist v2)\n• lang, numeralMode\n• audioEnabled\n• hasOnboarded, hasToggled*")]
+        progress[("progress<br/>zustand + persist<br/>ops · pearls · achievements<br/>streak · unlockedItems")]
+        settings[("settings<br/>zustand + persist<br/>lang · numeralMode<br/>audioEnabled · hasOnboarded")]
     end
 
     subgraph services["lib/"]
-        audio["audio/{bus,synth,cues}.ts\n→ playCue(id)"]
-        achievements["achievements/registry.ts\n→ predicates"]
+        audio["audio/{bus,synth,cues}.ts<br/>playCue(id)"]
+        achievements["achievements/registry.ts<br/>predicates"]
         souk_cat["souk/catalog.ts"]
         export["tapestry/exportPng.ts"]
         i18n["i18n/{provider,numerals,dict}"]
     end
 
     subgraph watchers["mounted in app/layout.tsx"]
-        watch["AchievementWatcher\n(zustand subscribe → unlocks)"]
+        watch["AchievementWatcher<br/>zustand subscribe → unlocks"]
     end
 
     home --> loomHub & seaHub & souk & chest & tapestry
