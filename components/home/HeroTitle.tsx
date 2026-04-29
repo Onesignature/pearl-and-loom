@@ -1,13 +1,24 @@
 "use client";
 
 // Hero title block on the home / family-tent screen.
-// Title + subtitle + thesis line. Uses clamp() everywhere so it scales
-// gracefully from phone-narrow to wide-desktop without overflow.
+// Personalized greeting + title + thesis line. Uses clamp() everywhere
+// so it scales gracefully from phone-narrow to wide-desktop without
+// overflow.
 
 import { useI18n } from "@/lib/i18n/provider";
+import { useSettings } from "@/lib/store/settings";
+
+function timeOfDayKey(): "profile.greetingMorning" | "profile.greetingAfternoon" | "profile.greetingEvening" {
+  const h = new Date().getHours();
+  if (h < 12) return "profile.greetingMorning";
+  if (h < 18) return "profile.greetingAfternoon";
+  return "profile.greetingEvening";
+}
 
 export function HeroTitle() {
   const { t, lang } = useI18n();
+  const learnerName = useSettings((s) => s.learnerName);
+  const firstName = learnerName.trim().split(/\s+/)[0];
 
   return (
     <div
@@ -20,6 +31,20 @@ export function HeroTitle() {
         gap: "clamp(10px, 1.4vw, 18px)",
       }}
     >
+      {firstName && (
+        <div
+          style={{
+            fontFamily: "var(--font-cormorant), serif",
+            fontSize: "clamp(14px, 1.5vw, 18px)",
+            color: "var(--saffron)",
+            letterSpacing: "0.16em",
+            fontStyle: "italic",
+            opacity: 0.92,
+          }}
+        >
+          {t(timeOfDayKey())}, {firstName}.
+        </div>
+      )}
       <h1
         style={{
           margin: 0,
@@ -40,16 +65,6 @@ export function HeroTitle() {
       >
         {t("meta.title")}
       </h1>
-      <div
-        style={{
-          color: "rgba(240,228,201,0.65)",
-          fontSize: "clamp(13px, 1.1vw, 15px)",
-          letterSpacing: "0.08em",
-          fontStyle: "italic",
-        }}
-      >
-        {t("meta.subtitle")}
-      </div>
 
       {/* Thesis line — flanked by horizontal rules */}
       <div
