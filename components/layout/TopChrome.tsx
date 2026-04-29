@@ -36,16 +36,27 @@ export function TopChrome({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "20px 28px",
-        gap: 12,
+        padding: "18px 28px",
+        gap: 14,
         zIndex: 50,
         background: transparent
           ? "transparent"
-          : "linear-gradient(to bottom, rgba(0,0,0,0.35), transparent)",
+          : "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.18) 75%, transparent 100%)",
+        borderBottom: transparent ? "none" : "1px solid rgba(232,163,61,0.18)",
         pointerEvents: "none",
       }}
     >
-      <div style={{ display: "flex", gap: 12, alignItems: "center", pointerEvents: "auto", minWidth: 0 }}>
+      <div style={{ display: "flex", gap: 14, alignItems: "center", pointerEvents: "auto", minWidth: 0 }}>
+        {/* Brand mark — small favicon ties inner pages back to the home identity */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/favicon.svg"
+          alt=""
+          width={30}
+          height={30}
+          className="chrome-brand-mark"
+          aria-hidden
+        />
         {(onBack || onHome) && (
           <button onClick={onBack || onHome} className="chrome-btn chrome-back">
             <span style={{ display: "inline-block", transform: dir === "rtl" ? "scaleX(-1)" : "none" }}>
