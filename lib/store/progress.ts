@@ -16,8 +16,28 @@ export interface CollectedPearl {
   wovenIntoTapestry: boolean;
 }
 
+export type QuizPath = "layla" | "saif";
+
+export interface QuizResult {
+  /** Score out of 5. Null until first attempt. */
+  score: number | null;
+  /** Best score across all attempts. */
+  bestScore: number | null;
+  /** Total attempts taken. */
+  attempts: number;
+  /** Timestamp of last attempt. */
+  lastAttemptAt: number | null;
+}
+
+export const EMPTY_QUIZ_RESULT: QuizResult = {
+  score: null,
+  bestScore: null,
+  attempts: 0,
+  lastAttemptAt: null,
+};
+
 interface ProgressState {
-  version: 2;
+  version: 3;
   seed: string;
   ops: PatternOp[];
   beads: PearlBead[];
@@ -32,6 +52,12 @@ interface ProgressState {
   streak: number;
   /** IDs of items purchased from the Souk al-Lulu shop. */
   unlockedItems: string[];
+  /** Quiz scores per path (Layla = math, Saif = science). */
+  quizScores: Record<QuizPath, QuizResult>;
+  /** Timestamp of first lesson completion — anchors leaderboard time-taken. */
+  startedAt: number | null;
+  /** Timestamp of heirloom completion. */
+  completedAt: number | null;
 
   appendOp: (op: PatternOp) => void;
   completeLoomLesson: (lessonId: string, op: PatternOp) => void;
@@ -40,6 +66,8 @@ interface ProgressState {
   weavePearlIntoTapestry: (pearlId: string, column: number) => void;
   unlockAchievement: (id: string) => void;
   spendPearls: (itemId: string, cost: { common?: number; fine?: number; royal?: number }) => boolean;
+  recordQuizScore: (path: QuizPath, score: number) => void;
+  markCompleted: () => void;
   reset: () => void;
 }
 
@@ -79,8 +107,11 @@ const initial = (): Pick<
   | "lastWeaveDate"
   | "streak"
   | "unlockedItems"
+  | "quizScores"
+  | "startedAt"
+  | "completedAt"
 > => ({
-  version: 2,
+  version: 3,
   seed: makeSeed(),
   ops: [],
   beads: [],
@@ -91,6 +122,12 @@ const initial = (): Pick<
   lastWeaveDate: null,
   streak: 0,
   unlockedItems: [],
+  quizScores: {
+    layla: { ...EMPTY_QUIZ_RESULT },
+    saif: { ...EMPTY_QUIZ_RESULT },
+  },
+  startedAt: null,
+  completedAt: null,
 });
 
 export const useProgress = create<ProgressState>()(
@@ -105,11 +142,15 @@ export const useProgress = create<ProgressState>()(
         set((s) => {
           if (s.loomLessonsCompleted.includes(lessonId)) return s;
           const today = todayKey();
+          const now = Date.now();
           return {
             loomLessonsCompleted: [...s.loomLessonsCompleted, lessonId],
             ops: [...s.ops, op],
             streak: bumpStreak(s.streak, s.lastWeaveDate),
             lastWeaveDate: today,
+            // First-ever lesson stamps the journey's start time. Powers the
+            // leaderboard's "time-taken-till-completion" column.
+            startedAt: s.startedAt ?? now,
           };
         }),
 
@@ -117,10 +158,12 @@ export const useProgress = create<ProgressState>()(
         set((s) => {
           if (s.diveLessonsCompleted.includes(lessonId)) return s;
           const today = todayKey();
+          const now = Date.now();
           return {
             diveLessonsCompleted: [...s.diveLessonsCompleted, lessonId],
             streak: bumpStreak(s.streak, s.lastWeaveDate),
             lastWeaveDate: today,
+            startedAt: s.startedAt ?? now,
           };
         }),
 
@@ -195,23 +238,54 @@ export const useProgress = create<ProgressState>()(
         return success;
       },
 
+      recordQuizScore: (path, score) =>
+        set((s) => {
+          const prior = s.quizScores[path];
+          const bestScore = Math.max(prior.bestScore ?? 0, score);
+          return {
+            quizScores: {
+              ...s.quizScores,
+              [path]: {
+                score,
+                bestScore,
+                attempts: prior.attempts + 1,
+                lastAttemptAt: Date.now(),
+              },
+            },
+          };
+        }),
+
+      markCompleted: () =>
+        set((s) => (s.completedAt ? s : { completedAt: Date.now() })),
+
       reset: () => set(() => initial()),
     }),
     {
       name: "pearl-and-loom:progress",
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => localStorage),
       migrate: (persisted, fromVersion) => {
-        // v1 → v2: add achievements/streak/items fields with safe defaults.
         const p = (persisted ?? {}) as Partial<ProgressState>;
+        // v1 → v2: add achievements/streak/items fields with safe defaults.
         if (fromVersion < 2) {
-          return {
-            ...p,
-            version: 2,
+          Object.assign(p, {
             achievements: p.achievements ?? [],
             lastWeaveDate: p.lastWeaveDate ?? null,
             streak: p.streak ?? 0,
             unlockedItems: p.unlockedItems ?? [],
+          });
+        }
+        // v2 → v3: add quizScores + startedAt + completedAt.
+        if (fromVersion < 3) {
+          return {
+            ...p,
+            version: 3,
+            quizScores: p.quizScores ?? {
+              layla: { ...EMPTY_QUIZ_RESULT },
+              saif: { ...EMPTY_QUIZ_RESULT },
+            },
+            startedAt: p.startedAt ?? null,
+            completedAt: p.completedAt ?? null,
           } as ProgressState;
         }
         return p as ProgressState;

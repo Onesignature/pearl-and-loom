@@ -14,6 +14,7 @@ const empty: AchievementCheckInput = {
   unlockedItems: [],
   hasToggledLang: false,
   hasToggledNumerals: false,
+  quizBestScores: { layla: 0, saif: 0 },
 };
 
 function withOverrides(o: Partial<AchievementCheckInput>): AchievementCheckInput {
@@ -129,6 +130,22 @@ describe("ACHIEVEMENT predicates", () => {
     expect(def.check(withOverrides({ ops, pearls: [] }))).toBe(false);
     expect(def.check(withOverrides({ ops: [], pearls }))).toBe(false);
     expect(def.check(withOverrides({ ops, pearls }))).toBe(true);
+  });
+
+  it("laylas_apprentice fires at quiz score 4/5 or better", () => {
+    const def = ACHIEVEMENT_BY_ID.laylas_apprentice;
+    expect(def.check(empty)).toBe(false);
+    expect(def.check(withOverrides({ quizBestScores: { layla: 3, saif: 0 } }))).toBe(false);
+    expect(def.check(withOverrides({ quizBestScores: { layla: 4, saif: 0 } }))).toBe(true);
+    expect(def.check(withOverrides({ quizBestScores: { layla: 5, saif: 0 } }))).toBe(true);
+  });
+
+  it("saifs_apprentice fires at quiz score 4/5 or better", () => {
+    const def = ACHIEVEMENT_BY_ID.saifs_apprentice;
+    expect(def.check(empty)).toBe(false);
+    expect(def.check(withOverrides({ quizBestScores: { layla: 0, saif: 3 } }))).toBe(false);
+    expect(def.check(withOverrides({ quizBestScores: { layla: 0, saif: 4 } }))).toBe(true);
+    expect(def.check(withOverrides({ quizBestScores: { layla: 0, saif: 5 } }))).toBe(true);
   });
 
   it("every achievement registers a non-empty bilingual title and motif", () => {

@@ -28,12 +28,20 @@ export function AchievementWatcher() {
         unlockedItems: p.unlockedItems,
         hasToggledLang: s.hasToggledLang,
         hasToggledNumerals: s.hasToggledNumerals,
+        quizBestScores: {
+          layla: p.quizScores.layla.bestScore ?? 0,
+          saif: p.quizScores.saif.bestScore ?? 0,
+        },
       };
       let newest: AchievementDef | null = null;
       for (const a of ACHIEVEMENTS) {
         if (!p.achievements.includes(a.id) && a.check(input)) {
           p.unlockAchievement(a.id);
           newest = a;
+          // Heirloom-complete is the journey's terminal milestone — stamp
+          // the completion timestamp the first time it fires so the
+          // leaderboard "time taken" column has both ends of the journey.
+          if (a.id === "heirloom_complete") p.markCompleted();
         }
       }
       // Suppress toast on the very first mount so revisiting the app

@@ -13,6 +13,8 @@ export interface AchievementCheckInput {
   unlockedItems: string[];
   hasToggledLang: boolean;
   hasToggledNumerals: boolean;
+  /** Best-ever quiz score per path. 0 = not yet attempted or 0 correct. */
+  quizBestScores: { layla: number; saif: number };
 }
 
 export interface AchievementDef {
@@ -161,6 +163,32 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     noteAr: "النسيج التام يُلفّ حول يد الأم ويُورَّث — ذاكرة العائلة في القماش.",
     check: (s) =>
       s.ops.filter((o) => o.kind !== "bead").length >= 25 && s.pearls.length >= 12,
+  },
+  {
+    id: "laylas_apprentice",
+    motif: "mthalath",
+    titleEn: "Layla's Apprentice",
+    titleAr: "تلميذة ليلى",
+    taglineEn: "Passed the loom quiz · 4/5 or better",
+    taglineAr: "اجتازت اختبار النَّول · ٤/٥ أو أفضل",
+    noteEn:
+      "A weaver's apprentice passed her first cloth review when she could explain — not just weave — every motif on the loom.",
+    noteAr:
+      "كانت التلميذة لا تُعتبر ناسجةً حتى تستطيع شرح كل زخرفة، لا أن تنسجها فحسب.",
+    check: (s) => s.quizBestScores.layla >= 4,
+  },
+  {
+    id: "saifs_apprentice",
+    motif: "dhurs",
+    titleEn: "Saif's Apprentice",
+    titleAr: "تلميذ سيف",
+    taglineEn: "Passed the dive quiz · 4/5 or better",
+    taglineAr: "اجتاز اختبار الغوص · ٤/٥ أو أفضل",
+    noteEn:
+      "Before a young diver was trusted with the rope, the nahham would test his grasp of breath, depth, and the moods of the sea.",
+    noteAr:
+      "قبل أن يُسلَّم الغوّاص الشاب الحبل، كان النّهام يختبر علمه بالنَّفس والعمق وأمزجة البحر.",
+    check: (s) => s.quizBestScores.saif >= 4,
   },
 ];
 
