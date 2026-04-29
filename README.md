@@ -355,5 +355,3 @@ Honest list of what didn't land in the time budget:
 ---
 
 *Submitted by Bilal Saeed Ahmed for the ADEK Frontend Developer (Interactive UI & Gamification) take-home, April 2026.*
-#   p e a r l - a n d - l o o m  
- 
