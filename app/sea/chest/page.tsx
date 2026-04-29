@@ -152,6 +152,7 @@ export default function PearlChestPage() {
       </div>
 
       <div
+        className="chest-scroll"
         style={{
           position: "absolute",
           inset: 0,
@@ -249,6 +250,19 @@ export default function PearlChestPage() {
       <style>{`
         @media (max-width: 1100px) {
           .chest-weave-preview { display: none !important; }
+        }
+        @media (max-width: 900px) {
+          .chest-scroll {
+            justify-content: flex-start !important;
+            padding-top: 124px !important;
+            row-gap: 6px;
+          }
+        }
+        @media (max-width: 640px) {
+          .chest-scroll {
+            padding-top: 132px !important;
+            padding-bottom: 60px !important;
+          }
         }
         .braid-btn {
           margin-top: 24px;

@@ -42,7 +42,6 @@ export function TopChrome({
         background: transparent
           ? "transparent"
           : "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.18) 75%, transparent 100%)",
-        borderBottom: transparent ? "none" : "1px solid rgba(232,163,61,0.18)",
         pointerEvents: "none",
       }}
     >
@@ -139,27 +138,41 @@ export function TopChrome({
         </button>
       </div>
       <style>{`
+        .chrome-brand-mark {
+          flex: 0 0 auto;
+          display: block;
+          opacity: 0.92;
+          filter: drop-shadow(0 1px 4px rgba(0,0,0,0.5));
+        }
         .chrome-btn {
-          background: rgba(245,235,211,0.08);
+          background: linear-gradient(180deg, rgba(245,235,211,0.10) 0%, rgba(245,235,211,0.04) 100%);
           color: var(--wool);
-          border: 1px solid rgba(240,228,201,0.18);
-          padding: 8px 14px;
+          border: 1px solid rgba(240,228,201,0.22);
+          padding: 9px 14px;
           font-family: var(--font-tajawal), sans-serif;
           font-size: 13px;
           letter-spacing: 0.08em;
           cursor: pointer;
-          backdrop-filter: blur(8px);
-          transition: all 0.2s var(--ease-loom);
-          border-radius: 2px;
-          min-width: 38px;
-          min-height: 38px;
+          backdrop-filter: blur(10px);
+          transition: background 0.2s var(--ease-loom), border-color 0.2s var(--ease-loom), box-shadow 0.2s var(--ease-loom), transform 0.2s var(--ease-loom);
+          box-shadow: inset 0 1px 0 rgba(245,235,211,0.06);
+          min-width: 40px;
+          min-height: 40px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
         }
         .chrome-btn:hover {
-          background: rgba(245,235,211,0.16);
-          border-color: rgba(240,228,201,0.32);
+          background: linear-gradient(180deg, rgba(232,163,61,0.18) 0%, rgba(232,163,61,0.06) 100%);
+          border-color: rgba(232,163,61,0.55);
+          box-shadow: inset 0 1px 0 rgba(245,235,211,0.10), 0 4px 14px rgba(232,163,61,0.18);
+          transform: translateY(-1px);
+        }
+        .chrome-back .chrome-back-label {
+          font-family: var(--font-cormorant), serif;
+          font-style: italic;
+          letter-spacing: 0.12em;
+          font-size: 14px;
         }
         .chrome-mobile-only { display: none; }
         @media (max-width: 640px) {
@@ -167,6 +180,7 @@ export function TopChrome({
           .chrome-mobile-only { display: inline-flex; }
           .chrome-title { font-size: 16px !important; white-space: normal !important; }
           .chrome-subtitle { font-size: 10px !important; white-space: normal !important; margin-top: 3px !important; }
+          .chrome-brand-mark { width: 26px !important; height: 26px !important; }
         }
         @media (max-width: 480px) {
           .chrome-back-label { display: none; }

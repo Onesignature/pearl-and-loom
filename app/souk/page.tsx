@@ -127,14 +127,24 @@ export default function SoukPage() {
           padding: 96px clamp(16px, 3vw, 48px) 60px;
           color: var(--wool);
         }
-        .souk-stall { max-width: 1080px; margin: 0 auto 36px; }
+        .souk-stall { max-width: 1080px; margin: 0 auto 30px; }
         .souk-stall-head {
           display: flex;
           align-items: baseline;
-          gap: 16px;
-          padding-bottom: 10px;
+          gap: 14px;
+          padding-bottom: 8px;
           margin-bottom: 14px;
-          border-bottom: 1px solid rgba(232,163,61,0.25);
+          border-bottom: 1px solid rgba(232,163,61,0.22);
+          position: relative;
+        }
+        .souk-stall-head::before {
+          content: "◆";
+          color: var(--saffron);
+          font-size: 9px;
+          opacity: 0.7;
+          margin-inline-end: 2px;
+          align-self: center;
+          line-height: 1;
         }
         .souk-stall-title {
           font-family: var(--font-cormorant), serif;
@@ -148,12 +158,12 @@ export default function SoukPage() {
           color: var(--saffron);
           letter-spacing: 0.32em;
           text-transform: uppercase;
-          opacity: 0.8;
+          opacity: 0.78;
         }
         .souk-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-          gap: 14px;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 12px;
         }
         .souk-feedback {
           position: fixed;
@@ -201,27 +211,31 @@ function Wallet({
       <style>{`
         .souk-wallet {
           max-width: 1080px;
-          margin: 0 auto 22px;
-          padding: 14px 18px;
-          background: linear-gradient(135deg, rgba(28,18,12,0.85), rgba(48,30,16,0.7));
-          border: 1px solid rgba(232,163,61,0.3);
+          margin: 0 auto 20px;
+          padding: 10px 18px;
+          background:
+            linear-gradient(180deg, rgba(48,30,16,0.55) 0%, rgba(20,12,8,0.55) 100%);
+          border: 1px solid rgba(232,163,61,0.28);
+          border-radius: var(--radius-btn, 6px);
+          box-shadow: inset 0 1px 0 rgba(245,235,211,0.05);
           display: flex;
           align-items: center;
-          gap: 22px;
+          gap: 20px;
           flex-wrap: wrap;
         }
         .souk-wallet-label {
           font-family: var(--font-cormorant), serif;
-          font-size: 11px;
-          letter-spacing: 0.36em;
-          text-transform: uppercase;
+          font-style: italic;
+          font-size: 12px;
+          letter-spacing: 0.18em;
           color: var(--saffron);
-          opacity: 0.8;
+          opacity: 0.82;
         }
         .souk-wallet-counts {
           display: flex;
           gap: 18px;
           flex-wrap: wrap;
+          align-items: center;
         }
       `}</style>
     </div>
@@ -285,15 +299,18 @@ function ItemCard({
 }) {
   return (
     <div className={`item-card${owned ? " owned" : ""}`}>
-      <div className="item-glyph" aria-hidden>{item.glyph}</div>
-      <div className="item-name">
-        {lang === "en" ? item.nameEn : item.nameAr}
-      </div>
-      <div className="item-tag">
-        {lang === "en" ? item.taglineEn : item.taglineAr}
+      <div className="item-head">
+        <div className="item-seal" aria-hidden>{item.glyph}</div>
+        <div className="item-head-text">
+          <div className="item-name">
+            {lang === "en" ? item.nameEn : item.nameAr}
+          </div>
+          <div className="item-tag">
+            {lang === "en" ? item.taglineEn : item.taglineAr}
+          </div>
+        </div>
       </div>
       <div className="item-effect">
-        <span aria-hidden style={{ marginInlineEnd: 6 }}>⚡</span>
         {lang === "en" ? item.effectEn : item.effectAr}
       </div>
       <div className="item-note">
@@ -302,7 +319,10 @@ function ItemCard({
       <div className="item-foot">
         <CostBadge cost={item.cost} lang={lang} />
         {owned ? (
-          <span className="item-owned">{lang === "en" ? "Owned" : "مَملوك"}</span>
+          <span className="item-owned" aria-label={lang === "en" ? "Owned" : "مَملوك"}>
+            <span aria-hidden style={{ marginInlineEnd: 5 }}>✓</span>
+            {lang === "en" ? "Owned" : "مَملوك"}
+          </span>
         ) : (
           <button
             className="item-buy"
@@ -322,41 +342,72 @@ function ItemCard({
       </div>
       <style>{`
         .item-card {
+          position: relative;
           display: flex;
           flex-direction: column;
-          gap: 6px;
-          padding: 16px 16px 14px;
-          background: rgba(245,235,211,0.04);
-          border: 1px solid rgba(232,163,61,0.22);
+          gap: 10px;
+          padding: 14px 14px 12px;
+          background:
+            linear-gradient(180deg, rgba(48,30,18,0.42) 0%, rgba(20,12,8,0.52) 100%);
+          border: 1px solid rgba(232,163,61,0.18);
+          border-radius: var(--radius-btn, 6px);
           color: var(--wool);
-          min-height: 220px;
-          transition: background 0.25s, border-color 0.25s, transform 0.25s;
+          box-shadow:
+            inset 0 1px 0 rgba(245,235,211,0.05),
+            0 2px 8px rgba(0,0,0,0.18);
+          transition: background 0.25s var(--ease-loom), border-color 0.25s var(--ease-loom), transform 0.25s var(--ease-loom), box-shadow 0.25s var(--ease-loom);
         }
-        .item-card:hover { transform: translateY(-2px); border-color: rgba(232,163,61,0.5); }
-        .item-card.owned { background: rgba(232,163,61,0.10); border-color: rgba(232,163,61,0.65); }
-        .item-glyph {
-          font-size: 24px;
+        .item-card:hover {
+          transform: translateY(-2px);
+          border-color: rgba(232,163,61,0.55);
+          box-shadow:
+            inset 0 1px 0 rgba(245,235,211,0.08),
+            0 8px 22px rgba(0,0,0,0.32);
+        }
+        .item-card.owned {
+          background:
+            linear-gradient(180deg, rgba(232,163,61,0.16) 0%, rgba(232,163,61,0.05) 100%);
+          border-color: rgba(232,163,61,0.55);
+        }
+        .item-head {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+        }
+        .item-seal {
+          flex: 0 0 auto;
+          width: 38px;
+          height: 38px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
           color: var(--saffron);
           line-height: 1;
+          background:
+            radial-gradient(circle at 32% 28%, rgba(232,163,61,0.25), rgba(232,163,61,0.06) 70%);
+          border: 1px solid rgba(232,163,61,0.4);
+          border-radius: 50%;
+          box-shadow: inset 0 1px 0 rgba(245,235,211,0.10);
         }
+        .item-head-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
         .item-name {
           font-family: var(--font-cormorant), serif;
           font-size: 17px;
           color: var(--wool);
           letter-spacing: 0.04em;
+          line-height: 1.15;
         }
         .item-tag {
           font-size: 10px;
           color: var(--saffron);
           letter-spacing: 0.22em;
           text-transform: uppercase;
-          opacity: 0.85;
+          opacity: 0.82;
         }
         .item-effect {
-          margin-top: 4px;
-          padding: 6px 10px;
-          background: rgba(232,163,61,0.14);
-          border: 1px solid rgba(232,163,61,0.45);
+          padding: 6px 0 6px 10px;
+          border-inline-start: 2px solid var(--saffron);
           font-family: var(--font-tajawal), sans-serif;
           font-size: 11.5px;
           color: var(--saffron-soft);
@@ -368,42 +419,58 @@ function ItemCard({
           color: rgba(240,228,201,0.7);
           line-height: 1.5;
           flex: 1;
-          margin-top: 4px;
         }
         .item-foot {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-top: 10px;
-          padding-top: 10px;
-          border-top: 1px dashed rgba(232,163,61,0.25);
+          gap: 10px;
+          margin-top: 4px;
         }
         .item-buy {
-          padding: 7px 16px;
-          background: var(--saffron);
+          padding: 8px 16px;
+          background:
+            linear-gradient(180deg, var(--saffron-soft) 0%, var(--saffron) 100%);
           color: var(--charcoal);
           border: 1px solid var(--saffron);
+          border-radius: var(--radius-btn, 6px);
           font-family: var(--font-cormorant), serif;
           font-size: 11px;
           letter-spacing: 0.3em;
           text-transform: uppercase;
+          font-weight: 600;
           cursor: pointer;
-          transition: background 0.2s;
+          box-shadow:
+            inset 0 1px 0 rgba(255,238,210,0.55),
+            0 3px 10px rgba(232,163,61,0.28);
+          transition: background 0.2s var(--ease-loom), box-shadow 0.2s var(--ease-loom), transform 0.2s var(--ease-loom);
         }
-        .item-buy:hover:not(:disabled) { background: var(--saffron-soft); }
+        .item-buy:hover:not(:disabled) {
+          background: linear-gradient(180deg, #F4C783 0%, var(--saffron-soft) 100%);
+          box-shadow:
+            inset 0 1px 0 rgba(255,238,210,0.7),
+            0 6px 18px rgba(232,163,61,0.4);
+          transform: translateY(-1px);
+        }
         .item-buy:disabled {
           opacity: 0.35;
           cursor: not-allowed;
           background: rgba(232,163,61,0.4);
+          box-shadow: none;
+          transform: none;
         }
         .item-owned {
+          display: inline-flex;
+          align-items: center;
           font-family: var(--font-cormorant), serif;
           font-size: 11px;
           letter-spacing: 0.3em;
           text-transform: uppercase;
           color: var(--saffron);
-          padding: 7px 16px;
-          border: 1px solid var(--saffron);
+          padding: 7px 14px;
+          border: 1px solid rgba(232,163,61,0.65);
+          border-radius: var(--radius-btn, 6px);
+          background: rgba(232,163,61,0.08);
         }
       `}</style>
     </div>

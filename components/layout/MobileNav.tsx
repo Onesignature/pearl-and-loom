@@ -240,16 +240,24 @@ export function MobileNav({ onOpenWalkthrough, onOpenTutorial }: MobileNavProps)
           display: none;
           width: 44px;
           height: 44px;
-          background: rgba(28,18,12,0.55);
-          border: 1px solid rgba(232,163,61,0.35);
+          background:
+            linear-gradient(180deg, rgba(48,30,18,0.78) 0%, rgba(20,12,8,0.78) 100%);
+          border: 1px solid rgba(232,163,61,0.42);
           color: var(--wool);
           padding: 0;
           cursor: pointer;
-          backdrop-filter: blur(6px);
+          backdrop-filter: blur(10px);
+          box-shadow:
+            inset 0 1px 0 rgba(245,235,211,0.06),
+            0 2px 8px rgba(0,0,0,0.22);
           align-items: center;
           justify-content: center;
+          transition: background 0.2s var(--ease-loom), border-color 0.2s var(--ease-loom);
         }
-        .mnav-trigger:active { background: rgba(232,163,61,0.18); }
+        .mnav-trigger:active {
+          background: linear-gradient(180deg, rgba(232,163,61,0.30) 0%, rgba(232,163,61,0.10) 100%);
+          border-color: rgba(232,163,61,0.85);
+        }
         .mnav-bar {
           display: block;
           width: 18px;
