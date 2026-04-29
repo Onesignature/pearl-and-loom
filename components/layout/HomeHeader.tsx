@@ -1,22 +1,28 @@
 "use client";
 
 // Branded header used only on the Home / Family Tent screen. Heavier and more
-// ceremonial than TopChrome: ornament rule + brand mark + locale chips +
-// "Walkthrough" video dialog + "How it works" tutorial dialog.
+// ceremonial than TopChrome: ornament rule + brand mark + a quiet chip row.
+//
+// The chip row was decluttered from 7 standalone surfaces (Walkthrough,
+// How-it-works, Souk, Audio, Numerals, Language, hamburger) down to 4
+// (Profile, Hikma, Souk, Help, Settings). Audio + Numerals + Language
+// fold into one Settings popover; Walkthrough + How-it-works fold into
+// one Help popover. Net: one cohesive identity strip, less visual
+// competition with the Family Tent scene.
 
 import { useState } from "react";
+import Link from "next/link";
 import { useI18n } from "@/lib/i18n/provider";
 import { TutorialDialog } from "@/components/home/TutorialDialog";
 import { WalkthroughDialog } from "@/components/home/WalkthroughDialog";
 import { MobileNav } from "@/components/layout/MobileNav";
-import { useAudioToggle } from "@/components/ui/useAudioToggle";
+import { ProfileChip } from "@/components/home/ProfileChip";
+import { HikmaCounter } from "@/components/home/HikmaCounter";
+import { SettingsPopover } from "@/components/home/SettingsPopover";
+import { HelpPopover } from "@/components/home/HelpPopover";
 
 export function HomeHeader() {
-  const { lang, setLang, numeralMode, setNumeralMode } = useI18n();
-  const { audioEnabled, toggle: toggleAudio } = useAudioToggle();
-  const useArabicDigits =
-    numeralMode === "arabic-indic" ||
-    (numeralMode === "auto" && lang === "ar");
+  const { lang } = useI18n();
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [walkthroughOpen, setWalkthroughOpen] = useState(false);
 
@@ -40,12 +46,12 @@ export function HomeHeader() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          gap: 16,
           pointerEvents: "auto",
         }}
       >
         {/* Brand mark — favicon + wordmark */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          {/* SVG favicon — Next/Image adds no value for a 44px static SVG */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14, flex: "0 0 auto" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/favicon.svg"
@@ -69,23 +75,6 @@ export function HomeHeader() {
           </div>
         </div>
 
-        {/* Era caption — center, between brand mark and locale chips.
-            Hidden on tablet/mobile portrait so the chip row stays on one line. */}
-        <div
-          className="home-era"
-          style={{
-            fontFamily: "var(--font-cormorant), serif",
-            fontSize: 13,
-            color: "var(--saffron)",
-            letterSpacing: "0.42em",
-            textTransform: "uppercase",
-            opacity: 0.78,
-            whiteSpace: "nowrap",
-          }}
-        >
-          {lang === "en" ? "Abu Dhabi · 1948" : "أبو ظبي · ١٩٤٨"}
-        </div>
-
         {/* Mobile-only hamburger — CSS shows only at ≤640px */}
         <div className="home-mobile-only" style={{ pointerEvents: "auto" }}>
           <MobileNav
@@ -94,84 +83,31 @@ export function HomeHeader() {
           />
         </div>
 
-        {/* Locale chips on the right — hidden at ≤640px in favour of hamburger.
-            Two visually grouped clusters (actions · settings) split by a hairline. */}
+        {/* Desktop chip row — 4 surfaces: Profile · Hikma · Souk · Help · Settings */}
         <div className="home-chip-row" style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
-          <div className="home-chip-group" style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }}>
-            <button
-              onClick={() => setWalkthroughOpen(true)}
-              className="home-chip home-chip--accent"
-              title="Watch the walkthrough"
-            >
-              <span style={{ marginInlineEnd: 8 }}>▶</span>
-              <span>{lang === "en" ? "Walkthrough" : "العرض التوضيحي"}</span>
-            </button>
-            <button
-              onClick={() => setTutorialOpen(true)}
-              className="home-chip"
-              title="How it works"
-            >
-              <span>{lang === "en" ? "How it works" : "كيف يعمل"}</span>
-            </button>
-            <a
-              href="/souk"
-              className="home-chip home-chip--accent"
-              title="Souk al-Lulu"
-              style={{ textDecoration: "none" }}
-            >
-              <span>{lang === "en" ? "Souk" : "السوق"}</span>
-            </a>
-          </div>
-          <span className="home-chip-divider" aria-hidden />
-          <div className="home-chip-group" style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }}>
-            <button
-              onClick={toggleAudio}
-              className="home-chip home-chip--icon"
-              title={audioEnabled ? "Mute audio" : "Enable audio"}
-              aria-pressed={audioEnabled}
-            >
-              <span aria-hidden>{audioEnabled ? "🔊" : "🔇"}</span>
-            </button>
-            <button
-              onClick={() =>
-                setNumeralMode(useArabicDigits ? "western" : "arabic-indic")
-              }
-              className="home-chip home-chip--icon"
-              title="Numeral system"
-            >
-              <span
-                style={{
-                  fontFamily: useArabicDigits
-                    ? "var(--font-tajawal), sans-serif"
-                    : undefined,
-                }}
-              >
-                {useArabicDigits ? "١٢٣" : "123"}
-              </span>
-            </button>
-            <button
-              onClick={() => setLang(lang === "en" ? "ar" : "en")}
-              className="home-chip"
-              title="Language"
-            >
-              <span
-                style={{
-                  fontFamily:
-                    lang === "en"
-                      ? "var(--font-cormorant), serif"
-                      : "var(--font-tajawal), sans-serif",
-                }}
-              >
-                {lang === "en" ? "العربية" : "English"}
-              </span>
-            </button>
-          </div>
+          <ProfileChip />
+          <HikmaCounter />
+          <Link
+            href="/leaderboard"
+            className="hp-chip"
+            title={lang === "en" ? "Leaderboard" : "لوحة الصدارة"}
+          >
+            <span aria-hidden style={{ marginInlineEnd: 6 }}>🏆</span>
+            <span>{lang === "en" ? "Leaderboard" : "الصدارة"}</span>
+          </Link>
+          <Link href="/souk" className="hp-chip hp-chip--accent" title="Souk al-Lulu">
+            <span>{lang === "en" ? "Souk" : "السوق"}</span>
+          </Link>
+          <HelpPopover
+            onOpenWalkthrough={() => setWalkthroughOpen(true)}
+            onOpenTutorial={() => setTutorialOpen(true)}
+          />
+          <SettingsPopover />
         </div>
       </div>
 
       <style>{`
         @media (max-width: 1100px) {
-          .home-era { display: none !important; }
           .home-wordmark { font-size: 17px !important; }
         }
         .home-mobile-only { display: none; }
@@ -180,18 +116,16 @@ export function HomeHeader() {
           .home-mobile-only { display: inline-flex; }
           .home-wordmark { font-size: 14px !important; }
         }
-        .home-chip-divider {
-          width: 1px;
-          height: 26px;
-          background: linear-gradient(to bottom, transparent, rgba(232,163,61,0.4), transparent);
-          flex: 0 0 auto;
-          margin-inline: 4px;
-        }
-        .home-chip {
+
+        /* Shared chip + popover styles for the home header. ProfileChip
+           uses its own classes; everything else (Souk link, Help, Settings)
+           uses .hp-chip + .hp-pop here. */
+        .hp-chip {
           padding: 10px 18px;
           background:
             linear-gradient(180deg, rgba(48,30,18,0.78) 0%, rgba(20,12,8,0.78) 100%);
           border: 1px solid rgba(232,163,61,0.42);
+          border-radius: 999px;
           color: var(--wool);
           font-family: var(--font-cormorant), serif;
           font-size: 13px;
@@ -206,13 +140,15 @@ export function HomeHeader() {
           display: inline-flex;
           align-items: center;
           min-height: 40px;
+          text-decoration: none;
         }
-        .home-chip--icon {
+        .hp-chip--icon {
           padding: 10px 14px;
           min-width: 44px;
           justify-content: center;
+          border-radius: 999px;
         }
-        .home-chip:hover {
+        .hp-chip:hover {
           background:
             linear-gradient(180deg, rgba(232,163,61,0.30) 0%, rgba(232,163,61,0.10) 100%);
           border-color: rgba(232,163,61,0.85);
@@ -221,7 +157,7 @@ export function HomeHeader() {
             0 6px 18px rgba(232,163,61,0.22);
           transform: translateY(-1px);
         }
-        .home-chip--accent {
+        .hp-chip--accent {
           background:
             linear-gradient(180deg, var(--saffron-soft) 0%, var(--saffron) 100%);
           color: var(--charcoal);
@@ -231,7 +167,7 @@ export function HomeHeader() {
             inset 0 1px 0 rgba(255,238,210,0.55),
             0 4px 14px rgba(232,163,61,0.36);
         }
-        .home-chip--accent:hover {
+        .hp-chip--accent:hover {
           background:
             linear-gradient(180deg, #F4C783 0%, var(--saffron-soft) 100%);
           border-color: var(--saffron-soft);
@@ -239,8 +175,99 @@ export function HomeHeader() {
             inset 0 1px 0 rgba(255,238,210,0.65),
             0 8px 24px rgba(232,163,61,0.45);
         }
-        @media (max-width: 1100px) {
-          .home-chip-divider { display: none; }
+
+        .hp-pop {
+          position: absolute;
+          top: calc(100% + 8px);
+          inset-inline-end: 0;
+          width: min(280px, 80vw);
+          padding: 14px;
+          background: linear-gradient(180deg, #1A1208 0%, #0A0807 100%);
+          border: 1px solid var(--saffron);
+          border-radius: 18px;
+          color: var(--wool);
+          z-index: 90;
+          box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+          font-family: var(--font-tajawal), sans-serif;
+          animation: hpRise 0.22s var(--ease-loom);
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        @keyframes hpRise {
+          from { opacity: 0; transform: translateY(-4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .hp-pop-eyebrow {
+          font-family: var(--font-cormorant), serif;
+          font-size: 10px;
+          letter-spacing: 0.32em;
+          text-transform: uppercase;
+          color: var(--saffron);
+          opacity: 0.85;
+          margin-bottom: 4px;
+        }
+        .hp-pop-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          padding: 6px 0;
+        }
+        .hp-pop-label {
+          font-family: var(--font-cormorant), serif;
+          font-size: 11px;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: rgba(240,228,201,0.68);
+        }
+        .hp-pop-toggle {
+          padding: 8px 14px;
+          background: rgba(245,235,211,0.06);
+          border: 1px solid rgba(232,163,61,0.4);
+          border-radius: 999px;
+          color: var(--wool);
+          font-size: 14px;
+          line-height: 1;
+          cursor: pointer;
+          transition: all 0.22s var(--ease-loom);
+        }
+        .hp-pop-toggle:hover {
+          background: rgba(232,163,61,0.18);
+          border-color: var(--saffron);
+        }
+        .hp-pop-toggle.is-on {
+          background: rgba(232,163,61,0.22);
+          border-color: var(--saffron);
+        }
+        .hp-pop-item {
+          width: 100%;
+          padding: 10px 14px;
+          background: rgba(245,235,211,0.04);
+          border: 1px solid rgba(232,163,61,0.32);
+          border-radius: 999px;
+          color: var(--wool);
+          font-family: var(--font-cormorant), serif;
+          font-size: 11px;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          cursor: pointer;
+          text-align: start;
+          display: inline-flex;
+          align-items: center;
+        }
+        .hp-pop-item:hover {
+          background: rgba(232,163,61,0.18);
+          border-color: var(--saffron);
+        }
+        .hp-pop-item--accent {
+          background: linear-gradient(180deg, var(--saffron-soft) 0%, var(--saffron) 100%);
+          border-color: var(--saffron);
+          color: var(--charcoal);
+          font-weight: 600;
+        }
+        .hp-pop-item--accent:hover {
+          background: linear-gradient(180deg, #F4C783 0%, var(--saffron-soft) 100%);
         }
       `}</style>
 
