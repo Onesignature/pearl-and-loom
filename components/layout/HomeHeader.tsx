@@ -103,6 +103,14 @@ export function HomeHeader() {
             <span aria-hidden style={{ marginInlineEnd: 6 }}>✦</span>
             <span>{lang === "en" ? "Forge" : "المسبك"}</span>
           </Link>
+          <Link
+            href="/atlas"
+            className="hp-chip"
+            title={lang === "en" ? "Sadu Atlas — motif reference" : "الأطلس — مرجع الزخارف"}
+          >
+            <span aria-hidden style={{ marginInlineEnd: 6 }}>◇</span>
+            <span>{lang === "en" ? "Atlas" : "الأطلس"}</span>
+          </Link>
           <HelpPopover
             onOpenWalkthrough={() => setWalkthroughOpen(true)}
             onOpenTutorial={() => setTutorialOpen(true)}

@@ -3,6 +3,7 @@
 import { useI18n } from "@/lib/i18n/provider";
 import { TentScene } from "@/components/scenes/TentScene";
 import { TopChrome } from "@/components/layout/TopChrome";
+import { SpeakButton } from "@/components/ui/SpeakButton";
 import type { DictPath } from "@/lib/i18n/provider";
 import { useRouter } from "next/navigation";
 
@@ -134,18 +135,28 @@ export function ProblemCard({
       </div>
       <div
         style={{
-          fontFamily:
-            lang === "ar"
-              ? "var(--font-tajawal), sans-serif"
-              : "var(--font-cormorant), serif",
-          fontSize: lang === "ar" ? 22 : 26,
-          color: "var(--ink)",
-          lineHeight: 1.4,
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 10,
           marginTop: 14,
-          letterSpacing: lang === "ar" ? "0" : "0.02em",
         }}
       >
-        {question}
+        <div
+          style={{
+            flex: 1,
+            fontFamily:
+              lang === "ar"
+                ? "var(--font-tajawal), sans-serif"
+                : "var(--font-cormorant), serif",
+            fontSize: lang === "ar" ? 22 : 26,
+            color: "var(--ink)",
+            lineHeight: 1.4,
+            letterSpacing: lang === "ar" ? "0" : "0.02em",
+          }}
+        >
+          {question}
+        </div>
+        <SpeakButton text={question} variant="icon" />
       </div>
       {hint && (
         <div className="lesson-howto" role="note">

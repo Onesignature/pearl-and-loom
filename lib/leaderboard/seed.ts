@@ -110,6 +110,10 @@ export interface BuildLeaderboardInput {
   completedAt: number | null;
   /** Wall-clock now — passed in so tests can pin it. */
   now: number;
+  /** Optional override for the seed entries — used by the
+   *  /api/leaderboard fetch consumer to decouple the seed from the
+   *  bundle. Defaults to the local constant. */
+  seed?: LeaderboardEntry[];
 }
 
 /**
@@ -120,7 +124,8 @@ export interface BuildLeaderboardInput {
 export function buildLeaderboard(
   input: BuildLeaderboardInput,
 ): LeaderboardEntry[] {
-  const entries: LeaderboardEntry[] = [...SEED_ENTRIES];
+  const seed = input.seed ?? SEED_ENTRIES;
+  const entries: LeaderboardEntry[] = [...seed];
   if (input.learnerName.trim()) {
     const name = input.learnerName.trim().split(/\s+/)[0];
     const elapsed =

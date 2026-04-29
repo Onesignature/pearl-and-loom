@@ -9,6 +9,7 @@ import { Oyster } from "@/components/portraits/Portraits";
 import { GodRays, Caustics, Particulates, SaifSwimmer } from "@/components/sea/fx";
 import { DiveConceptVisual } from "@/components/sea/DiveConceptVisual";
 import { MotifChevron } from "@/components/motifs";
+import { SpeakButton } from "@/components/ui/SpeakButton";
 import { playCue } from "@/lib/audio/cues";
 import type { DiveDef } from "@/app/sea/page";
 import type { PearlGrade } from "@/lib/store/progress";
@@ -1051,18 +1052,28 @@ function ProblemOverlay({
         {problem.trialLabel} · {fmt(Math.round(breath))}% {t("dive.breath")}
       </div>
       <div
-        className="dive-question-text"
         style={{
-          fontFamily:
-            lang === "ar"
-              ? "var(--font-tajawal), sans-serif"
-              : "var(--font-cormorant), serif",
-          color: "var(--foam)",
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 10,
           marginTop: 14,
-          lineHeight: 1.4,
         }}
       >
-        {problem.q}
+        <div
+          className="dive-question-text"
+          style={{
+            flex: 1,
+            fontFamily:
+              lang === "ar"
+                ? "var(--font-tajawal), sans-serif"
+                : "var(--font-cormorant), serif",
+            color: "var(--foam)",
+            lineHeight: 1.4,
+          }}
+        >
+          {problem.q}
+        </div>
+        <SpeakButton text={problem.q} variant="icon" />
       </div>
 
       {/* Theme-matched concept diagram — replaces the previous pressure-

@@ -36,6 +36,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/loom", labelEn: "Layla's Loom", labelAr: "نَول ليلى", glyph: "▦" },
   { href: "/sea", labelEn: "Saif's Sea", labelAr: "بحر سيف", glyph: "≈" },
   { href: "/forge", labelEn: "The Forge", labelAr: "المسبك", glyph: "✦" },
+  { href: "/atlas", labelEn: "Sadu Atlas", labelAr: "الأطلس", glyph: "◇" },
   { href: "/leaderboard", labelEn: "Leaderboard", labelAr: "لوحة الصدارة", glyph: "🏆" },
 ];
 

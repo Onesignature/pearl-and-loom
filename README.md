@@ -96,9 +96,12 @@ Pearls return home and become beads in Layla's tapestry. Completing the curricul
 | `/sea` + 5 dives | Three core dives (buoyancy / pressure / reef biology) + two deep dives (lung capacity, refraction) gated on the cores. Pre-dive force diagram, in-dive breath gauge, end-of-dive pearl reveal. |
 | `/sea/chest` | 3D pearl chest — sandalwood body with brass strapping, mother-of-pearl Sadu inlay on the lid, pearls coloured by tier. R3F + bloom + ACESFilmic, lazy-loaded, paused offscreen, reduced-motion aware. |
 | `/forge` | Interactive pattern-engine playground. Sliders for seed, op kind, palette. The deterministic engine produces Sadu rows in real time. Save as PNG. |
+| `/atlas` | Educational reference for all 8 Sadu motifs — large render + EN/AR names + cultural meaning + "When woven" occasion + UNESCO ICH 00517 / Sharjah Heritage Institute citations. Each card deep-links to `/forge`. |
 | `/tapestry` | Full heirloom view + PNG export + Web Share. Signed PNG certificate downloads after the heirloom completes. |
-| `/leaderboard` | Ranked by ✦ Hikma points. Mock data + the live learner. |
+| `/leaderboard` | Ranked by ✦ Hikma points. Mock data fetched live from `/api/leaderboard` with loading + error fallback. |
 | `/styleguide` | Tokens, type ramp, motifs, live tapestry sandbox. |
+| `/api/leaderboard` | GET endpoint serving the seeded mock leaderboard (1-day cache header). Demonstrates a real fetch + route-handler pattern without inventing a backend the app doesn't need. |
+| `/api/achievements` | GET endpoint serving the achievement catalog (id + motif + bilingual title/tagline/note). Predicates intentionally excluded — they're functions, not transport-safe. |
 
 ---
 
@@ -107,12 +110,13 @@ Pearls return home and become beads in Layla's tapestry. Completing the curricul
 ### 1. UAE cultural integration
 
 - 8 authentic Sadu motifs rendered as live SVG with Arabic names: *al-mthalath, al-shajarah, al-eyoun, al-mushat, hubub, dhurs al-khail, uwairjan, khat*.
+- **`/atlas`** — full educational reference for every motif with cultural meaning, "When woven" occasion strips, and source citations (UNESCO ICH 00517, Sharjah Heritage Institute, Anthropological Museum of Abu Dhabi).
 - Pearling vocabulary in lesson copy: *ghasa, nahham, taab, fattam, deyeen, diveen*.
 - 12 achievement badges (Wasm), each a real Sadu motif with a Bedouin weaving footnote.
 - Bilingual EN ⇄ AR everywhere, full RTL layout, Tajawal font for Arabic, Arabic-Indic numerals (٠–٩) with a per-user toggle.
 - 1948 setting threaded through chrome ("Abu Dhabi · 1948") and the pitch deck.
 
-**Where:** `components/motifs/index.tsx` · `lib/achievements/registry.ts` · `lib/i18n/dict/{en,ar}.ts` · `lib/i18n/numerals.ts`
+**Where:** `components/motifs/index.tsx` · `app/atlas/page.tsx` · `lib/achievements/registry.ts` · `lib/i18n/dict/{en,ar}.ts` · `lib/i18n/numerals.ts`
 
 ### 2. Visual design
 
@@ -335,13 +339,15 @@ pnpm build
   └─ next build                   (only if verify passed)
 ```
 
-Current state on a fresh checkout: 0 TypeScript errors, 0 ESLint errors, 100 unit tests passing (98 + 2 skipped).
+Current state on a fresh checkout: 0 TypeScript errors, 0 ESLint errors, 109 tests passing (107 + 2 skipped).
 
 ---
 
 ## Testing
 
-12 test files under Vitest + jsdom + `@testing-library/react`. Two specs are skipped under jsdom — `tapestry-export` (Canvas not host-able) and the audio synth smoke (Web Audio not host-able); both run in real browsers.
+13 test files under Vitest + jsdom + `@testing-library/react`. Two specs are skipped under jsdom — `tapestry-export` (Canvas not host-able) and the audio synth smoke (Web Audio not host-able); both run in real browsers. Test runner is wrapped with `cross-env NODE_ENV=test` so React 19's `act` is available even when the parent shell sets `NODE_ENV=production` (Vercel's build runner).
+
+**Pure-logic unit tests:**
 
 | File | Coverage |
 |---|---|
@@ -358,7 +364,13 @@ Current state on a fresh checkout: 0 TypeScript errors, 0 ESLint errors, 100 uni
 | `tests/progress-quiz.test.ts` | `recordQuizScore` tracks bestScore, layla/saif tracked independently, `markCompleted` idempotent, `startedAt` stamp-once. |
 | `tests/leaderboard.test.ts` | `buildLeaderboard` — seed-only without profile, "you" inserted with first-name normalised, sorted by hikma desc, tiebreak rules. |
 
-Deliberately not tested: E2E, visual regression, audio output (no headless WebAudio in CI), Framer Motion timelines, R3F scene rendering. The integrity tests above catch the regressions those would.
+**Component-render tests** (`@testing-library/react`):
+
+| File | Coverage |
+|---|---|
+| `tests/components.test.tsx` | `<HikmaCounter>` (live derivation + tier band), `<UnlockToast>` (render + click-to-dismiss + 3.5s auto-dismiss), `<ProfileChip>` (null vs profile-set states), `<LessonSaduPreview>` (locked-caption reveal), `<TitleReveal>` (full text + aria-label, semantic tag override, custom label). |
+
+Deliberately not tested: E2E, visual regression, audio output (no headless WebAudio in CI), Framer Motion timelines, R3F scene rendering. The integrity + component-render tests above catch the regressions those would.
 
 ---
 
@@ -424,7 +436,8 @@ Deliberately not tested: E2E, visual regression, audio output (no headless WebAu
 - **RTL** — full Tailwind v4 logical properties (`ms-`, `me-`, `ps-`, `pe-`) plus `inline-start` / `inline-end` everywhere. Tapestry SVG internals are `dir="ltr"` so motif coordinates stay positive-X-right while the *frame* flips with locale.
 - **Numerals** — `<NumeralText mode="auto" | "western" | "arabic-indic">`. Math problems render in active mode; URLs and lesson IDs stay western for routing stability.
 - **Audio** — defaults on, persisted, one-tap mute (header chip + hamburger drawer + per-page TopChrome chip).
-- **Reduced motion** — `@media (prefers-reduced-motion: reduce)` clamps animations globally; the R3F chest drops auto-rotate, freezes Float, uses `frameloop="demand"`. The audio toggle is independent (motion ≠ audio).
+- **Bilingual TTS narration** — every loom and dive question carries a 🔊 *Read aloud* button driven by the Web Speech API (`SpeechSynthesisUtterance`). Voice picked from the active locale's BCP-47 chain (`en-US/en-GB/en` or `ar-AE/ar-SA/ar-EG/ar`). Real accessibility for Grade 4/8 learners who can't read every word fluently. Graceful fallback when no voice is installed; doesn't render at all if `speechSynthesis` is unavailable. (`components/ui/SpeakButton.tsx`.)
+- **Reduced motion** — `@media (prefers-reduced-motion: reduce)` clamps animations globally; the R3F chest drops auto-rotate, freezes Float, uses `frameloop="demand"`. Framer-motion's `useReducedMotion()` collapses every page transition + Hikma-counter tween + tapestry weave-in to instant. The audio toggle is independent (motion ≠ audio).
 - **Keyboard** — every dialog is `aria-modal`, dismisses on Escape, traps body scroll while open.
 - **Live regions** — `aria-live="polite"` on the achievement unlock toast and tapestry save toasts.
 

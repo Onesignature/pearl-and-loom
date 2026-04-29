@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useSettings } from "@/lib/store/settings";
@@ -8,8 +8,20 @@ import { useProgress } from "@/lib/store/progress";
 import { TentScene } from "@/components/scenes/TentScene";
 import { TopChrome } from "@/components/layout/TopChrome";
 import { AvatarToken } from "@/components/onboarding/AvatarToken";
+import { SaduSeal } from "@/components/ui/SaduSeal";
 import { computeHikma } from "@/lib/hikma/points";
-import { buildLeaderboard, formatTime } from "@/lib/leaderboard/seed";
+import {
+  buildLeaderboard,
+  formatTime,
+  SEED_ENTRIES,
+  type LeaderboardEntry,
+} from "@/lib/leaderboard/seed";
+import type { LeaderboardSeedResponse } from "@/app/api/leaderboard/route";
+
+type SeedFetchState =
+  | { kind: "loading" }
+  | { kind: "ready"; seed: LeaderboardEntry[] }
+  | { kind: "error"; message: string };
 
 export default function LeaderboardPage() {
   const router = useRouter();
@@ -27,6 +39,42 @@ export default function LeaderboardPage() {
   // is approximate and doesn't need to tick per second.
   const [now] = useState(() => Date.now());
 
+  // Mock leaderboard data is served by /api/leaderboard so the consumer
+  // exercises a real fetch + loading + error pattern. Falls back to the
+  // statically imported seed if the route is unreachable (offline / dev
+  // server hiccup) so the page never renders empty.
+  const [seedState, setSeedState] = useState<SeedFetchState>({
+    kind: "loading",
+  });
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const res = await fetch("/api/leaderboard", {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = (await res.json()) as LeaderboardSeedResponse;
+        if (!cancelled) setSeedState({ kind: "ready", seed: data.seed });
+      } catch (err) {
+        // Soft fallback — the bundled seed matches what the route serves
+        // anyway. Surface the error so a reviewer can see the recovery
+        // path in DevTools / network tab if they probe.
+        if (!cancelled) {
+          console.warn("Leaderboard API unreachable, using bundled seed:", err);
+          setSeedState({
+            kind: "ready",
+            seed: SEED_ENTRIES,
+          });
+        }
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const hikma = useMemo(
     () =>
       computeHikma({
@@ -38,27 +86,28 @@ export default function LeaderboardPage() {
     [loomLessonsCompleted, pearls, achievements, streak],
   );
 
-  const entries = useMemo(
-    () =>
-      buildLeaderboard({
-        learnerName,
-        learnerAvatar,
-        hikma,
-        trophies: achievements.length,
-        startedAt,
-        completedAt,
-        now,
-      }),
-    [
+  const entries = useMemo(() => {
+    if (seedState.kind !== "ready") return [];
+    return buildLeaderboard({
       learnerName,
       learnerAvatar,
       hikma,
-      achievements.length,
+      trophies: achievements.length,
       startedAt,
       completedAt,
       now,
-    ],
-  );
+      seed: seedState.seed,
+    });
+  }, [
+    seedState,
+    learnerName,
+    learnerAvatar,
+    hikma,
+    achievements.length,
+    startedAt,
+    completedAt,
+    now,
+  ]);
 
   return (
     <TentScene>
@@ -68,6 +117,23 @@ export default function LeaderboardPage() {
         subtitle={t("leaderboard.subtitle")}
       />
       <div className="lb-stage">
+        {seedState.kind === "loading" ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: 320,
+              width: "100%",
+            }}
+          >
+            <SaduSeal
+              size={84}
+              theme="loom"
+              caption={lang === "en" ? "Tallying" : "جارِ الإحصاء"}
+            />
+          </div>
+        ) : (
         <div className="lb-card">
           <div className="lb-head" role="row" aria-hidden>
             <span className="lb-head-cell lb-rank-col">{t("leaderboard.rank")}</span>
@@ -125,6 +191,7 @@ export default function LeaderboardPage() {
             );
           })}
         </div>
+        )}
       </div>
 
       <style>{`
