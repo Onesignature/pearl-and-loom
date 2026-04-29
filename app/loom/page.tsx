@@ -8,6 +8,7 @@ import { TopChrome } from "@/components/layout/TopChrome";
 import { LoomFigure } from "@/components/loom/LoomFigure";
 import { LessonCard } from "@/components/loom/LessonCard";
 import { CinematicLayla } from "@/components/portraits/CinematicLayla";
+import { QuizHubCard } from "@/components/quiz/QuizHubCard";
 
 interface LessonDef {
   id: "symmetry" | "fractions" | "tessellation" | "arrays" | "angles";
@@ -125,6 +126,10 @@ export default function LoomHubPage() {
               />
             );
           })}
+          <QuizHubCard
+            path="layla"
+            unlocked={LESSONS.every((l) => completed.includes(l.id))}
+          />
         </div>
       </div>
       <style>{`

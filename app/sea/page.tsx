@@ -2,10 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
+import { useProgress } from "@/lib/store/progress";
 import { SeaScene } from "@/components/scenes/SeaScene";
 import { TopChrome } from "@/components/layout/TopChrome";
 import { NauticalMap } from "@/components/sea/NauticalMap";
 import { DiveCard } from "@/components/sea/DiveCard";
+import { QuizHubCard } from "@/components/quiz/QuizHubCard";
 
 export interface DiveDef {
   id: number;
@@ -23,9 +25,13 @@ export const DIVES: DiveDef[] = [
   { id: 5, key: "refractionTrial", depth: 20, state: "locked", href: null },
 ];
 
+const REQUIRED_DIVES = ["shallowBank", "deepReef", "coralGarden"];
+
 export default function SeaHubPage() {
   const router = useRouter();
   const { t } = useI18n();
+  const completed = useProgress((s) => s.diveLessonsCompleted);
+  const quizUnlocked = REQUIRED_DIVES.every((id) => completed.includes(id));
   return (
     <SeaScene>
       <TopChrome
@@ -34,13 +40,15 @@ export default function SeaHubPage() {
         subtitle={`${t("sea.saif")} · ${t("sea.ghasaSeason")}`}
       />
       <div
+        className="sea-stage"
         style={{
           position: "absolute",
           inset: 0,
           display: "flex",
           flexWrap: "wrap",
-          alignItems: "stretch",
-          alignContent: "flex-start",
+          alignItems: "center",
+          alignContent: "center",
+          justifyContent: "center",
           paddingTop: 86,
           paddingBottom: 28,
           paddingInline: "clamp(16px, 3vw, 32px)",
@@ -89,8 +97,19 @@ export default function SeaHubPage() {
               onClick={d.href ? () => router.push(d.href as string) : undefined}
             />
           ))}
+          <QuizHubCard path="saif" unlocked={quizUnlocked} />
         </div>
       </div>
+      <style>{`
+        @media (max-width: 640px) {
+          .sea-stage {
+            align-items: flex-start !important;
+            align-content: flex-start !important;
+            padding-top: 96px !important;
+            padding-bottom: 40px !important;
+          }
+        }
+      `}</style>
     </SeaScene>
   );
 }
