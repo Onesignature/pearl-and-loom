@@ -104,6 +104,12 @@ The five rubric axes, each mapped to specific shipped features and the file path
 - Aged-paper, lantern-glow, and warp-line CSS textures used consistently.
 - `/styleguide` exposes tokens, type ramp, motifs, and a live tapestry sandbox.
 
+<p align="center">
+  <img src="./public/readme/chest.png" alt="Family Heirloom chest — pearls collected by tier with Layla's tapestry preview" width="780" />
+  <br/>
+  <sub><em>Family Heirloom chest. Brass-strapped sandalwood with mother-of-pearl Sadu inlay; pearls inside grouped by tier; Layla's in-progress weave on the right.</em></sub>
+</p>
+
 **Where to find it:** `components/portraits/*.tsx` · `app/sea/chest/page.tsx` · `components/sea/{DiveScene,fx}.tsx` · `app/globals.css` · `app/styleguide/page.tsx`
 
 ### 3. UI / UX
@@ -129,6 +135,12 @@ The five rubric axes, each mapped to specific shipped features and the file path
 - Streak-chain saffron diamonds animate in as days accumulate.
 - Saif's animated `saifBreathe` on the dhow, swaying sea grass, rising bubbles, depth-tinted Saif underwater.
 - Heirloom-complete ceremony — staggered row fade-in, ornament reveal, layered chord cue, save-as-PNG / save-certificate CTAs.
+
+<p align="center">
+  <img src="./public/readme/predive.png" alt="Pre-dive — pick a stone, watch the force diagram update" width="780" />
+  <br/>
+  <sub><em>Pre-dive force diagram. Pick a stone — buoyancy vs. weight updates live; "TOO HEAVY" / "TOO LIGHT" verdicts gate the dive. Real Grade-8 physics.</em></sub>
+</p>
 
 **Where to find it:** `lib/audio/{bus,synth,cues}.ts` · `components/sea/{DiveScene,fx}.tsx` · `components/portraits/Portraits.tsx` · `components/achievements/UnlockToast.tsx` · `components/ceremony/HeirloomCeremony.tsx`
 
