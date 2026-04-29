@@ -5,6 +5,7 @@ export const ar: Dict = {
   meta: {
     title: "اللؤلؤة والنَّول",
     subtitle: "حكاية عائلة، تُنسَج صفًّا بعد صف",
+    thesis: "حِرفتان · عائلة واحدة · إرث واحد",
   },
   splash: {
     chooseLanguage: "اختَر لغتك",
@@ -112,8 +113,17 @@ export const ar: Dict = {
     royalName: "لؤلؤة ملكية",
     size: "الحجم",
     luster: "البريق",
-    toChest: "إلى الصندوق",
+    toChest: "إلى الإرث",
     diveAgain: "اغطس مجددًا",
+  },
+  heirloom: {
+    title: "إرث العائلة",
+    pearls: "اللؤلؤ",
+    tapestry: "النسيج",
+    saifContribution: "إسهام سيف",
+    laylaWeave: "نسج ليلى",
+    pearlsBraided: "لؤلؤة منسوجة",
+    rowsWoven: "صفًّا منسوجًا",
   },
   tapestry: {
     title: "نسيج العائلة",

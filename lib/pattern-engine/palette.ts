@@ -11,7 +11,3 @@ export const SADU_COLORS: Record<SaduColor, string> = {
 
 export const FOREGROUND_COLORS: SaduColor[] = ["indigo", "madder", "saffron", "charcoal"];
 export const BACKGROUND_COLOR: SaduColor = "wool";
-
-export function colorHex(c: SaduColor): string {
-  return SADU_COLORS[c];
-}

@@ -38,25 +38,37 @@ export default function SeaHubPage() {
           position: "absolute",
           inset: 0,
           display: "flex",
+          flexWrap: "wrap",
+          alignItems: "stretch",
+          alignContent: "flex-start",
           paddingTop: 86,
           paddingBottom: 28,
-          paddingInline: 32,
-          gap: 28,
+          paddingInline: "clamp(16px, 3vw, 32px)",
+          gap: "clamp(16px, 2.5vw, 28px)",
+          overflowY: "auto",
         }}
       >
         <div
           style={{
-            flex: "1 1 60%",
+            flex: "1 1 560px",
+            minWidth: "min(100%, 320px)",
             position: "relative",
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-end",
-            minWidth: 0,
           }}
         >
           <NauticalMap dives={DIVES} />
         </div>
-        <div style={{ width: 340, display: "flex", flexDirection: "column", gap: 12 }}>
+        <div
+          style={{
+            flex: "0 1 340px",
+            minWidth: "min(100%, 280px)",
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+          }}
+        >
           <div
             style={{
               color: "var(--foam)",

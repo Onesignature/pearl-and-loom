@@ -6,7 +6,6 @@ import type {
   PearlBead,
   Rotation,
   Row,
-  RowBand,
   SaduColor,
 } from "./types";
 import { BORDER_MOTIFS, FIELD_MOTIFS } from "./motifs";
@@ -231,11 +230,3 @@ export function embedBeads(row: Row, beads: PearlBead[]): Row {
   return { ...row, cells };
 }
 
-// ----------------------------------------------------------------------
-// Row band classifier (purely deterministic, used for visual variety)
-// ----------------------------------------------------------------------
-
-export function bandForRowIndex(rowIndex: number, totalRows: number, borderRows: number): RowBand {
-  if (rowIndex < borderRows || rowIndex >= totalRows - borderRows) return "border";
-  return "field";
-}

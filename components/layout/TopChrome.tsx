@@ -1,6 +1,8 @@
 "use client";
 
 import { useI18n } from "@/lib/i18n/provider";
+import { MobileNav } from "@/components/layout/MobileNav";
+import { useAudioToggle } from "@/components/ui/useAudioToggle";
 
 interface TopChromeProps {
   title?: string;
@@ -18,12 +20,14 @@ export function TopChrome({
   transparent = false,
 }: TopChromeProps) {
   const { lang, dir, setLang, numeralMode, setNumeralMode, t } = useI18n();
+  const { audioEnabled, toggle: toggleAudio } = useAudioToggle();
   const useArabicDigits =
     numeralMode === "arabic-indic" ||
     (numeralMode === "auto" && lang === "ar");
 
   return (
     <div
+      className="chrome-bar"
       style={{
         position: "absolute",
         top: 0,
@@ -33,6 +37,7 @@ export function TopChrome({
         alignItems: "center",
         justifyContent: "space-between",
         padding: "20px 28px",
+        gap: 12,
         zIndex: 50,
         background: transparent
           ? "transparent"
@@ -40,21 +45,21 @@ export function TopChrome({
         pointerEvents: "none",
       }}
     >
-      <div style={{ display: "flex", gap: 12, alignItems: "center", pointerEvents: "auto" }}>
+      <div style={{ display: "flex", gap: 12, alignItems: "center", pointerEvents: "auto", minWidth: 0 }}>
         {(onBack || onHome) && (
-          <button onClick={onBack || onHome} className="chrome-btn">
+          <button onClick={onBack || onHome} className="chrome-btn chrome-back">
             <span style={{ display: "inline-block", transform: dir === "rtl" ? "scaleX(-1)" : "none" }}>
               ←
             </span>
-            <span style={{ marginInlineStart: 6 }}>
+            <span className="chrome-back-label" style={{ marginInlineStart: 6 }}>
               {onHome ? t("home.welcome") : t("nav.back")}
             </span>
           </button>
         )}
         {title && (
-          <div style={{ color: "var(--wool)", minWidth: 0 }}>
+          <div className="chrome-title-block" style={{ color: "var(--wool)", minWidth: 0 }}>
             <div
-              className="font-display"
+              className="font-display chrome-title"
               style={{
                 fontSize: 20,
                 lineHeight: 1.15,
@@ -66,6 +71,7 @@ export function TopChrome({
             </div>
             {subtitle && (
               <div
+                className="chrome-subtitle"
                 style={{
                   fontSize: 11,
                   opacity: 0.7,
@@ -81,7 +87,18 @@ export function TopChrome({
           </div>
         )}
       </div>
-      <div style={{ display: "flex", gap: 10, pointerEvents: "auto" }}>
+      <div className="chrome-mobile-only" style={{ pointerEvents: "auto" }}>
+        <MobileNav />
+      </div>
+      <div className="chrome-chip-row" style={{ display: "flex", gap: 10, pointerEvents: "auto" }}>
+        <button
+          onClick={toggleAudio}
+          className="chrome-btn"
+          title={audioEnabled ? "Mute audio" : "Enable audio"}
+          aria-pressed={audioEnabled}
+        >
+          <span aria-hidden>{audioEnabled ? "🔊" : "🔇"}</span>
+        </button>
         <button
           onClick={() =>
             setNumeralMode(useArabicDigits ? "western" : "arabic-indic")
@@ -132,6 +149,18 @@ export function TopChrome({
         .chrome-btn:hover {
           background: rgba(245,235,211,0.16);
           border-color: rgba(240,228,201,0.32);
+        }
+        .chrome-mobile-only { display: none; }
+        @media (max-width: 640px) {
+          .chrome-chip-row { display: none !important; }
+          .chrome-mobile-only { display: inline-flex; }
+          .chrome-title { font-size: 16px !important; white-space: normal !important; }
+          .chrome-subtitle { font-size: 10px !important; white-space: normal !important; margin-top: 3px !important; }
+        }
+        @media (max-width: 480px) {
+          .chrome-back-label { display: none; }
+          .chrome-back { padding: 8px 10px !important; min-width: 36px; }
+          .chrome-bar { padding: 14px 14px !important; }
         }
       `}</style>
     </div>

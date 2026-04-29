@@ -36,12 +36,11 @@ export default function StyleguidePage() {
       />
       <div
         style={{
-          position: "absolute",
-          inset: 0,
-          paddingTop: 100,
-          paddingBottom: 40,
-          paddingInline: 60,
-          overflowY: "auto",
+          position: "relative",
+          minHeight: "100dvh",
+          paddingTop: 110,
+          paddingBottom: 60,
+          paddingInline: "clamp(16px, 3vw, 60px)",
         }}
       >
         <div style={{ maxWidth: 1200, margin: "0 auto", color: "var(--wool)" }}>

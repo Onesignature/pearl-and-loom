@@ -35,15 +35,16 @@ export default function WeaveAnimPage() {
           inset: 0,
           paddingTop: 86,
           paddingBottom: 60,
-          paddingInline: 60,
+          paddingInline: "clamp(16px, 3vw, 60px)",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
+          overflowY: "auto",
         }}
       >
-        <div style={{ display: "flex", gap: 24 }}>
+        <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
           {[0, 1, 2].map((i) => (
-            <div key={i} style={{ flex: 1 }}>
+            <div key={i} style={{ flex: "1 1 220px", minWidth: 220 }}>
               <div
                 style={{
                   aspectRatio: "1.4",
@@ -74,7 +75,7 @@ export default function WeaveAnimPage() {
             </div>
           ))}
         </div>
-        <div style={{ marginTop: 36, display: "flex", justifyContent: "center", gap: 16 }}>
+        <div style={{ marginTop: 36, display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
           <button onClick={() => setAutoPlay(!autoPlay)} className="anim-btn">
             {autoPlay ? t("weave.pause") : t("weave.play")}
           </button>

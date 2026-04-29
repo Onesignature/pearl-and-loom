@@ -1,16 +1,11 @@
 import { TAPESTRY_25 } from "@/lib/tapestry/composition";
 import { MOTIF_COMPONENTS } from "@/components/motifs";
+import { PEARL_TIERS } from "@/lib/pearl/colors";
 
 interface TapestryStripProps {
   woven?: number;
   height?: number;
 }
-
-const PEARL_FILL = {
-  common: "var(--pearl-common)",
-  fine: "var(--pearl-fine)",
-  royal: "var(--pearl-royal)",
-};
 
 export function TapestryStrip({ woven = 3, height = 56 }: TapestryStripProps) {
   return (
@@ -62,7 +57,7 @@ export function TapestryStrip({ woven = 3, height = 56 }: TapestryStripProps) {
                   width: 8,
                   height: 8,
                   borderRadius: "50%",
-                  background: PEARL_FILL[row.pearl],
+                  background: PEARL_TIERS[row.pearl].cssVar,
                   boxShadow: "0 0 6px rgba(244,184,96,0.6)",
                 }}
               />

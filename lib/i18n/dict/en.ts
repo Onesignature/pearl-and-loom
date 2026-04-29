@@ -2,6 +2,7 @@ export const en = {
   meta: {
     title: "The Pearl and the Loom",
     subtitle: "A family story, woven row by row",
+    thesis: "Two crafts · One family · One heirloom",
   },
   splash: {
     chooseLanguage: "Choose your language",
@@ -109,8 +110,17 @@ export const en = {
     royalName: "Royal Pearl",
     size: "Size",
     luster: "Luster",
-    toChest: "TO CHEST",
+    toChest: "TO HEIRLOOM",
     diveAgain: "DIVE AGAIN",
+  },
+  heirloom: {
+    title: "Family Heirloom",
+    pearls: "Pearls",
+    tapestry: "Tapestry",
+    saifContribution: "Saif's Contribution",
+    laylaWeave: "Layla's Weave",
+    pearlsBraided: "pearls braided",
+    rowsWoven: "rows woven",
   },
   tapestry: {
     title: "Family Tapestry",

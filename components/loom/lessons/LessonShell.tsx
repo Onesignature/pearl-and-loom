@@ -28,10 +28,14 @@ export function LessonShell({ titleKey, index, children }: LessonShellProps) {
           inset: 0,
           paddingTop: 86,
           paddingBottom: 28,
-          paddingInline: 60,
+          paddingInline: "clamp(16px, 3vw, 60px)",
           display: "flex",
-          gap: 40,
+          gap: "clamp(20px, 3vw, 40px)",
           alignItems: "center",
+          alignContent: "center",
+          justifyContent: "center",
+          flexWrap: "wrap",
+          overflowY: "auto",
         }}
       >
         {children}
@@ -63,7 +67,14 @@ export function ProblemCard({
 }: ProblemCardProps) {
   const { t, fmt, lang } = useI18n();
   return (
-    <div className="paper-bg" style={{ width: 360, padding: "32px 32px", flexShrink: 0 }}>
+    <div
+      className="paper-bg"
+      style={{
+        flex: "0 1 360px",
+        minWidth: "min(100%, 280px)",
+        padding: "clamp(20px, 2.5vw, 32px)",
+      }}
+    >
       <div
         className="font-display"
         style={{

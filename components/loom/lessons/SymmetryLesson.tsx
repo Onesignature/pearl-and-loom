@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useProgress } from "@/lib/store/progress";
 import { LessonShell, ProblemCard } from "./LessonShell";
+import { playCue } from "@/lib/audio/cues";
 
 const COLS = 8;
 const ROWS = 4;
@@ -43,6 +44,7 @@ export function SymmetryLesson() {
   function weave() {
     if (!isCorrect) return;
     setCelebrating(true);
+    playCue("loom.thump");
     completeLoomLesson("symmetry", { kind: "symmetry", axis: "vertical", lessonId: "symmetry" });
     setTimeout(() => router.push("/loom/weave"), 1400);
   }
@@ -174,14 +176,14 @@ interface SymGridProps {
 }
 
 function SymGrid({ filled, correct, celebrating, editable, onToggle }: SymGridProps) {
-  const cellSize = 56;
   return (
     <div
       className="ltr-internal"
       style={{
         display: "grid",
-        gridTemplateColumns: `repeat(${COLS}, ${cellSize}px)`,
-        gridTemplateRows: `repeat(${ROWS}, ${cellSize}px)`,
+        gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))`,
+        aspectRatio: `${COLS} / ${ROWS}`,
+        width: "min(100%, 480px)",
         gap: 2,
         background: "var(--charcoal-soft)",
         padding: 6,
@@ -195,6 +197,7 @@ function SymGrid({ filled, correct, celebrating, editable, onToggle }: SymGridPr
             key={i}
             onClick={() => editable && onToggle?.(i)}
             style={{
+              aspectRatio: "1 / 1",
               background: isFilled ? "var(--madder)" : "var(--wool)",
               border: "none",
               cursor: editable ? "pointer" : "default",

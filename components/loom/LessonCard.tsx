@@ -12,6 +12,7 @@ interface LessonCardProps {
 export function LessonCard({ index, title, state, onClick }: LessonCardProps) {
   const { fmt, lang, dir, t } = useI18n();
   const locked = state === "locked";
+  const completed = state === "completed";
   return (
     <button
       onClick={onClick}
@@ -50,24 +51,28 @@ export function LessonCard({ index, title, state, onClick }: LessonCardProps) {
           <div
             style={{
               fontSize: 11,
-              color: "var(--ink-soft)",
+              color: completed ? "var(--saffron)" : "var(--ink-soft)",
               marginTop: 4,
               letterSpacing: "0.12em",
               textTransform: "uppercase",
             }}
           >
-            {locked ? `🔒 ${t("loom.locked")}` : t("loom.plusOneRow")}
+            {locked
+              ? `🔒 ${t("loom.locked")}`
+              : completed
+                ? `✓ ${t("loom.completed")}`
+                : t("loom.plusOneRow")}
           </div>
         </div>
         {!locked && (
           <div
             style={{
-              color: "var(--saffron)",
-              fontSize: 22,
+              color: completed ? "var(--ink-soft)" : "var(--saffron)",
+              fontSize: completed ? 18 : 22,
               transform: dir === "rtl" ? "scaleX(-1)" : "none",
             }}
           >
-            →
+            {completed ? "↻" : "→"}
           </div>
         )}
       </div>

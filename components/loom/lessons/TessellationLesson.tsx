@@ -6,6 +6,7 @@ import { useI18n } from "@/lib/i18n/provider";
 import { useProgress } from "@/lib/store/progress";
 import { LessonShell, ProblemCard } from "./LessonShell";
 import { MotifMthalath } from "@/components/motifs";
+import { playCue } from "@/lib/audio/cues";
 
 interface Option {
   id: "tri60" | "pent" | "tri90";
@@ -41,6 +42,7 @@ export function TessellationLesson() {
 
   function onCta() {
     if (!picked?.correct) return;
+    playCue("loom.thump");
     completeLoomLesson("tessellation", {
       kind: "tessellation",
       motif: "mthalath",
@@ -82,8 +84,14 @@ export function TessellationLesson() {
         )}
       </ProblemCard>
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 22 }}>
-        <div style={{ display: "flex", gap: 18 }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 22, minWidth: 0 }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gap: "clamp(8px, 2vw, 18px)",
+          }}
+        >
           {OPTIONS.map((opt) => (
             <button
               key={opt.id}

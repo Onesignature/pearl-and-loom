@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useProgress } from "@/lib/store/progress";
 import { LessonShell, ProblemCard } from "./LessonShell";
+import { playCue } from "@/lib/audio/cues";
 
 export function FractionsLesson() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export function FractionsLesson() {
       setShowProof(true);
       return;
     }
+    playCue("loom.thump");
     completeLoomLesson("fractions", {
       kind: "fraction",
       numerator: 3,

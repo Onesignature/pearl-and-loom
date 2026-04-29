@@ -1,7 +1,8 @@
 "use client";
 
 import { useI18n } from "@/lib/i18n/provider";
-import { LaylaPortrait, SaifPortrait } from "@/components/portraits/Portraits";
+import { SaifPortrait } from "@/components/portraits/Portraits";
+import { CinematicLaylaPortrait } from "@/components/portraits/CinematicLaylaPortrait";
 import type { DictPath } from "@/lib/i18n/provider";
 
 interface CharacterCardProps {
@@ -29,14 +30,21 @@ export function CharacterCard({ who, onClick, locked = false, progress }: Charac
           : "linear-gradient(170deg, #08374A 0%, #0E5E7B 50%, #051E2C 100%)",
       }}
     >
-      <div style={{ position: "relative", height: 360, overflow: "hidden" }}>
-        {isLayla ? <LaylaPortrait /> : <SaifPortrait />}
+      <div
+        className="char-portrait"
+        style={{
+          position: "relative",
+          height: 240,
+          overflow: "hidden",
+        }}
+      >
+        {isLayla ? <CinematicLaylaPortrait /> : <SaifPortrait />}
       </div>
-      <div style={{ padding: "22px 26px 26px" }}>
+      <div className="char-body" style={{ padding: "16px 22px 20px" }}>
         <div
-          className="font-display"
+          className="font-display char-name"
           style={{
-            fontSize: 36,
+            fontSize: 30,
             color: "var(--wool)",
             letterSpacing: "0.06em",
             lineHeight: 1,
@@ -49,10 +57,11 @@ export function CharacterCard({ who, onClick, locked = false, progress }: Charac
           {t(nameKey)}
         </div>
         <div
+          className="char-role"
           style={{
-            fontSize: 12,
+            fontSize: 11,
             color: isLayla ? "var(--saffron)" : "var(--sunset-gold)",
-            marginTop: 8,
+            marginTop: 6,
             letterSpacing: "0.14em",
             textTransform: "uppercase",
           }}
@@ -60,11 +69,12 @@ export function CharacterCard({ who, onClick, locked = false, progress }: Charac
           {t(roleKey)}
         </div>
         <div
+          className="char-tagline"
           style={{
-            fontSize: 13,
+            fontSize: 12,
             color: "rgba(240,228,201,0.65)",
-            marginTop: 10,
-            lineHeight: 1.6,
+            marginTop: 8,
+            lineHeight: 1.5,
           }}
         >
           {t(taglineKey)}
@@ -72,23 +82,24 @@ export function CharacterCard({ who, onClick, locked = false, progress }: Charac
         {progress && (
           <div
             style={{
-              marginTop: 18,
+              marginTop: 12,
               display: "flex",
               alignItems: "baseline",
-              gap: 8,
+              gap: 6,
               color: "var(--wool)",
             }}
           >
             <span
               className="font-display"
               style={{
-                fontSize: 28,
+                fontSize: 24,
                 color: isLayla ? "var(--saffron)" : "var(--sunset-gold)",
+                lineHeight: 1,
               }}
             >
               {fmt(progress.current)}
             </span>
-            <span style={{ fontSize: 12, opacity: 0.6 }}>
+            <span style={{ fontSize: 11, opacity: 0.6 }}>
               / {fmt(progress.total)} {t(progress.label)}
             </span>
           </div>
@@ -101,11 +112,24 @@ export function CharacterCard({ who, onClick, locked = false, progress }: Charac
           cursor: pointer;
           text-align: start;
           color: var(--wool);
-          width: 360px;
+          width: 308px;
+          flex: 0 0 auto;
           overflow: hidden;
           font-family: var(--font-tajawal), sans-serif;
           transition: transform 0.4s var(--ease-loom), border-color 0.3s;
           box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        @media (max-width: 720px) {
+          .char-card {
+            width: min(308px, 100%);
+          }
+        }
+        @media (max-width: 480px) {
+          .char-portrait { height: 180px !important; }
+          .char-name { font-size: 26px !important; }
+          .char-role { font-size: 10px !important; margin-top: 4px !important; }
+          .char-tagline { font-size: 11px !important; margin-top: 6px !important; }
+          .char-body { padding: 12px 16px 16px !important; }
         }
         .char-card:hover:not(:disabled) {
           transform: translateY(-4px);

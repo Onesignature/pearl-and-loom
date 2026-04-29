@@ -5,8 +5,11 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
 import { useProgress } from "@/lib/store/progress";
 import { TopChrome } from "@/components/layout/TopChrome";
-import { SaifSwimmer, Oyster } from "@/components/portraits/Portraits";
+import { Oyster } from "@/components/portraits/Portraits";
+import { GodRays, Caustics, Particulates, SaifSwimmer } from "@/components/sea/fx";
 import { MotifChevron } from "@/components/motifs";
+import { playCue } from "@/lib/audio/cues";
+import { useSoukEffects } from "@/lib/souk/effects";
 import type { DiveDef } from "@/app/sea/page";
 import type { PearlGrade } from "@/lib/store/progress";
 
@@ -25,8 +28,11 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
   const { t, fmt, lang } = useI18n();
   const completeDiveLesson = useProgress((s) => s.completeDiveLesson);
   const collectPearl = useProgress((s) => s.collectPearl);
+  const effects = useSoukEffects();
 
-  const [breath, setBreath] = useState(100);
+  // Starting breath = 100 + fattam bonus; drain rate scaled by fattam.
+  const startingBreath = 100 + effects.extraBreath;
+  const [breath, setBreath] = useState(startingBreath);
   const [depth, setDepth] = useState(0);
   const [target, setTarget] = useState<number | null>(null);
   const [problem, setProblem] = useState<Problem | null>(null);
@@ -34,24 +40,31 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
   const [pearls, setPearls] = useState(0);
   const lockedNav = useRef(false);
 
-  // Breath drains while underwater and no problem is being answered
+  // Breath drains while underwater and no problem is being answered.
+  // Drain rate is multiplied by the fattam noseclip's effect (≈ 15% slower
+  // when owned).
   useEffect(() => {
     if (depth > 0 && breath > 0 && !answered) {
-      const tid = setTimeout(() => setBreath((b) => Math.max(0, b - 0.5)), 200);
+      const tid = setTimeout(
+        () =>
+          setBreath((b) => Math.max(0, b - 0.5 * effects.breathDrainMultiplier)),
+        200,
+      );
       return () => clearTimeout(tid);
     }
-  }, [breath, depth, answered]);
+  }, [breath, depth, answered, effects.breathDrainMultiplier]);
 
-  // Move toward target
+  // Move toward target — descent/ascent multiplier from the diveen stone.
   useEffect(() => {
     if (target == null || depth === target) return;
+    const step = 0.3 * effects.descentMultiplier;
     const tid = setTimeout(() => {
       setDepth((d) =>
-        d < target ? Math.min(target, d + 0.3) : Math.max(target, d - 0.3),
+        d < target ? Math.min(target, d + step) : Math.max(target, d - step),
       );
     }, 30);
     return () => clearTimeout(tid);
-  }, [depth, target]);
+  }, [depth, target, effects.descentMultiplier]);
 
   // Show problem on reaching oyster — synchronizes UI to arrival event.
   useEffect(() => {
@@ -62,6 +75,9 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
       !problem &&
       !answered
     ) {
+      // Setting state in an effect is the right pattern here: `problem`
+      // persists after the trigger conditions stop holding (e.g. once
+      // answered) so it can't be derived purely from props.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setProblem(problemFor(target, lang));
     }
@@ -80,6 +96,7 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
     if (correct) {
       const tier: PearlGrade =
         target === 15 ? "royal" : target === 10 ? "fine" : "common";
+      playCue(tier === "royal" ? "pearl.royal" : "pearl.ping");
       const pearlId = `pearl-${dive.key}-${target}-${Date.now()}`;
       collectPearl({
         id: pearlId,
@@ -89,6 +106,16 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
         diveId: dive.key,
       });
       setPearls((p) => p + 1);
+      // Heritage al-deyeen net — awards a free common pearl on top.
+      for (let n = 0; n < effects.bonusCommonPearlsPerDive; n++) {
+        collectPearl({
+          id: `pearl-${dive.key}-bonus-${Date.now()}-${n}`,
+          grade: "common",
+          size: 2,
+          luster: 3,
+          diveId: dive.key,
+        });
+      }
       if (!lockedNav.current) {
         lockedNav.current = true;
         setTimeout(() => {
@@ -113,7 +140,7 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
         overflow: "hidden",
       }}
     >
-      {/* Surface waves */}
+      {/* Surface waves with sun-backlit gradient */}
       <svg
         aria-hidden
         style={{
@@ -127,102 +154,193 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
         preserveAspectRatio="none"
         viewBox="0 0 1366 160"
       >
+        <defs>
+          <linearGradient id="surfaceG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#FFE9B8" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#F4B860" stopOpacity="0.2" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="1366" height="160" fill="url(#surfaceG)" />
         <path
           d="M 0 80 Q 200 60 400 80 T 800 80 T 1366 80 L 1366 0 L 0 0 Z"
-          fill="#F4B860"
-          opacity="0.6"
+          fill="#FFE0A8"
+          opacity="0.55"
         />
         <path
-          d="M 0 100 Q 200 80 400 100 T 800 100 T 1366 100 L 1366 0 L 0 0 Z"
+          d="M 0 110 Q 200 90 400 110 T 800 110 T 1366 110 L 1366 0 L 0 0 Z"
+          fill="#F4B860"
+          opacity="0.4"
+        />
+        <path
+          d="M 0 140 Q 200 130 400 140 T 800 140 T 1366 140 L 1366 0 L 0 0 Z"
           fill="#0E5E7B"
           opacity="0.5"
         />
       </svg>
-      {/* Distant dhow */}
+      {/* Saif's dhow at the surface — directly above his dive line, with anchor rope.
+          This grounds the scene: he descended from THIS boat. */}
       <svg
         aria-hidden
         style={{
           position: "absolute",
-          top: "10%",
-          left: "10%",
-          width: 100,
-          opacity: 0.6,
+          top: "9%",
+          insetInlineStart: "50%",
+          transform: "translateX(-50%)",
+          width: 180,
+          opacity: 0.7,
+          pointerEvents: "none",
         }}
-        viewBox="0 0 80 30"
+        viewBox="0 0 200 80"
       >
-        <path d="M 0 22 L 70 22 L 64 28 L 6 28 Z" fill="#2A1810" />
-        <path d="M 35 22 L 35 0 L 60 22 Z" fill="#3D2A1E" />
+        <path d="M 20 30 Q 100 20 180 30 L 168 44 Q 100 50 32 44 Z" fill="#1A0E08" />
+        <path
+          d="M 20 30 Q 100 20 180 30 L 178 33 Q 100 24 22 33 Z"
+          fill="#3D2A1E"
+          opacity="0.7"
+        />
+        <line x1="100" y1="22" x2="100" y2="-10" stroke="#3D2A1E" strokeWidth="1.5" />
+        <path d="M 100 -8 L 138 22 L 100 22 Z" fill="#5A3618" opacity="0.6" />
+        <line x1="100" y1="44" x2="100" y2="80" stroke="#C9A876" strokeWidth="0.8" opacity="0.5" />
       </svg>
-      {/* Caustic light */}
-      <div
+      {/* Wake / disturbance ring on the surface beneath the dhow */}
+      <svg
         aria-hidden
         style={{
           position: "absolute",
           top: "16%",
-          insetInlineStart: 0,
-          insetInlineEnd: 0,
-          height: "30%",
+          insetInlineStart: "50%",
+          transform: "translateX(-50%)",
+          width: 200,
+          opacity: 0.45,
+          pointerEvents: "none",
+        }}
+        viewBox="0 0 200 30"
+      >
+        <ellipse
+          cx="100"
+          cy="15"
+          rx="60"
+          ry="6"
+          fill="none"
+          stroke="#FFE9B8"
+          strokeWidth="0.8"
+          opacity="0.6"
+        />
+        <ellipse
+          cx="100"
+          cy="15"
+          rx="80"
+          ry="8"
+          fill="none"
+          stroke="#FFE9B8"
+          strokeWidth="0.5"
+          opacity="0.4"
+        />
+      </svg>
+      {/* Animated god rays from surface */}
+      <GodRays topPct={10} intensity={0.55} />
+      {/* Depth fog — thickens with depth */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
           background:
-            "radial-gradient(ellipse 50% 100% at 30% 0%, rgba(244,184,96,0.25), transparent 70%), radial-gradient(ellipse 40% 100% at 70% 0%, rgba(244,184,96,0.18), transparent 70%)",
+            "linear-gradient(to bottom, transparent 30%, rgba(8,55,74,0.25) 55%, rgba(5,30,44,0.55) 80%, rgba(2,16,26,0.75) 100%)",
           pointerEvents: "none",
         }}
       />
-      {/* Caustic shimmer on seabed */}
+      {/* Drifting plankton / particulates */}
+      <Particulates count={44} />
+      {/* Animated caustics on seabed */}
+      <Caustics bottom={0} height={240} opacity={0.4} />
+      {/* Seabed silhouette + rocks + coral hints + swaying sea grass */}
       <svg
         aria-hidden
         style={{
           position: "absolute",
           bottom: 0,
-          insetInlineStart: 0,
+          left: 0,
           width: "100%",
-          height: 200,
-          opacity: 0.35,
+          height: "18%",
           pointerEvents: "none",
         }}
+        preserveAspectRatio="none"
         viewBox="0 0 1366 200"
       >
-        {Array.from({ length: 40 }).map((_, i) => (
-          <ellipse
-            key={i}
-            cx={i * 35 + 10}
-            cy={150 + (i % 3) * 18}
-            rx={20 + (i % 4) * 8}
-            ry={3}
-            fill="#F4B860"
-            opacity={0.3 + (i % 3) * 0.2}
-          />
+        <path
+          d="M 0 200 L 0 120 Q 100 100 200 110 Q 320 80 480 100 Q 640 70 800 95 Q 960 75 1120 100 Q 1240 90 1366 110 L 1366 200 Z"
+          fill="#03101A"
+          opacity="0.85"
+        />
+        <path
+          d="M 0 200 L 0 150 Q 100 130 200 140 Q 320 110 480 130 Q 640 100 800 125 Q 960 105 1120 130 Q 1240 120 1366 140 L 1366 200 Z"
+          fill="#021018"
+          opacity="0.6"
+        />
+        {/* Rock formations */}
+        <ellipse cx="220" cy="160" rx="70" ry="22" fill="#04141F" />
+        <ellipse cx="540" cy="170" rx="55" ry="18" fill="#04141F" />
+        <ellipse cx="920" cy="165" rx="80" ry="24" fill="#04141F" />
+        <ellipse cx="1180" cy="172" rx="50" ry="16" fill="#04141F" />
+        {/* Coral suggestions */}
+        <path
+          d="M 320 160 Q 318 140 322 130 Q 326 138 324 160 Z"
+          fill="#5A2A1E"
+          opacity="0.6"
+        />
+        <path
+          d="M 700 158 Q 696 138 702 124 Q 708 138 706 158 Z"
+          fill="#5A2A1E"
+          opacity="0.6"
+        />
+        <path
+          d="M 1040 162 Q 1038 142 1043 130 Q 1048 142 1046 162 Z"
+          fill="#5A2A1E"
+          opacity="0.6"
+        />
+        {/* Swaying sea grass */}
+        {[150, 380, 620, 850, 1100, 1280].map((x, i) => (
+          <g key={x} transform={`translate(${x} 160)`}>
+            {[0, 6, 12].map((dx, j) => (
+              <path
+                key={j}
+                d={`M ${dx} 0 Q ${dx + (i % 2 ? 3 : -3)} -10 ${dx + (i % 2 ? 1 : -1)} -22`}
+                stroke="#1A4A40"
+                strokeWidth="1.5"
+                fill="none"
+                opacity="0.7"
+              >
+                <animate
+                  attributeName="d"
+                  values={`M ${dx} 0 Q ${dx + 3} -10 ${dx + 1} -22; M ${dx} 0 Q ${dx - 2} -10 ${dx + 2} -22; M ${dx} 0 Q ${dx + 3} -10 ${dx + 1} -22`}
+                  dur={`${4 + j}s`}
+                  repeatCount="indefinite"
+                />
+              </path>
+            ))}
+          </g>
         ))}
       </svg>
-      {/* Bubbles */}
-      {Array.from({ length: 12 }).map((_, i) => (
-        <div
-          key={i}
-          aria-hidden
-          style={{
-            position: "absolute",
-            left: `${10 + ((i * 7) % 80)}%`,
-            bottom: "0",
-            width: 4 + (i % 4) * 3,
-            height: 4 + (i % 4) * 3,
-            borderRadius: "50%",
-            background: "rgba(240,244,242,0.4)",
-            animation: `bubble ${4 + (i % 5)}s ${i * 0.4}s ease-in infinite`,
-          }}
-        />
-      ))}
 
-      {/* Diver */}
+      {/* Saif diving — depth filter darkens & cyan-shifts him past 6m & 12m */}
       <div
         style={{
           position: "absolute",
           insetInlineStart: "50%",
-          top: `${22 + (depth / 18) * 60}%`,
+          top: `${24 + (depth / 18) * 54}%`,
           transform: "translateX(-50%)",
           transition: "top 0.3s linear",
-          width: 90,
+          width: 124,
+          filter:
+            depth > 12
+              ? "brightness(0.7) hue-rotate(8deg)"
+              : depth > 6
+                ? "brightness(0.85)"
+                : "none",
         }}
       >
-        <SaifSwimmer />
+        <SaifSwimmer swimming={target != null && target > 0} />
       </div>
 
       {/* Oysters */}
@@ -270,14 +388,54 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
         transparent
       />
 
+      {/* "Select an oyster" instruction prompt — only visible before user picks a target */}
+      {target == null && depth === 0 && (
+        <div
+          style={{
+            position: "absolute",
+            top: "19%",
+            insetInlineStart: "50%",
+            transform: "translateX(-50%)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 6,
+            pointerEvents: "none",
+            animation: "selectPulse 2.4s ease-in-out infinite",
+            zIndex: 30,
+          }}
+        >
+          <div
+            style={{
+              padding: "8px 22px",
+              background: "rgba(8,30,44,0.78)",
+              border: "1px solid rgba(244,184,96,0.55)",
+              backdropFilter: "blur(10px)",
+              color: "var(--sunset-gold)",
+              fontFamily: "var(--font-cormorant), serif",
+              fontSize: 11,
+              letterSpacing: "0.32em",
+              textTransform: "uppercase",
+              whiteSpace: "nowrap",
+              fontStyle: "italic",
+            }}
+          >
+            {lang === "en"
+              ? "Select an oyster to dive for"
+              : "اختر محارة للغوص إليها"}
+          </div>
+          <div style={{ color: "var(--sunset-gold)", fontSize: 16, opacity: 0.7 }}>↓</div>
+        </div>
+      )}
+
       {/* HUD */}
-      <div style={{ position: "absolute", top: 90, insetInlineStart: 28 }}>
+      <div className="dive-hud dive-hud-tl">
         <BreathHUD breath={breath} />
       </div>
-      <div style={{ position: "absolute", top: 90, insetInlineEnd: 28 }}>
+      <div className="dive-hud dive-hud-tr">
         <DepthHUD depth={depth} />
       </div>
-      <div style={{ position: "absolute", bottom: 30, insetInlineStart: 28 }}>
+      <div className="dive-hud dive-hud-bl">
         <button
           onClick={() => {
             setTarget(0);
@@ -289,7 +447,7 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
           ↑ {t("dive.surface")}
         </button>
       </div>
-      <div style={{ position: "absolute", bottom: 30, insetInlineEnd: 28 }}>
+      <div className="dive-hud dive-hud-br">
         <BankedHUD pearls={pearls} target={3} />
       </div>
 
@@ -318,6 +476,23 @@ export function DiveScene({ dive }: { dive: DiveDef }) {
           backdrop-filter: blur(8px);
         }
         .surface-btn:hover { background: rgba(244,184,96,0.2); }
+        .dive-hud { position: absolute; }
+        .dive-hud-tl { top: 90px; inset-inline-start: 28px; }
+        .dive-hud-tr { top: 90px; inset-inline-end: 28px; }
+        .dive-hud-bl { bottom: 30px; inset-inline-start: 28px; }
+        .dive-hud-br { bottom: 30px; inset-inline-end: 28px; }
+        @media (max-width: 640px) {
+          .dive-hud-tl, .dive-hud-tr { top: 78px; }
+          .dive-hud-tl { inset-inline-start: 12px; }
+          .dive-hud-tr { inset-inline-end: 12px; }
+          .dive-hud-bl { bottom: 18px; inset-inline-start: 12px; }
+          .dive-hud-br { bottom: 18px; inset-inline-end: 12px; }
+          .surface-btn { padding: 10px 14px !important; font-size: 10px !important; letter-spacing: 0.22em !important; }
+        }
+        @keyframes selectPulse {
+          0%, 100% { opacity: 0.85; transform: translateX(-50%) translateY(0); }
+          50% { opacity: 1; transform: translateX(-50%) translateY(-3px); }
+        }
       `}</style>
     </div>
   );
@@ -527,13 +702,16 @@ function ProblemOverlay({
   const { t, fmt, lang } = useI18n();
   return (
     <div
+      className="dive-problem-card"
       style={{
         position: "absolute",
         insetInlineStart: "50%",
         top: "50%",
         transform: "translate(-50%, -50%)",
-        width: 540,
-        padding: "32px 32px 0",
+        width: "min(540px, calc(100vw - 32px))",
+        maxHeight: "calc(100dvh - 160px)",
+        overflowY: "auto",
+        padding: "clamp(18px, 4vw, 32px) clamp(18px, 4vw, 32px) 0",
         background: "rgba(8,55,74,0.55)",
         border: "1px solid rgba(244,184,96,0.4)",
         backdropFilter: "blur(20px) saturate(140%)",
@@ -571,8 +749,9 @@ function ProblemOverlay({
         <div style={{ marginTop: 16, display: "flex", justifyContent: "center" }}>
           <svg
             viewBox="0 0 360 100"
-            style={{ width: 360, height: 100 }}
+            style={{ width: "100%", maxWidth: 360, height: "auto" }}
             className="ltr-internal"
+            preserveAspectRatio="xMidYMid meet"
           >
             <rect x="0" y="0" width="360" height="20" fill="#F4B860" opacity="0.4" />
             <text

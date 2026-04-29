@@ -6,6 +6,7 @@ import { useI18n } from "@/lib/i18n/provider";
 import { SeaScene } from "@/components/scenes/SeaScene";
 import { TopChrome } from "@/components/layout/TopChrome";
 import { SaifOnDeck, Stone } from "@/components/portraits/Portraits";
+import { playCue } from "@/lib/audio/cues";
 import type { DiveDef } from "@/app/sea/page";
 
 export function PreDive({ dive }: { dive: DiveDef }) {
@@ -26,22 +27,13 @@ export function PreDive({ dive }: { dive: DiveDef }) {
         title={t("predive.title")}
         subtitle={`${t(`sea.titles.${dive.key}` as never).toUpperCase()} · ${fmt(dive.depth)}M`}
       />
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          paddingTop: 86,
-          paddingBottom: 28,
-          paddingInline: 50,
-          display: "flex",
-          gap: 36,
-          alignItems: "center",
-        }}
-      >
-        <div style={{ flex: "0 0 360px", height: "100%", position: "relative" }}>
+      <div className="predive-stage">
+        {/* Saif's dhow scene anchored flush bottom-left of the viewport.
+            Position: absolute so it bleeds past parent padding to the screen edge. */}
+        <div className="predive-deck">
           <SaifOnDeck />
         </div>
-        <div style={{ flex: 1, color: "var(--foam)" }}>
+        <div className="predive-loadout">
           <div
             className="font-display"
             style={{
@@ -59,28 +51,30 @@ export function PreDive({ dive }: { dive: DiveDef }) {
                 lang === "ar"
                   ? "var(--font-tajawal), sans-serif"
                   : "var(--font-cormorant), serif",
-              fontSize: 36,
+              fontSize: "clamp(22px, 2.4vw, 32px)",
               color: "var(--foam)",
               letterSpacing: "0.04em",
-              marginTop: 6,
+              marginTop: 4,
+              lineHeight: 1.1,
             }}
           >
             {t("predive.chooseStone")}
           </div>
 
-          <div style={{ marginTop: 24 }}>
-            <div style={{ display: "flex", gap: 10 }}>
+          <div style={{ marginTop: 14 }}>
+            <div style={{ display: "flex", gap: 6 }}>
               {[1, 2, 3, 4, 5, 6].map((n) => (
                 <button
                   key={n}
                   onClick={() => setStones(n)}
                   className={`stone-btn${stones === n ? " active" : ""}`}
+                  aria-pressed={stones === n}
                 >
-                  <Stone size={n * 7 + 16} />
+                  <Stone size={n * 4 + 12} />
                   <div
                     style={{
-                      fontSize: 11,
-                      marginTop: 6,
+                      fontSize: 10,
+                      marginTop: 3,
                       fontFamily: "var(--font-cormorant), serif",
                     }}
                   >
@@ -91,36 +85,32 @@ export function PreDive({ dive }: { dive: DiveDef }) {
             </div>
           </div>
 
-          <div style={{ marginTop: 36, display: "flex", gap: 26 }}>
-            <div className="paper-bg" style={{ padding: 22, flex: 1 }}>
+          <div
+            style={{
+              marginTop: 16,
+              display: "grid",
+              gridTemplateColumns: "1fr 170px",
+              gap: 18,
+              minHeight: 0,
+            }}
+          >
+            <div className="paper-bg" style={{ padding: 14 }}>
               <div
                 style={{
                   fontSize: 10,
                   letterSpacing: "0.3em",
                   textTransform: "uppercase",
                   color: "var(--ink-soft)",
-                  marginBottom: 10,
+                  marginBottom: 8,
                 }}
               >
                 {t("predive.forceDiagram")}
               </div>
-              <ForceDiagram stones={stones} status={status} />
-              <div
-                style={{
-                  marginTop: 12,
-                  fontSize: 12,
-                  color:
-                    status === "good" ? "var(--sea-blue)" : "var(--madder)",
-                  fontFamily: "var(--font-cormorant), serif",
-                  letterSpacing: "0.1em",
-                }}
-              >
-                {status === "under" && t("predive.underweight")}
-                {status === "over" && t("predive.overweight")}
-                {status === "good" && t("predive.balanced")}
+              <div style={{ width: "84%", margin: "0 auto" }}>
+                <ForceDiagram stones={stones} status={status} />
               </div>
             </div>
-            <div className="paper-bg" style={{ padding: 22, width: 200, textAlign: "center" }}>
+            <div className="paper-bg" style={{ padding: 12, textAlign: "center" }}>
               <div
                 style={{
                   fontSize: 10,
@@ -132,14 +122,17 @@ export function PreDive({ dive }: { dive: DiveDef }) {
                 {t("dive.breath")}
               </div>
               <BreathRing seconds={breath} />
-              <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 6 }}>
+              <div style={{ fontSize: 10, color: "var(--ink-soft)", marginTop: 0 }}>
                 {t("predive.capacity")}
               </div>
             </div>
           </div>
 
           <button
-            onClick={() => router.push(`/sea/dives/${dive.key}/dive?stones=${stones}`)}
+            onClick={() => {
+              playCue("dive.splash");
+              router.push(`/sea/dives/${dive.key}/dive?stones=${stones}`);
+            }}
             className="dive-btn"
           >
             {t("predive.dive")}
@@ -147,37 +140,126 @@ export function PreDive({ dive }: { dive: DiveDef }) {
         </div>
       </div>
       <style>{`
-        .stone-btn {
-          background: rgba(240,244,242,0.06);
-          border: 1px solid rgba(240,244,242,0.2);
+        .predive-stage {
+          position: absolute;
+          inset: 0;
+          padding-top: 86px;
+          padding-bottom: 18px;
+          padding-inline: 28px;
+          display: flex;
+          align-items: center;
+          overflow: hidden;
+        }
+        .predive-deck {
+          position: absolute;
+          inset-inline-start: 0;
+          bottom: 0;
+          top: 86px;
+          width: 320px;
+          pointer-events: none;
+        }
+        .predive-loadout {
+          flex: 1;
           color: var(--foam);
-          padding: 14px 8px;
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          margin-inline-start: 300px;
+        }
+        @media (max-width: 900px) {
+          .predive-stage {
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            padding-inline: 20px;
+            padding-bottom: 0;
+            overflow-y: auto;
+            gap: 16px;
+          }
+          .predive-deck {
+            /* Full-width band; Saif's portrait sits centered inside it at the
+               SVG's natural 360:540 aspect (so his head doesn't get cropped).
+               A deck-wood gradient extends edge-to-edge so the shore reads as
+               ground spanning the viewport. */
+            position: relative;
+            inset: auto;
+            width: 100%;
+            max-width: none;
+            margin-inline: -20px;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            flex: 0 0 auto;
+            order: 2;
+            background:
+              linear-gradient(to bottom,
+                transparent 0%,
+                transparent 60%,
+                rgba(96, 60, 32, 0.4) 76%,
+                rgba(60, 38, 22, 0.78) 90%,
+                rgba(31, 20, 10, 0.95) 100%);
+          }
+          .predive-deck > svg {
+            width: 100% !important;
+            height: auto !important;
+            max-width: 320px;
+            aspect-ratio: 360 / 540;
+            display: block;
+            margin: 0 auto;
+          }
+          .predive-loadout {
+            margin-inline-start: 0;
+            flex: 1 1 auto;
+            order: 1;
+          }
+        }
+        .stone-btn {
+          background: rgba(8, 30, 44, 0.55);
+          border: 1.5px solid rgba(244, 184, 96, 0.35);
+          color: var(--foam);
+          padding: 8px 4px;
           cursor: pointer;
           transition: all 0.3s var(--ease-water);
           font-family: var(--font-tajawal), sans-serif;
           flex: 1;
+          backdrop-filter: blur(6px);
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
-        .stone-btn:hover { background: rgba(240,244,242,0.12); }
+        .stone-btn:hover {
+          background: rgba(8, 30, 44, 0.75);
+          border-color: rgba(244, 184, 96, 0.6);
+        }
         .stone-btn.active {
           border-color: var(--sunset-gold);
-          background: rgba(244,184,96,0.18);
+          background: rgba(244, 184, 96, 0.22);
+          box-shadow:
+            0 0 0 1px var(--sunset-gold),
+            0 6px 22px rgba(244, 184, 96, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
         .dive-btn {
-          margin-top: 30px;
-          padding: 16px 60px;
+          margin-top: 18px;
+          padding: 18px 56px;
+          align-self: flex-start;
           background: var(--sunset-gold);
           color: var(--sea-deep);
           border: none;
           font-family: var(--font-cormorant), serif;
-          font-size: 16px;
-          letter-spacing: 0.4em;
+          font-size: 18px;
+          letter-spacing: 0.45em;
+          font-weight: 700;
           cursor: pointer;
           transition: all 0.3s var(--ease-water);
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
         }
         .dive-btn:hover {
           background: #FFD080;
           transform: translateY(2px);
-          box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+          box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+        }
+        @media (max-width: 640px) {
+          .dive-btn { align-self: center !important; }
         }
       `}</style>
     </SeaScene>
@@ -191,71 +273,205 @@ function ForceDiagram({
   stones: number;
   status: "under" | "good" | "over";
 }) {
-  const buoy = 30;
-  const weight = stones * 8 + 5;
+  // Compact technical schematic: free-body diagram of buoyancy ↑ vs weight ↓ on
+  // the left, balance scale on the right that tilts based on net force, and a
+  // status pill at the bottom. Weight arrow length is clamped so it never
+  // escapes the card even at the heaviest stone setting.
+  const { lang } = useI18n();
+  const BUOY = 22;
+  const WEIGHT_RAW = stones * 6 + 8;
+  const WEIGHT = Math.min(WEIGHT_RAW, 36);
+  const net = WEIGHT_RAW - BUOY;
+  const tilt = Math.max(-12, Math.min(12, net * 0.45));
+
+  const inkSoft = "rgba(60,40,20,0.55)";
+  const upColor = "#0E5E7B";
+  const downColor = "#B5341E";
+  const okColor = "#7A8A4E";
+  const statusColor =
+    status === "good" ? okColor : status === "under" ? upColor : downColor;
+
+  const statusLabel =
+    status === "good"
+      ? lang === "en"
+        ? "BALANCED · SINKS GENTLY"
+        : "متوازن · ينزل بهدوء"
+      : status === "under"
+        ? lang === "en"
+          ? "TOO LIGHT · WILL FLOAT UP"
+          : "خفيف · يطفو"
+        : lang === "en"
+          ? "TOO HEAVY · SINKS TOO FAST"
+          : "ثقيل · ينزل بسرعة";
+
   return (
-    <svg viewBox="0 0 200 140" style={{ width: "100%" }}>
-      <ellipse
-        cx="100"
-        cy="70"
-        rx="22"
-        ry="40"
-        fill="none"
-        stroke="#0E5E7B"
-        strokeWidth="1.2"
-        opacity="0.7"
-      />
-      <circle
-        cx="100"
-        cy="42"
-        r="10"
-        fill="none"
-        stroke="#0E5E7B"
-        strokeWidth="1.2"
-        opacity="0.7"
-      />
-      <g>
-        <line x1="65" y1="70" x2="65" y2={70 - buoy} stroke="#0E5E7B" strokeWidth="2.5" />
+    <svg
+      viewBox="0 0 220 110"
+      style={{ width: "100%", display: "block" }}
+      className="ltr-internal"
+    >
+      <defs>
+        <marker
+          id="arrUp"
+          viewBox="0 0 10 10"
+          refX="5"
+          refY="0"
+          markerWidth="6"
+          markerHeight="6"
+          orient="auto"
+        >
+          <path d="M 0 8 L 5 0 L 10 8 Z" fill={upColor} />
+        </marker>
+        <marker
+          id="arrDown"
+          viewBox="0 0 10 10"
+          refX="5"
+          refY="10"
+          markerWidth="6"
+          markerHeight="6"
+          orient="auto"
+        >
+          <path d="M 0 2 L 5 10 L 10 2 Z" fill={downColor} />
+        </marker>
+      </defs>
+
+      {/* Free-body diagram on the left */}
+      <g transform="translate(50 50)">
+        <circle cx="0" cy="-16" r="5" fill="none" stroke={inkSoft} strokeWidth="1" />
         <path
-          d={`M 65 ${70 - buoy} L 60 ${75 - buoy} L 70 ${75 - buoy} Z`}
-          fill="#0E5E7B"
+          d="M -7 -11 Q -9 4 -5 16 L 5 16 Q 9 4 7 -11 Z"
+          fill="none"
+          stroke={inkSoft}
+          strokeWidth="1"
+        />
+        <circle cx="0" cy="0" r="1.6" fill="#3D2A1E" />
+        <line
+          x1="0"
+          y1="-2"
+          x2="0"
+          y2={-BUOY - 4}
+          stroke={upColor}
+          strokeWidth="1.6"
+          markerEnd="url(#arrUp)"
         />
         <text
-          x="50"
-          y={70 - buoy + 4}
-          textAnchor="end"
-          fill="#0E5E7B"
-          fontSize="9"
+          x="6"
+          y={-BUOY - 2}
+          fill={upColor}
+          fontSize="7"
           fontFamily="serif"
-          letterSpacing="1"
+          letterSpacing="0.8"
         >
-          ↑
+          F
+          <tspan fontSize="5" dy="1">
+            b
+          </tspan>
         </text>
-      </g>
-      <g>
-        <line x1="135" y1="70" x2="135" y2={70 + weight} stroke="#B5341E" strokeWidth="2.5" />
-        <path
-          d={`M 135 ${70 + weight} L 130 ${65 + weight} L 140 ${65 + weight} Z`}
-          fill="#B5341E"
+        <line
+          x1="0"
+          y1="2"
+          x2="0"
+          y2={WEIGHT + 4}
+          stroke={downColor}
+          strokeWidth="1.6"
+          markerEnd="url(#arrDown)"
         />
         <text
-          x="150"
-          y={70 + weight}
-          fill="#B5341E"
-          fontSize="9"
+          x="6"
+          y={WEIGHT - 2}
+          fill={downColor}
+          fontSize="7"
           fontFamily="serif"
-          letterSpacing="1"
+          letterSpacing="0.8"
         >
-          ↓
+          F
+          <tspan fontSize="5" dy="1">
+            w
+          </tspan>
         </text>
       </g>
-      <rect x="60" y="120" width="80" height="6" fill="#5A3618" />
-      <circle
-        cx={100 + (weight - buoy) * 1.5}
-        cy="116"
-        r="5"
-        fill={status === "good" ? "#0E5E7B" : "#B5341E"}
+
+      {/* Vertical separator */}
+      <line
+        x1="105"
+        y1="14"
+        x2="105"
+        y2="92"
+        stroke={inkSoft}
+        strokeWidth="0.5"
+        strokeDasharray="2 2"
       />
+
+      {/* Balance scale on the right */}
+      <g transform="translate(165 50)">
+        <line x1="0" y1="0" x2="0" y2="32" stroke="#5A3618" strokeWidth="1.5" />
+        <polygon points="-5,32 5,32 0,36" fill="#5A3618" />
+        <circle cx="0" cy="0" r="2" fill="#3D2A1E" />
+        <g transform={`rotate(${tilt})`} style={{ transition: "transform 0.4s ease" }}>
+          <line
+            x1="-30"
+            y1="0"
+            x2="30"
+            y2="0"
+            stroke="#3D2A1E"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+          <line x1="-30" y1="0" x2="-30" y2="6" stroke="#3D2A1E" strokeWidth="0.8" />
+          <path d="M -38 6 Q -30 12 -22 6 Z" fill="none" stroke={upColor} strokeWidth="1.2" />
+          <text
+            x="-30"
+            y="18"
+            textAnchor="middle"
+            fill={upColor}
+            fontSize="6"
+            letterSpacing="1"
+          >
+            ↑
+          </text>
+          <line x1="30" y1="0" x2="30" y2="6" stroke="#3D2A1E" strokeWidth="0.8" />
+          <path d="M 22 6 Q 30 12 38 6 Z" fill="none" stroke={downColor} strokeWidth="1.2" />
+          <text
+            x="30"
+            y="18"
+            textAnchor="middle"
+            fill={downColor}
+            fontSize="6"
+            letterSpacing="1"
+          >
+            ↓
+          </text>
+        </g>
+        <line x1="-20" y1="38" x2="20" y2="38" stroke="#3D2A1E" strokeWidth="1.5" />
+      </g>
+
+      {/* Status pill at bottom — well-padded, won't overflow */}
+      <g transform="translate(110 100)">
+        <rect x="-100" y="-8" width="200" height="16" rx="8" fill={statusColor} opacity="0.16" />
+        <rect
+          x="-100"
+          y="-8"
+          width="200"
+          height="16"
+          rx="8"
+          fill="none"
+          stroke={statusColor}
+          strokeWidth="0.6"
+          opacity="0.55"
+        />
+        <circle cx="-88" cy="0" r="3" fill={statusColor} />
+        <text
+          x="-80"
+          y="2.6"
+          fill={statusColor}
+          fontSize="7"
+          fontFamily="var(--font-cormorant), serif"
+          letterSpacing="1.3"
+          fontWeight="600"
+        >
+          {statusLabel}
+        </text>
+      </g>
     </svg>
   );
 }
@@ -267,7 +483,7 @@ function BreathRing({ seconds = 60 }: { seconds?: number }) {
   return (
     <svg
       viewBox="0 0 140 140"
-      style={{ width: 140, height: 140, display: "block", margin: "10px auto" }}
+      style={{ width: 78, height: 78, display: "block", margin: "4px auto" }}
     >
       <circle cx="70" cy="70" r={r} fill="none" stroke="rgba(80,55,30,0.2)" strokeWidth="8" />
       <circle
