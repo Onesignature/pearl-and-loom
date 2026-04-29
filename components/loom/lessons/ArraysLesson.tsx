@@ -131,7 +131,7 @@ export function ArraysLesson() {
             : `${fmt(rows)} × ${fmt(cols)} = ${fmt(rows * cols)} زخرفة`}
         </div>
         <div
-          className="ltr-internal"
+          className="ltr-internal arrays-grid"
           style={{
             display: "grid",
             gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
@@ -142,6 +142,9 @@ export function ArraysLesson() {
             border: "1px solid rgba(240,228,201,0.2)",
             width: "min(100%, 460px)",
             aspectRatio: `${cols} / ${rows}`,
+            // Cap height so a tall array (e.g. 2×8) can't blow out the
+            // viewport on phone — falls back to a max-height-driven width.
+            maxHeight: "60vh",
             transition: "all 0.4s var(--ease-loom)",
             boxShadow: celebrating
               ? "0 0 28px rgba(232,163,61,0.6) inset"
@@ -187,26 +190,8 @@ interface DimRowProps {
 function DimRow({ label, value, target, onSet, celebrating, fmt }: DimRowProps) {
   const ok = value === target;
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        padding: "10px 0",
-        borderBottom: "1px dashed rgba(80,55,30,0.18)",
-      }}
-    >
-      <div
-        style={{
-          fontSize: 11,
-          letterSpacing: "0.24em",
-          textTransform: "uppercase",
-          color: "var(--ink-soft)",
-          minWidth: 80,
-        }}
-      >
-        {label}
-      </div>
+    <div className="dim-row">
+      <div className="dim-label">{label}</div>
       <button
         onClick={() => onSet(Math.max(MIN_DIM, value - 1))}
         disabled={celebrating || value <= MIN_DIM}
@@ -216,14 +201,8 @@ function DimRow({ label, value, target, onSet, celebrating, fmt }: DimRowProps) 
         −
       </button>
       <div
-        className="font-display"
-        style={{
-          minWidth: 40,
-          textAlign: "center",
-          fontSize: 22,
-          color: ok ? "var(--saffron)" : "var(--ink)",
-          transition: "color 0.2s",
-        }}
+        className="font-display dim-value"
+        style={{ color: ok ? "var(--saffron)" : "var(--ink)" }}
       >
         {fmt(value)}
       </div>
@@ -236,26 +215,52 @@ function DimRow({ label, value, target, onSet, celebrating, fmt }: DimRowProps) 
         +
       </button>
       <span
-        style={{
-          marginInlineStart: "auto",
-          fontSize: 12,
-          color: ok ? "var(--saffron)" : "rgba(80,55,30,0.45)",
-          letterSpacing: "0.12em",
-        }}
+        className="dim-indicator"
+        style={{ color: ok ? "var(--saffron)" : "rgba(80,55,30,0.45)" }}
       >
         {ok ? "✓" : `→ ${fmt(target)}`}
       </span>
       <style>{`
+        .dim-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 0;
+          border-bottom: 1px dashed rgba(80,55,30,0.18);
+          flex-wrap: wrap;
+        }
+        .dim-label {
+          font-size: 11px;
+          letter-spacing: 0.24em;
+          text-transform: uppercase;
+          color: var(--ink-soft);
+          flex: 1 1 70px;
+          min-width: 60px;
+        }
+        .dim-value {
+          min-width: 36px;
+          text-align: center;
+          font-size: 22px;
+          transition: color 0.2s;
+        }
+        .dim-indicator {
+          margin-inline-start: auto;
+          font-size: 12px;
+          letter-spacing: 0.12em;
+          flex: 0 0 auto;
+        }
         .dim-btn {
           width: 32px;
           height: 32px;
           background: rgba(232,163,61,0.12);
           border: 1px solid rgba(232,163,61,0.4);
+          border-radius: 999px;
           color: var(--ink);
           font-family: var(--font-cormorant), serif;
           font-size: 18px;
           cursor: pointer;
           transition: background 0.2s;
+          flex: 0 0 auto;
         }
         .dim-btn:hover:not(:disabled) { background: rgba(232,163,61,0.28); }
         .dim-btn:disabled { opacity: 0.35; cursor: not-allowed; }

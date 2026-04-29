@@ -159,6 +159,7 @@ export function AnglesLesson() {
           alignItems: "center",
           gap: 16,
           minWidth: 0,
+          maxWidth: "100%",
         }}
       >
         <div
@@ -207,7 +208,8 @@ function VertexPreview({ rotation }: VertexPreviewProps) {
     <div
       style={{
         position: "relative",
-        width: "min(90%, 360px)",
+        width: "min(100%, 360px)",
+        maxHeight: "60vh",
         aspectRatio: "1 / 1",
         background: "var(--charcoal-soft)",
         border: "1px solid rgba(240,228,201,0.2)",

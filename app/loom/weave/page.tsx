@@ -3,16 +3,52 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/provider";
+import { useProgress } from "@/lib/store/progress";
 import { TentScene } from "@/components/scenes/TentScene";
 import { TopChrome } from "@/components/layout/TopChrome";
 
 const TIMINGS = [400, 800, 600];
 
+// Loom curriculum order — used to pick the "next lesson" CTA after the
+// learner has just completed one. Mirrors LESSONS in app/loom/page.tsx
+// but stripped to just id + href + unlock requirement.
+const LESSON_ORDER: { id: string; href: string; requires: number }[] = [
+  { id: "symmetry", href: "/loom/lessons/symmetry", requires: 0 },
+  { id: "fractions", href: "/loom/lessons/fractions", requires: 0 },
+  { id: "tessellation", href: "/loom/lessons/tessellation", requires: 0 },
+  { id: "arrays", href: "/loom/lessons/arrays", requires: 3 },
+  { id: "angles", href: "/loom/lessons/angles", requires: 3 },
+];
+
 export default function WeaveAnimPage() {
   const router = useRouter();
   const { t, lang } = useI18n();
+  const completed = useProgress((s) => s.loomLessonsCompleted);
+  const quizBest = useProgress((s) => s.quizScores.layla.bestScore);
   const [phase, setPhase] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
+
+  // Pick the next destination so the learner always has an obvious move
+  // after the weave animation. Priority:
+  //   1. The next not-yet-completed lesson they can unlock.
+  //   2. The final quiz, once all 5 lessons are done and the quiz is unattempted.
+  //   3. Back to the lesson hub (everything done).
+  const nextLesson = LESSON_ORDER.find(
+    (l) => !completed.includes(l.id) && completed.length >= l.requires,
+  );
+  let primaryHref: string;
+  let primaryLabel: string;
+  if (nextLesson) {
+    primaryHref = nextLesson.href;
+    primaryLabel = t("weave.nextLesson");
+  } else if (quizBest === null) {
+    primaryHref = "/loom/quiz";
+    primaryLabel = t("weave.takeQuiz");
+  } else {
+    primaryHref = "/loom";
+    primaryLabel = t("weave.backToLessons");
+  }
+  const arrow = lang === "ar" ? "←" : "→";
 
   useEffect(() => {
     if (!autoPlay) return;
@@ -77,7 +113,7 @@ export default function WeaveAnimPage() {
             </div>
           ))}
         </div>
-        <div style={{ marginTop: 36, display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
+        <div style={{ marginTop: 36, display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
           <button onClick={() => setAutoPlay(!autoPlay)} className="anim-btn">
             {autoPlay ? t("weave.pause") : t("weave.play")}
           </button>
@@ -92,9 +128,15 @@ export default function WeaveAnimPage() {
           </button>
           <button
             onClick={() => router.push("/tapestry")}
+            className="anim-btn"
+          >
+            {t("weave.viewTapestry")}
+          </button>
+          <button
+            onClick={() => router.push(primaryHref)}
             className="anim-btn primary"
           >
-            {t("weave.viewTapestry")} {lang === "ar" ? "←" : "→"}
+            {primaryLabel} {arrow}
           </button>
         </div>
       </div>
@@ -114,6 +156,7 @@ export default function WeaveAnimPage() {
           padding: 12px 22px;
           background: rgba(245,235,211,0.08);
           border: 1px solid rgba(240,228,201,0.25);
+          border-radius: 999px;
           color: var(--wool);
           font-family: var(--font-cormorant), serif;
           font-size: 12px;
@@ -126,6 +169,11 @@ export default function WeaveAnimPage() {
           background: var(--saffron);
           color: var(--charcoal);
           border-color: var(--saffron);
+          font-weight: 600;
+          box-shadow: 0 4px 14px rgba(232,163,61,0.32);
+        }
+        .anim-btn.primary:hover {
+          background: var(--saffron-soft);
         }
       `}</style>
     </TentScene>

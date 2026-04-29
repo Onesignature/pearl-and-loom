@@ -61,6 +61,17 @@ export function PreDive({ dive }: { dive: DiveDef }) {
             {t("predive.chooseStone")}
           </div>
 
+          <div className="predive-howto" role="note">
+            <span className="predive-howto-eyebrow">
+              {lang === "en" ? "How to play" : "كيف تلعب"}
+            </span>
+            <span className="predive-howto-body">
+              {lang === "en"
+                ? "Tap a stone. Heavier sinks faster — but uses more breath. Watch the force diagram to find the balance."
+                : "اضغط على حجر. الأثقل يهبط أسرع — لكنّه يستهلك نفسًا أكثر. راقب مخطط القوى لتجد التوازن."}
+            </span>
+          </div>
+
           <div style={{ marginTop: 14 }}>
             <div style={{ display: "flex", gap: 6 }}>
               {[1, 2, 3, 4, 5, 6].map((n) => (
@@ -214,9 +225,35 @@ export function PreDive({ dive }: { dive: DiveDef }) {
             order: 1;
           }
         }
+        .predive-howto {
+          margin-top: 12px;
+          padding: 12px 14px;
+          background: linear-gradient(180deg, rgba(244,184,96,0.16) 0%, rgba(244,184,96,0.06) 100%);
+          border: 1px solid rgba(244,184,96,0.42);
+          border-radius: 14px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          color: var(--foam);
+        }
+        .predive-howto-eyebrow {
+          font-family: var(--font-cormorant), serif;
+          font-size: 10px;
+          letter-spacing: 0.32em;
+          text-transform: uppercase;
+          color: var(--sunset-gold);
+          opacity: 0.92;
+        }
+        .predive-howto-body {
+          font-size: 14px;
+          color: var(--foam);
+          line-height: 1.55;
+          opacity: 0.92;
+        }
         .stone-btn {
           background: rgba(8, 30, 44, 0.55);
           border: 1.5px solid rgba(244, 184, 96, 0.35);
+          border-radius: 16px;
           color: var(--foam);
           padding: 8px 4px;
           cursor: pointer;
