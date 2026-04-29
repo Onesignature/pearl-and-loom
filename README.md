@@ -51,7 +51,28 @@ The student plays two siblings simultaneously:
 - **Layla** sits at the Sadu loom inside the family tent. Each Grade 4 math problem she solves — symmetry, equivalent fractions, tessellation, multiplication arrays, geometric angles — weaves a real row of an evolving 25-row tapestry. The math *is* the loom.
 - **Saif** sails on the family's dhow for the *ghasa* season. Each Grade 8 science problem — buoyancy and density, water pressure at depth, marine biology of the Arabian Gulf, lung capacity, light refraction — earns a graded pearl (common, fine, or royal). The science *is* the dive.
 
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="./public/readme/lesson.png" alt="Symmetry lesson — math weaves the row" />
+      <br/>
+      <sub><strong>Layla · Lesson 1.</strong> Mirror the motif across the axis. The grid she completes is the next row of the tapestry.</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="./public/readme/dive.png" alt="Pressure trial dive — science earns the pearl" />
+      <br/>
+      <sub><strong>Saif · Pressure trial.</strong> Answer correctly before breath runs out — the pearl that surfaces is the grade of the answer.</sub>
+    </td>
+  </tr>
+</table>
+
 Pearls return home and become beads in Layla's tapestry. The completed heirloom is the family's story in cloth — the kind of thing a Bedouin bride's mother would wrap around her daughter's hand on her wedding day. Finishing the curriculum means finishing the heirloom.
+
+<p align="center">
+  <img src="./public/readme/braid.png" alt="Braiding sequence — Saif's pearl meets Layla's loom" width="820" />
+  <br/>
+  <sub><em>The braid. Three frames: Saif offers a pearl · the pearl crosses sea-to-tent · Layla weaves it into the row.</em></sub>
+</p>
 
 The point isn't novelty for its own sake. The point is that **two UNESCO heritages are denser cultural integration than one**, and a deliberately pre-oil, dignified setting reads more confidently than a glossy "kids' app" gloss on a space mission. Reference points used during design: Louvre Abu Dhabi, Qasr Al Hosn, Sheikh Zayed Festival Sadu workshop documentation.
 
